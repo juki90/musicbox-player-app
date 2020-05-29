@@ -1,0 +1,11 @@
+$default-body-background-color: #333;
+
+@import url("https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap");
+
+body {
+  background-color: $default-body-background-color;
+}
+
+#root {
+  margin-top: 50px;
+}
