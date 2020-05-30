@@ -5,6 +5,8 @@ import Home from "./Home";
 import Search from "./Search";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
+import { routes } from "../routes";
+import Collection from "./Collection";
 
 const useStyles = makeStyles({
   container: {
@@ -19,11 +21,14 @@ const Root: React.FC = () => {
       <Header />
       <Container className={classes.container}>
         <Switch>
-          <Route exact path="/">
+          <Route exact path={routes.home}>
             <Home />
           </Route>
-          <Route exact path="/search">
+          <Route exact path={routes.search}>
             <Search />
+          </Route>
+          <Route exact path={routes.collection}>
+            <Collection />
           </Route>
         </Switch>
       </Container>

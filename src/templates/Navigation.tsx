@@ -8,6 +8,7 @@ import CloseRounded from "@material-ui/icons/CloseRounded";
 import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import theme from "../styles/theme";
+import { routes } from "../routes";
 
 const useStyles = makeStyles({
   button: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles({
   },
   menuLink: {
     color: "#222",
-    fontSize: "1.25em",
+    fontSize: "1.2em",
     fontFamily: theme.typography.fontFamily,
     textAlign: "center",
     marginLeft: "25px",
@@ -37,6 +38,18 @@ const useStyles = makeStyles({
     "&:hover": {
       color: "#555",
       textDecoration: "none",
+    },
+  },
+  navButton: {
+    padding: "0 1em",
+    textAlign: "center",
+    marginLeft: "1em",
+    "& a": {
+      marginLeft: 0,
+      marginRight: " 0 !important",
+    },
+    "& span": {
+      textTransform: "none",
     },
   },
 });
@@ -91,23 +104,33 @@ const Navigation: React.FC = () => {
           >
             <ThemeProvider theme={theme}>
               <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href="/player">
+                <Link className={classes.menuLink} href={routes.player}>
                   Player
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href="/collection">
+                <Link className={classes.menuLink} href={routes.search}>
+                  Search
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link className={classes.menuLink} href={routes.collection}>
                   Collection
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href="/playlists">
+                <Link className={classes.menuLink} href={routes.playlists}>
                   Playlists
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href="/search">
-                  Search
+                <Link className={classes.menuLink} href={routes.login}>
+                  Login
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link className={classes.menuLink} href={routes.register}>
+                  Register
                 </Link>
               </MenuItem>
             </ThemeProvider>
@@ -115,20 +138,34 @@ const Navigation: React.FC = () => {
         </Box>
       )}
       {docWidth >= 1280 && (
-        <Box component="nav">
+        <Box component="nav" display="flex" alignItems="center">
           <ThemeProvider theme={theme}>
-            <Link className={classes.menuLink} href="/player">
+            <Link className={classes.menuLink} href={routes.player}>
               Player
             </Link>
-            <Link className={classes.menuLink} href="/collection">
-              Collection
-            </Link>
-            <Link className={classes.menuLink} href="/playlists">
-              Playlists
-            </Link>
-            <Link className={classes.menuLink} href="/search">
+            <Link className={classes.menuLink} href={routes.search}>
               Search
             </Link>
+            <Link className={classes.menuLink} href={routes.collection}>
+              Collection
+            </Link>
+            <Link className={classes.menuLink} href={routes.playlists}>
+              Playlists
+            </Link>
+            <Button
+              className={classes.navButton}
+              variant="contained"
+              color="secondary"
+            >
+              <Link className={classes.menuLink} href={routes.login}>
+                Login
+              </Link>
+            </Button>
+            <Button className={classes.navButton} variant="contained">
+              <Link className={classes.menuLink} href={routes.register}>
+                Register
+              </Link>
+            </Button>
           </ThemeProvider>
         </Box>
       )}

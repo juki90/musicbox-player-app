@@ -10,11 +10,15 @@ import theme from "../styles/theme";
 
 const useStyles = makeStyles({
   header: {
-    height: "50px",
+    height: "60px",
     paddingTop: "5px",
+    paddingBottom: "5px",
   },
   headerContainer: {
     height: "100%",
+    [theme.breakpoints.up("md")]: {
+      padding: 0,
+    },
   },
   headerBox: {
     height: "100%",

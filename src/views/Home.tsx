@@ -4,9 +4,10 @@ import introImage from "../assets/intro-image.svg";
 import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { Box, Link } from "@material-ui/core";
-import theme from "../styles/theme";
+import { theme } from "../styles/theme";
 import Fab from "@material-ui/core/Fab";
 import SearchIcon from "@material-ui/icons/Search";
+import { routes } from "../routes";
 
 const useStyles = makeStyles({
   introImg: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles({
   },
   introHeading: {
     textAlign: "center",
+    margin: "1em 0",
     fontWeight: "bold",
   },
   paragraph: {
@@ -26,13 +28,11 @@ const useStyles = makeStyles({
     margin: "1em 0",
   },
   fab: {
-    paddingTop: "5px",
     letterSpacing: "1px",
     display: "flex",
     margin: "1.5em auto",
-    width: "160px",
+    width: "140px",
     justifyContent: "space-around",
-
     "& a": {
       color: "#000",
       "&:hover": {
@@ -41,7 +41,7 @@ const useStyles = makeStyles({
     },
   },
   cardOuter: {
-    padding: "1.5em 2.5em",
+    padding: "60px 2.5em",
     minHeight: "100vh",
   },
 });
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
               aria-label="edit"
             >
               <SearchIcon />
-              <Link href="/search">Search</Link>
+              <Link href={routes.search}>Search</Link>
             </Fab>
             <Typography className={classes.paragraph} variant="body1">
               With this app you can search, collect, listen and watch videos
@@ -92,12 +92,12 @@ const Home: React.FC = () => {
               First of all, you will need to search for videos, you may choose
               between searching in youtube, vimeo or both at the same time. Go
               to
-              <Link href="/search"> search here</Link>.
+              <Link href={routes.search}> search here</Link>.
             </Typography>
             <Typography className={classes.paragraph} variant="body1">
               When you search for videos, you can add them to{" "}
-              <Link href="/collection"> collection</Link> or
-              <Link href="/playlists"> playlists</Link>.
+              <Link href={routes.collection}> collection</Link> or
+              <Link href={routes.playlists}> playlists</Link>.
             </Typography>
             <Typography className={classes.paragraph} variant="body1">
               This app is using Youtube API and Vimeo API
