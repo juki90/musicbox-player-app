@@ -8,6 +8,7 @@ import { theme } from "../styles/theme";
 import Fab from "@material-ui/core/Fab";
 import SearchIcon from "@material-ui/icons/Search";
 import { routes } from "../routes";
+import { useCommonStyles } from "./Root";
 
 const useStyles = makeStyles({
   introImg: {
@@ -15,17 +16,6 @@ const useStyles = makeStyles({
     maxWidth: "50%",
     height: "auto",
     margin: "1em auto",
-  },
-  introHeading: {
-    textAlign: "center",
-    margin: "1em 0",
-    fontWeight: "bold",
-  },
-  paragraph: {
-    marginBottom: "1em",
-  },
-  contentHeading: {
-    margin: "1em 0",
   },
   fab: {
     letterSpacing: "1px",
@@ -40,20 +30,17 @@ const useStyles = makeStyles({
       },
     },
   },
-  cardOuter: {
-    padding: "60px 2.5em",
-    minHeight: "100vh",
-  },
 });
 
 const Home: React.FC = () => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
   return (
     <Box p="1.5em 0">
       <ThemeProvider theme={theme}>
-        <Paper className={classes.cardOuter} elevation={0}>
+        <Paper className={commonClasses.cardOuter} elevation={0}>
           <Typography
-            className={classes.introHeading}
+            className={commonClasses.introHeading}
             variant="h3"
             component="h1"
           >
@@ -62,7 +49,7 @@ const Home: React.FC = () => {
           <img className={classes.introImg} src={introImage} alt="Notes line" />
           <Typography>
             <Typography
-              className={classes.contentHeading}
+              className={commonClasses.contentHeading}
               align="center"
               variant="h4"
             >
@@ -70,7 +57,7 @@ const Home: React.FC = () => {
             </Typography>
             <Typography
               align="center"
-              className={classes.paragraph}
+              className={commonClasses.paragraph}
               variant="body1"
             >
               Search now
@@ -84,22 +71,22 @@ const Home: React.FC = () => {
               <SearchIcon />
               <Link href={routes.search}>Search</Link>
             </Fab>
-            <Typography className={classes.paragraph} variant="body1">
+            <Typography className={commonClasses.paragraph} variant="body1">
               With this app you can search, collect, listen and watch videos
               from youtube and vimeo.
             </Typography>
-            <Typography className={classes.paragraph} variant="body1">
+            <Typography className={commonClasses.paragraph} variant="body1">
               First of all, you will need to search for videos, you may choose
               between searching in youtube, vimeo or both at the same time. Go
               to
               <Link href={routes.search}> search here</Link>.
             </Typography>
-            <Typography className={classes.paragraph} variant="body1">
+            <Typography className={commonClasses.paragraph} variant="body1">
               When you search for videos, you can add them to{" "}
               <Link href={routes.collection}> collection</Link> or
               <Link href={routes.playlists}> playlists</Link>.
             </Typography>
-            <Typography className={classes.paragraph} variant="body1">
+            <Typography className={commonClasses.paragraph} variant="body1">
               This app is using Youtube API and Vimeo API
             </Typography>
           </Typography>

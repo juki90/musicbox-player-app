@@ -1,65 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import SearchResult from "./../components/SearchResult";
+import Item from "./../components/Item";
 import { Typography, Button, makeStyles } from "@material-ui/core";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import AppsIcon from "@material-ui/icons/Apps";
 import Pagination from "@material-ui/lab/Pagination";
+import { useCommonStyles } from "../views/Root";
+import classes from "*.module.css";
+import theme from "../styles/theme";
 
 const useStyles = makeStyles({
-  viewButton: {
-    margin: "0.5em 0.5em 1em 0",
-    padding: "8px 0",
-    minWidth: 0,
-    width: "42px",
-    "& span": {
-      margin: 0,
-      padding: 0,
+  viewOptions: {
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
     },
-    "& .MuiButton-label": {
-      width: "12px",
-    },
-    "& .MuiTouchRipple-root": {
-      display: "none",
-    },
-  },
-  paginationContainer: {
-    margin: "1em 0",
-    textAlign: "center",
-  },
-  pagination: {
-    display: "inline-block",
   },
 });
 
 const SearchResults: React.FC = () => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
+  const [gridOn, setGridOn] = useState<boolean>(false);
   return (
     <Box>
-      <Box>
+      <Box className={classes.viewOptions}>
         <Typography>Change view</Typography>
         <Button
-          className={classes.viewButton}
+          className={commonClasses.viewButton}
           variant="contained"
           size="large"
+          color={!gridOn ? "primary" : "default"}
           startIcon={<FormatListBulletedIcon />}
+          onClick={() => setGridOn(false)}
         ></Button>
         <Button
-          className={classes.viewButton}
+          className={commonClasses.viewButton}
           variant="contained"
           size="large"
+          color={gridOn ? "primary" : "default"}
           startIcon={<AppsIcon />}
+          onClick={() => setGridOn(true)}
         ></Button>
       </Box>
       <Grid container spacing={2}>
-        <SearchResult />
-        <SearchResult />
-        <SearchResult />
-        <SearchResult />
+        <Item grid={gridOn} type="search-result" />
+        <Item grid={gridOn} type="search-result" />
+        <Item grid={gridOn} type="search-result" />
+        <Item grid={gridOn} type="search-result" />
       </Grid>
-      <div className={classes.paginationContainer}>
-        <Pagination className={classes.pagination} count={4} size="small" />
+      <div className={commonClasses.paginationContainer}>
+        <Pagination
+          className={commonClasses.pagination}
+          count={4}
+          size="small"
+        />
       </div>
     </Box>
   );

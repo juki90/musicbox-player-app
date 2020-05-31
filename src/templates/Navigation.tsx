@@ -43,7 +43,7 @@ const useStyles = makeStyles({
   navButton: {
     padding: "0 1em",
     textAlign: "center",
-    marginLeft: "1em",
+    marginLeft: "1.5em",
     "& a": {
       marginLeft: 0,
       marginRight: " 0 !important",
@@ -125,7 +125,7 @@ const Navigation: React.FC = () => {
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <Link className={classes.menuLink} href={routes.login}>
-                  Login
+                  Log in
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClose}>

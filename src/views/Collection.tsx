@@ -1,111 +1,91 @@
 import React, { useState } from "react";
 import Paper from "@material-ui/core/Paper";
-import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
+import { ThemeProvider, makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { theme, headingGradient } from "../styles/theme";
+import { theme } from "../styles/theme";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import AppsIcon from "@material-ui/icons/Apps";
 import Pagination from "@material-ui/lab/Pagination";
-import CollectionItem from "./../components/CollectionItem";
+import Item from "../components/Item";
+import { useCommonStyles } from "./Root";
+import { TextField } from "@material-ui/core";
 
 const useStyles = makeStyles({
-  introHeading: {
-    textAlign: "center",
-    fontWeight: "bold",
-    marginTop: "0.5em",
-    marginBottom: "1em",
-    borderRadius: "5px",
-    padding: "1em",
-    backgroundImage: headingGradient,
-  },
-  subtitle: {
-    marginBottom: "1em",
-  },
-  paragraph: {
-    marginBottom: "1em",
-  },
-  contentHeading: {
-    margin: "1em 0",
-  },
-  cardOuter: {
-    padding: "1.5em 2.5em",
-  },
-  viewButton: {
-    margin: "0.5em 0.5em 1em 0",
-    padding: "8px 0",
-    minWidth: 0,
-    width: "42px",
-    "& span": {
-      margin: 0,
-      padding: 0,
-    },
-    "& .MuiButton-label": {
-      width: "12px",
-    },
-    "& .MuiTouchRipple-root": {
-      display: "none",
-    },
-  },
-  paginationContainer: {
-    margin: "1em 0",
-    textAlign: "center",
-  },
-  pagination: {
-    display: "inline-block",
+  searchButton: {
+    margin: "0.5em 0 1em 0",
   },
 });
 
 const Collection: React.FC = () => {
+  const commonClasses = useCommonStyles();
   const classes = useStyles();
+
+  const [gridOn, setGridOn] = useState<boolean>(false);
 
   return (
     <Box p="1.5em 0">
       <ThemeProvider theme={theme}>
-        <Paper className={classes.cardOuter} elevation={0}>
+        <Paper className={commonClasses.cardOuter} elevation={0}>
           <Typography
-            className={classes.introHeading}
+            className={commonClasses.introHeading}
             variant="h4"
             component="h1"
           >
             Your music/video collection
           </Typography>
           <Box>
+            <Typography>Search in collection:</Typography>
+            <TextField
+              id="search"
+              className={classes.searchButton}
+              label="Search"
+            />
+          </Box>
+          <Box>
             <Typography
-              className={classes.subtitle}
+              className={commonClasses.subtitle}
               variant="h6"
               component="h2"
             >
-              All your content listed from the most recent
+              All your content listed from the most recent:
             </Typography>
             <Typography>Change view</Typography>
             <Button
-              className={classes.viewButton}
+              className={commonClasses.viewButton}
               variant="contained"
               size="large"
+              color={!gridOn ? "primary" : "default"}
               startIcon={<FormatListBulletedIcon />}
+              onClick={() => setGridOn(false)}
             ></Button>
             <Button
-              className={classes.viewButton}
+              className={commonClasses.viewButton}
               variant="contained"
               size="large"
+              color={gridOn ? "primary" : "default"}
               startIcon={<AppsIcon />}
+              onClick={() => setGridOn(true)}
             ></Button>
           </Box>
           <Box>
             <Grid container spacing={2}>
-              <CollectionItem />
-              <CollectionItem />
-              <CollectionItem />
-              <CollectionItem />
-              <CollectionItem />
-              <CollectionItem />
+              <Item grid={gridOn} type="collection" />
+              <Item grid={gridOn} type="collection" />
+              <Item grid={gridOn} type="collection" />
+              <Item grid={gridOn} type="collection" />
+              <Item grid={gridOn} type="collection" />
+              <Item grid={gridOn} type="collection" />
             </Grid>
           </Box>
-          <div className={classes.paginationContainer}>
-            <Pagination className={classes.pagination} count={4} size="small" />
+          <div className={commonClasses.paginationContainer}>
+            <Pagination
+              className={commonClasses.pagination}
+              count={4}
+              size="small"
+            />
           </div>
         </Paper>
       </ThemeProvider>

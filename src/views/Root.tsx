@@ -7,10 +7,60 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import { routes } from "../routes";
 import Collection from "./Collection";
+import { headingGradient } from "../styles/theme";
+import Playlists from "./Playlists";
+import Login from "./Login";
 
 const useStyles = makeStyles({
   container: {
     padding: 0,
+  },
+});
+
+export const useCommonStyles = makeStyles({
+  introHeading: {
+    textAlign: "center",
+    fontWeight: "bold",
+    marginTop: "0.5em",
+    marginBottom: "1em",
+    borderRadius: "5px",
+    padding: "1em",
+    backgroundImage: headingGradient,
+  },
+  subtitle: {
+    marginBottom: "1em",
+  },
+  paragraph: {
+    marginBottom: "1em",
+  },
+  contentHeading: {
+    margin: "1em 0",
+  },
+  cardOuter: {
+    padding: "1.5em",
+  },
+  viewButton: {
+    margin: "0.5em 0.5em 1em 0",
+    padding: "8px 0",
+    minWidth: 0,
+    width: "42px",
+    "& span": {
+      margin: 0,
+      padding: 0,
+    },
+    "& .MuiButton-label": {
+      width: "12px",
+    },
+    "& .MuiTouchRipple-root": {
+      display: "none",
+    },
+  },
+  paginationContainer: {
+    margin: "1em 0",
+    textAlign: "center",
+  },
+  pagination: {
+    display: "inline-block",
   },
 });
 
@@ -29,6 +79,12 @@ const Root: React.FC = () => {
           </Route>
           <Route exact path={routes.collection}>
             <Collection />
+          </Route>
+          <Route exact path={routes.playlists}>
+            <Playlists />
+          </Route>
+          <Route exact path={routes.login}>
+            <Login />
           </Route>
         </Switch>
       </Container>

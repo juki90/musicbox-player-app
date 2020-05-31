@@ -11,12 +11,12 @@ export const theme = createMuiTheme({
       main: "#62d9fb",
     },
     secondary: {
-      main: "#a2eae4",
+      main: "#7abcff",
     },
   },
   typography: {
     fontFamily: globalFontFamily,
-    fontSize: 16,
+    fontSize: 15,
     h1: {
       fontFamily: globalFontFamily,
     },

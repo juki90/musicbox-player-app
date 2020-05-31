@@ -13,32 +13,15 @@ import {
   Radio,
   RadioGroup,
 } from "@material-ui/core";
-import { theme, headingGradient } from "../styles/theme";
+import { theme } from "../styles/theme";
 import Grid from "@material-ui/core/Grid";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
 import SearchResults from "../templates/SearchResults";
+import { useCommonStyles } from "./Root";
 
 const useStyles = makeStyles({
-  introHeading: {
-    textAlign: "center",
-    fontWeight: "bold",
-    marginTop: "0.5em",
-    marginBottom: "1em",
-    borderRadius: "5px",
-    padding: "1em",
-    backgroundImage: headingGradient,
-  },
-  paragraph: {
-    marginBottom: "1em",
-  },
-  contentHeading: {
-    margin: "1em 0",
-  },
-  cardOuter: {
-    padding: "1.5em 2.5em",
-  },
   filterBtn: {
     padding: "10px 15px 5px 15px",
     margin: "10px 0 20px 0",
@@ -48,12 +31,12 @@ const useStyles = makeStyles({
   },
   searchInput: {
     "& input": {
-      height: "45px",
+      height: "38px",
       padding: "0 15px",
     },
     "& label": {
-      fontSize: "1em",
-      transform: "translate(14px, 17px) scale(1)",
+      fontSize: "0.9em",
+      transform: "translate(14px, 11px) scale(1)",
       "&.MuiInputLabel-shrink": {
         transform: "translate(18px, -6px) scale(0.75)",
       },
@@ -61,7 +44,7 @@ const useStyles = makeStyles({
   },
   searchBtn: {
     margin: "1em 0 1em 1em",
-    padding: "10px 15px 5px 15px",
+    padding: "5px 15px",
     "& .MuiButton-label": {
       display: "flex",
       justifyContent: "space-around",
@@ -75,21 +58,22 @@ const useStyles = makeStyles({
 });
 
 const Home: React.FC = () => {
+  const commonClasses = useCommonStyles();
   const classes = useStyles();
   const [filtersOn, setFiltersOn] = useState<boolean>(false);
   return (
     <Box p="1.5em 0">
       <ThemeProvider theme={theme}>
-        <Paper className={classes.cardOuter} elevation={0}>
+        <Paper className={commonClasses.cardOuter} elevation={0}>
           <Typography
-            className={classes.introHeading}
+            className={commonClasses.introHeading}
             variant="h4"
             component="h1"
           >
             Search music and videos
           </Typography>
           <form noValidate autoComplete="off">
-            <Typography className={classes.paragraph} variant="body1">
+            <Typography className={commonClasses.paragraph} variant="body1">
               Keywords to search:
             </Typography>
             <Box mb="1em" display="flex" alignItems="center">
