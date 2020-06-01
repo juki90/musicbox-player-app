@@ -19,7 +19,6 @@ const useStyles = makeStyles({
     flexDirection: "column",
     padding: "10px",
     width: "100%",
-
     [theme.breakpoints.up("sm")]: {
       flexDirection: "row",
     },
@@ -32,7 +31,6 @@ const useStyles = makeStyles({
     alignItems: "top",
     flexDirection: "column",
     padding: "10px",
-    width: "100%",
   },
   videoMiniatureContent: {
     width: "100%",
@@ -54,7 +52,6 @@ const useStyles = makeStyles({
     display: "block",
     height: "auto",
     width: "100px",
-    margin: "0 auto",
   },
   videoInfo: {
     padding: "0 1em",
@@ -63,7 +60,6 @@ const useStyles = makeStyles({
       fontWeight: "bold",
     },
     [theme.breakpoints.up("sm")]: {
-      width: "100%",
       flexDirection: "row",
     },
   },
@@ -74,7 +70,7 @@ const useStyles = makeStyles({
     padding: "5px 20px",
     width: "1em",
     minWidth: 0,
-    margin: "0 2px",
+    margin: "0 2px 5px 2px",
     "& .MuiButton-startIcon": {
       padding: 0,
       margin: 0,
@@ -87,9 +83,12 @@ const useStyles = makeStyles({
     },
   },
   playlistActions: {
-    marginLeft: 0,
+    margin: "0 auto",
     [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      alignItems: "center",
       marginLeft: "auto",
+      marginRight: "25px",
     },
   },
 });
@@ -180,30 +179,39 @@ const Item: React.FC<ItemProps> = ({ type, grid = false }) => {
                     variant="contained"
                     color="secondary"
                     size="small"
+                    startIcon={<PlaylistAddIcon />}
+                  >
+                    Playlist
+                  </Button>
+                  <Button
+                    className={classes.videoButton}
+                    variant="contained"
+                    color="secondary"
+                    size="small"
                     startIcon={<AddIcon />}
                   >
                     Collection
                   </Button>
                 </>
               )}
-              {type === "playlist" && (
-                <Box className={classes.playlistActions}>
-                  <Button
-                    className={classes.videoButtonPlaylist}
-                    variant="contained"
-                    color="primary"
-                    size="small"
-                    startIcon={<UnfoldMoreIcon />}
-                  ></Button>
-                  <Button
-                    className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
-                    variant="contained"
-                    size="small"
-                    startIcon={<DeleteForeverIcon />}
-                  ></Button>
-                </Box>
-              )}
             </Box>
+            {type === "playlist" && (
+              <Box className={classes.playlistActions}>
+                <Button
+                  className={classes.videoButtonPlaylist}
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<UnfoldMoreIcon />}
+                ></Button>
+                <Button
+                  className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
+                  variant="contained"
+                  size="small"
+                  startIcon={<DeleteForeverIcon />}
+                ></Button>
+              </Box>
+            )}
           </Box>
         </CardContent>
       </Card>

@@ -34,6 +34,7 @@ const useStyles = makeStyles({
   },
   actionButton: {
     marginRight: "0.5em",
+    marginBottom: "0.5em",
   },
 });
 

@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const commonClasses = useCommonStyles(),
     classes = useStyles(),
     [nameInput, setNameInput] = useState<string>(""),
@@ -36,6 +36,11 @@ const Login: React.FC = () => {
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const type = e.target.getAttribute("id"),
         val = e.target.value;
+      if (type === "name") {
+        setNameInput(val);
+        setNameError(false);
+        return;
+      }
       if (type === "email") {
         setEmailInput(val);
         setEmailError(false);
@@ -51,6 +56,10 @@ const Login: React.FC = () => {
       const type = e.target.getAttribute("id"),
         val = e.target.value;
       if (val.length === 0) {
+        return;
+      }
+      if (type === "name" && !/[\w]{3,}/.test(val)) {
+        setNameError(true);
         return;
       }
       if (type === "email" && !/(.+)@(.+){2,}\.(.+){2,}/.test(val)) {
@@ -82,6 +91,15 @@ const Login: React.FC = () => {
           >
             <form className={classes.form} noValidate autoComplete="off">
               <TextField
+                id="name"
+                label="Name"
+                error={nameError}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                helperText={nameError && "At least 3 letters"}
+                value={nameInput}
+              />
+              <TextField
                 id="email"
                 label="Email"
                 error={emailError}
@@ -106,18 +124,14 @@ const Login: React.FC = () => {
                 color="primary"
                 startIcon={<VpnKeyIcon />}
               >
-                Login
+                Register
               </Button>
             </form>
           </Box>
-          <Typography align="center">
-            If you haven't registered yet, please
-            <Link href={routes.register}>register</Link> .
-          </Typography>
         </Paper>
       </ThemeProvider>
     </Box>
   );
 };
 
-export default Login;
+export default Register;

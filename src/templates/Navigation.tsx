@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
@@ -9,6 +9,7 @@ import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import theme from "../styles/theme";
 import { routes } from "../routes";
+import PlayerContext from "../context";
 
 const useStyles = makeStyles({
   button: {
@@ -57,7 +58,9 @@ const useStyles = makeStyles({
 const Navigation: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [docWidth, setDocWidth] = useState<number>(document.body.offsetWidth);
-
+  const setPlayerOn = useContext<
+    (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
+  >(PlayerContext);
   const classes = useStyles();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -103,8 +106,12 @@ const Navigation: React.FC = () => {
             onClose={handleClose}
           >
             <ThemeProvider theme={theme}>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.player}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.home}
+                  onClick={setPlayerOn}
+                >
                   Player
                 </Link>
               </MenuItem>
@@ -140,7 +147,11 @@ const Navigation: React.FC = () => {
       {docWidth >= 1280 && (
         <Box component="nav" display="flex" alignItems="center">
           <ThemeProvider theme={theme}>
-            <Link className={classes.menuLink} href={routes.player}>
+            <Link
+              className={classes.menuLink}
+              href={routes.home}
+              onClick={setPlayerOn}
+            >
               Player
             </Link>
             <Link className={classes.menuLink} href={routes.search}>

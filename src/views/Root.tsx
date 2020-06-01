@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Header from "../templates/Header";
 import Home from "./Home";
@@ -10,6 +10,9 @@ import Collection from "./Collection";
 import { headingGradient } from "../styles/theme";
 import Playlists from "./Playlists";
 import Login from "./Login";
+import Register from "./Register";
+import Player from "./../templates/Player";
+import PlayerContext from "../context";
 
 const useStyles = makeStyles({
   container: {
@@ -65,10 +68,21 @@ export const useCommonStyles = makeStyles({
 });
 
 const Root: React.FC = () => {
-  const classes = useStyles();
+  const classes = useStyles(),
+    [playerOn, setPlayerOn] = useState<boolean>(false);
+
+  const handlePlayerContext = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setPlayerOn(true);
+  };
+
   return (
     <Router>
-      <Header />
+      <PlayerContext.Provider value={handlePlayerContext}>
+        <Header />
+      </PlayerContext.Provider>
       <Container className={classes.container}>
         <Switch>
           <Route exact path={routes.home}>
@@ -86,8 +100,12 @@ const Root: React.FC = () => {
           <Route exact path={routes.login}>
             <Login />
           </Route>
+          <Route exact path={routes.register}>
+            <Register />
+          </Route>
         </Switch>
       </Container>
+      {playerOn && <Player />}
     </Router>
   );
 };
