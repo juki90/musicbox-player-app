@@ -53,6 +53,9 @@ const useStyles = makeStyles({
       textTransform: "none",
     },
   },
+  mobileNav: {
+    zIndex: 99999999999999,
+  },
 });
 
 const Navigation: React.FC = () => {
@@ -104,6 +107,7 @@ const Navigation: React.FC = () => {
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}
+            className={classes.mobileNav}
           >
             <ThemeProvider theme={theme}>
               <MenuItem>

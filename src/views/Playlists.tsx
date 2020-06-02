@@ -15,9 +15,6 @@ import TitleIcon from "@material-ui/icons/Title";
 import Item from "../components/Item";
 
 const useStyles = makeStyles({
-  tabsContainer: {
-    flexWrap: "wrap",
-  },
   selected: {
     "&.Mui-selected": {
       backgroundColor: theme.palette.secondary.main,
@@ -69,12 +66,13 @@ const Playlists: React.FC = () => {
               value={activeTab}
               onChange={handleTabChange}
               aria-label="playlist tabs"
-              classes={{ flexContainer: classes.tabsContainer }}
+              variant="scrollable"
+              scrollButtons="auto"
             >
               <Tab className={classes.selected} value={0} label="ALL" />
               <Tab className={classes.selected} value={1} label="Item Two" />
               <Tab className={classes.selected} value={2} label="Item Three" />
-              <Tab className={classes.selected} value={3} label="Item Two" />
+              <Tab className={classes.selected} value={3} label="Item Four" />
             </Tabs>
           </AppBar>
           <AppBar position="static" color="default">

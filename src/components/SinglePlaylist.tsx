@@ -14,7 +14,7 @@ const SinglePlaylist: React.FC<SinglePlaylistProps> = ({
 }) => {
   if (value === index) {
     return (
-      <Box p="0.5em">
+      <Box p="0">
         {children ? (
           children
         ) : (

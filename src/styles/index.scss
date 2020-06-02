@@ -1,5 +1,10 @@
 $default-body-background-color: #333;
 
+a,
+button {
+  cursor: pointer;
+}
+
 body {
   background-color: $default-body-background-color;
 }

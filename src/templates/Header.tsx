@@ -10,9 +10,14 @@ import theme from "../styles/theme";
 
 const useStyles = makeStyles({
   header: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    zIndex: 999,
     height: "60px",
     paddingTop: "5px",
     paddingBottom: "5px",
+    backgroundColor: theme.palette.primary.main,
   },
   headerContainer: {
     height: "100%",

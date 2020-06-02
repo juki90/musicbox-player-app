@@ -13,18 +13,43 @@ import theme from "../styles/theme";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
 
 const useStyles = makeStyles({
-  videoItem: {
-    display: "flex",
-    alignItems: "top",
-    flexDirection: "column",
-    padding: "10px",
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      flexDirection: "row",
-    },
-    "& img": {
-      alignSelf: "center",
-    },
+  videoItem: (props: ItemProps) => {
+    return props.type === "playlist"
+      ? {
+          display: "flex",
+          alignItems: "top",
+          flexDirection: "row",
+          padding: "10px",
+          "& img": {
+            alignSelf: "center",
+          },
+          "& h6": {
+            fontSize: "80%",
+            wordBreak: "break-word",
+          },
+          [theme.breakpoints.up("sm")]: {
+            "& h6": {
+              fontSize: "100%",
+            },
+          },
+          [theme.breakpoints.up("lg")]: {
+            "& h6": {
+              fontSize: "120%",
+            },
+          },
+        }
+      : {
+          display: "flex",
+          alignItems: "top",
+          flexDirection: "column",
+          padding: "10px",
+          "& img": {
+            alignSelf: "center",
+          },
+          [theme.breakpoints.up("sm")]: {
+            flexDirection: "row",
+          },
+        };
   },
   videoItemGrid: {
     display: "flex",
@@ -54,14 +79,8 @@ const useStyles = makeStyles({
     width: "100px",
   },
   videoInfo: {
-    padding: "0 1em",
-    flexDirection: "column",
-    "& h6": {
-      fontWeight: "bold",
-    },
-    [theme.breakpoints.up("sm")]: {
-      flexDirection: "row",
-    },
+    padding: "0 0 0 0.5em",
+    flexDirection: "row",
   },
   videoButton: {
     margin: "0.5em 0.5em 0.5em 0",
@@ -83,6 +102,7 @@ const useStyles = makeStyles({
     },
   },
   playlistActions: {
+    padding: "0 0.25em",
     margin: "0 auto",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
@@ -98,8 +118,9 @@ interface ItemProps {
   grid?: boolean;
 }
 
-const Item: React.FC<ItemProps> = ({ type, grid = false }) => {
-  const classes = useStyles();
+const Item: React.FC<ItemProps> = (props) => {
+  const { grid, type } = props;
+  const classes = useStyles(props);
   return (
     <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
       <Card className={classes.videoMiniature}>
