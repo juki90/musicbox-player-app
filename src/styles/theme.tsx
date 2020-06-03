@@ -16,7 +16,7 @@ export const theme = createMuiTheme({
   },
   typography: {
     fontFamily: globalFontFamily,
-    fontSize: 15,
+    fontSize: 14,
     h1: {
       fontFamily: globalFontFamily,
     },

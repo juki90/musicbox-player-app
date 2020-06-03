@@ -1,9 +1,12 @@
 import React from "react";
 
-const PlayerContext = React.createContext(
-  (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    return;
-  }
-);
+export const PlayerContext = React.createContext((on?: boolean) => {
+  return;
+});
 
-export default PlayerContext;
+export const MinimalizeContext = React.createContext({
+  minimalize: (on?: boolean) => {
+    return;
+  },
+  currently: false,
+});

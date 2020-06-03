@@ -9,7 +9,8 @@ import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import theme from "../styles/theme";
 import { routes } from "../routes";
-import PlayerContext from "../context";
+import { PlayerContext, MinimalizeContext } from "../context";
+import { withRouter, RouteComponentProps } from "react-router";
 
 const useStyles = makeStyles({
   button: {
@@ -30,8 +31,6 @@ const useStyles = makeStyles({
     fontSize: "1.2em",
     fontFamily: theme.typography.fontFamily,
     textAlign: "center",
-    marginLeft: "25px",
-    marginRight: "25px",
     textDecoration: "none",
     [theme.breakpoints.up("lg")]: {
       marginRight: 0,
@@ -42,10 +41,14 @@ const useStyles = makeStyles({
     },
   },
   navButton: {
+    display: "block",
     padding: "0 1em",
     textAlign: "center",
-    marginLeft: "1.5em",
+    marginLeft: "15px",
+    minWidth: 0,
+    width: "auto",
     "& a": {
+      width: "100%",
       marginLeft: 0,
       marginRight: " 0 !important",
     },
@@ -54,25 +57,61 @@ const useStyles = makeStyles({
     },
   },
   mobileNav: {
-    zIndex: 99999999999999,
+    zIndex: 9999999,
+    "& li": {
+      padding: 0,
+      width: "100%",
+    },
+    "& a": {
+      padding: "0.5em 1.5em",
+    },
+  },
+  desktopNav: {
+    "& a": {
+      marginLeft: "1em",
+    },
+
+    "& button a": {
+      marginLeft: 0,
+    },
   },
 });
 
-const Navigation: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [docWidth, setDocWidth] = useState<number>(document.body.offsetWidth);
-  const setPlayerOn = useContext<
-    (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void
-  >(PlayerContext);
+const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null),
+    [docWidth, setDocWidth] = useState<number>(document.body.offsetWidth);
+
   const classes = useStyles();
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const setPlayerOn = useContext<(on?: boolean) => void>(PlayerContext),
+    minimalizePlayer = useContext<{
+      minimalize: (on?: boolean) => void;
+      currently: boolean;
+    }>(MinimalizeContext);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleNaviconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    handleNaviconClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(null);
+    },
+    handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      if (e.target instanceof HTMLAnchorElement) {
+        const href: string = e.target.pathname;
+        minimalizePlayer.minimalize(true);
+        history.push(href);
+        setAnchorEl(null);
+      }
+    },
+    handlePlayerClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      setPlayerOn(true);
+      setAnchorEl(null);
+      if (minimalizePlayer.currently) {
+        minimalizePlayer.minimalize(false);
+      }
+    };
 
   const handleResize = () => {
     setDocWidth(document.body.offsetWidth);
@@ -93,7 +132,7 @@ const Navigation: React.FC = () => {
             classes={{ root: classes.button, label: classes.buttonLabel }}
             aria-controls="main-menu"
             aria-haspopup="true"
-            onClick={handleClick}
+            onClick={handleNaviconClick}
           >
             {!!anchorEl ? (
               <CloseRounded className={classes.svgIcon} />
@@ -106,41 +145,61 @@ const Navigation: React.FC = () => {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleClose}
             className={classes.mobileNav}
+            onClose={handleNaviconClose}
           >
             <ThemeProvider theme={theme}>
               <MenuItem>
                 <Link
                   className={classes.menuLink}
                   href={routes.home}
-                  onClick={setPlayerOn}
+                  onClick={handlePlayerClick}
                 >
                   Player
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.search}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.search}
+                  onClick={handleLinkClick}
+                >
                   Search
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.collection}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.collection}
+                  onClick={handleLinkClick}
+                >
                   Collection
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.playlists}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.playlists}
+                  onClick={handleLinkClick}
+                >
                   Playlists
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.login}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.login}
+                  onClick={handleLinkClick}
+                >
                   Log in
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Link className={classes.menuLink} href={routes.register}>
+              <MenuItem>
+                <Link
+                  className={classes.menuLink}
+                  href={routes.register}
+                  onClick={handleLinkClick}
+                >
                   Register
                 </Link>
               </MenuItem>
@@ -149,22 +208,39 @@ const Navigation: React.FC = () => {
         </Box>
       )}
       {docWidth >= 1280 && (
-        <Box component="nav" display="flex" alignItems="center">
+        <Box
+          component="nav"
+          display="flex"
+          alignItems="center"
+          className={classes.desktopNav}
+        >
           <ThemeProvider theme={theme}>
             <Link
               className={classes.menuLink}
               href={routes.home}
-              onClick={setPlayerOn}
+              onClick={handlePlayerClick}
             >
               Player
             </Link>
-            <Link className={classes.menuLink} href={routes.search}>
+            <Link
+              className={classes.menuLink}
+              href={routes.search}
+              onClick={handleLinkClick}
+            >
               Search
             </Link>
-            <Link className={classes.menuLink} href={routes.collection}>
+            <Link
+              className={classes.menuLink}
+              href={routes.collection}
+              onClick={handleLinkClick}
+            >
               Collection
             </Link>
-            <Link className={classes.menuLink} href={routes.playlists}>
+            <Link
+              className={classes.menuLink}
+              href={routes.playlists}
+              onClick={handleLinkClick}
+            >
               Playlists
             </Link>
             <Button
@@ -172,12 +248,20 @@ const Navigation: React.FC = () => {
               variant="contained"
               color="secondary"
             >
-              <Link className={classes.menuLink} href={routes.login}>
+              <Link
+                className={classes.menuLink}
+                href={routes.login}
+                onClick={handleLinkClick}
+              >
                 Login
               </Link>
             </Button>
             <Button className={classes.navButton} variant="contained">
-              <Link className={classes.menuLink} href={routes.register}>
+              <Link
+                className={classes.menuLink}
+                href={routes.register}
+                onClick={handleLinkClick}
+              >
                 Register
               </Link>
             </Button>
@@ -188,4 +272,4 @@ const Navigation: React.FC = () => {
   );
 };
 
-export default Navigation;
+export default withRouter(Navigation);

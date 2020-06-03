@@ -9,6 +9,10 @@ body {
   background-color: $default-body-background-color;
 }
 
+#main-body.scroll-lock {
+  overflow: hidden;
+}
+
 #root {
   margin-top: 50px;
 }

@@ -122,19 +122,64 @@ const Playlists: React.FC = () => {
           <Card>
             <SinglePlaylist value={activeTab} index={0}></SinglePlaylist>
             <SinglePlaylist value={activeTab} index={1}>
-              <Item type="playlist" />
-              <Item type="playlist" />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
             </SinglePlaylist>
             <SinglePlaylist value={activeTab} index={2}>
-              <Item type="playlist" />
-              <Item type="playlist" />
-              <Item type="playlist" />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
             </SinglePlaylist>
             <SinglePlaylist value={activeTab} index={3}>
-              <Item type="playlist" />
-              <Item type="playlist" />
-              <Item type="playlist" />
-              <Item type="playlist" />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
+              <Item
+                added={new Date()}
+                title="Ipsum dolor"
+                desc="Lorem ipsum dolor sit amet"
+                type="playlist"
+              />
             </SinglePlaylist>
           </Card>
         </Paper>

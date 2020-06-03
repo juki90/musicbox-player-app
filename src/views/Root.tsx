@@ -12,7 +12,9 @@ import Playlists from "./Playlists";
 import Login from "./Login";
 import Register from "./Register";
 import Player from "./../templates/Player";
-import PlayerContext from "../context";
+import { PlayerContext, MinimalizeContext } from "../context";
+import { Provider } from "react-redux";
+import store from "../store";
 
 const useStyles = makeStyles({
   container: {
@@ -40,7 +42,10 @@ export const useCommonStyles = makeStyles({
     margin: "1em 0",
   },
   cardOuter: {
-    padding: "1.5em",
+    padding: "1.5em 1.5em 4em 1.5em",
+    "& .MuiTypography-root": {
+      padding: "0.5em",
+    },
   },
   viewButton: {
     margin: "0.5em 0.5em 1em 0",
@@ -69,44 +74,72 @@ export const useCommonStyles = makeStyles({
 
 const Root: React.FC = () => {
   const classes = useStyles(),
-    [playerOn, setPlayerOn] = useState<boolean>(false);
+    [playerOn, setPlayerOn] = useState<boolean>(false),
+    [playerMinimalized, minimalizePlayer] = useState<boolean>(false);
 
-  const handlePlayerContext = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault();
+  const handleMinimalizeContext = (on?: boolean) => {
+    const element = document.querySelector("#main-body")!;
+    if (!on) {
+      minimalizePlayer(false);
+      element.classList.add("scroll-lock");
+      return;
+    }
+    minimalizePlayer(true);
+    element.classList.remove("scroll-lock");
+  };
+
+  const handlePlayerContext = (on?: boolean) => {
+    if (!on) {
+      setPlayerOn(false);
+      return;
+    }
     setPlayerOn(true);
   };
 
   return (
-    <Router>
-      <PlayerContext.Provider value={handlePlayerContext}>
-        <Header />
-      </PlayerContext.Provider>
-      <Container className={classes.container}>
-        <Switch>
-          <Route exact path={routes.home}>
-            <Home />
-          </Route>
-          <Route exact path={routes.search}>
-            <Search />
-          </Route>
-          <Route exact path={routes.collection}>
-            <Collection />
-          </Route>
-          <Route exact path={routes.playlists}>
-            <Playlists />
-          </Route>
-          <Route exact path={routes.login}>
-            <Login />
-          </Route>
-          <Route exact path={routes.register}>
-            <Register />
-          </Route>
-        </Switch>
-      </Container>
-      {playerOn && <Player />}
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <PlayerContext.Provider value={handlePlayerContext}>
+          <MinimalizeContext.Provider
+            value={{
+              minimalize: handleMinimalizeContext,
+              currently: playerMinimalized,
+            }}
+          >
+            <Header />
+          </MinimalizeContext.Provider>
+        </PlayerContext.Provider>
+        <Container className={classes.container}>
+          <Switch>
+            <Route exact path={routes.home}>
+              <Home />
+            </Route>
+            <Route exact path={routes.search}>
+              <Search />
+            </Route>
+            <Route exact path={routes.collection}>
+              <Collection />
+            </Route>
+            <Route exact path={routes.playlists}>
+              <Playlists />
+            </Route>
+            <Route exact path={routes.login}>
+              <Login />
+            </Route>
+            <Route exact path={routes.register}>
+              <Register />
+            </Route>
+          </Switch>
+        </Container>
+        {playerOn && (
+          <Player
+            minimalized={playerMinimalized}
+            minimalize={minimalizePlayer}
+            close={() => setPlayerOn(false)}
+          />
+        )}
+      </Router>
+    </Provider>
   );
 };
 

@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   },
   headerContainer: {
     height: "100%",
-    [theme.breakpoints.up("md")]: {
+    [theme.breakpoints.up("lg")]: {
       padding: 0,
     },
   },

@@ -7,7 +7,6 @@ import {
   AppBar,
   Tabs,
   Tab,
-  Divider,
 } from "@material-ui/core";
 import defaultVideoImg from "../assets/blank-video.jpg";
 import theme from "../styles/theme";
@@ -20,46 +19,101 @@ import SkipPreviousIcon from "@material-ui/icons/SkipPrevious";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VolumeUp from "@material-ui/icons/VolumeUp";
-import CancelIcon from "@material-ui/icons/Cancel";
+import CloseIcon from "@material-ui/icons/Close";
+import MinimizeIcon from "@material-ui/icons/Minimize";
 import SinglePlaylist from "../components/SinglePlaylist";
 import Item from "./../components/Item";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
-  player: {
-    position: "fixed",
-    top: "60px",
-    left: 0,
-    width: "100%",
-    height: "100vh",
-    overflowY: "scroll",
-    zIndex: 999,
+  player: (props: PlayerProps) => {
+    return props.minimalized
+      ? {
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          height: "80px",
+          paddingRight: "50px",
+          backgroundColor: "#121212",
+        }
+      : {
+          position: "fixed",
+          top: "60px",
+          left: 0,
+          width: "100%",
+          height: "100vh",
+          overflowY: "scroll",
+          zIndex: 999,
+        };
   },
   videoBox: {
     backgroundColor: "#121212",
   },
   videoContainer: {
     position: "relative",
+    padding: "0.5em 0",
+    alignItems: "center",
+    display: (props: PlayerProps) => {
+      return props.minimalized ? "flex" : "block";
+    },
+  },
+  videoTitle: {
+    textAlign: "center",
+    color: "#ffffff",
+    fontWeight: "bold",
+    fontSize: (props: PlayerProps) => {
+      return props.minimalized ? "0.75em" : "1.5em";
+    },
+  },
+  videoDesc: {
+    display: (props: PlayerProps) => {
+      return props.minimalized ? "none" : "block";
+    },
+    color: "#eeeeee",
     padding: "1em 0",
-    width: "100%",
   },
   video: {
     display: "block",
-    margin: "0 auto",
+    alignSelf: "center",
     height: "auto",
+    margin: (props: PlayerProps) => {
+      return props.minimalized ? "0 0.5em" : "1em auto 2em auto";
+    },
+    width: (props: PlayerProps) => {
+      return props.minimalized ? "120px" : "240px";
+    },
     [theme.breakpoints.up("sm")]: {
-      width: "480px",
+      width: (props: PlayerProps) => {
+        return props.minimalized ? "120px" : "480px";
+      },
     },
   },
   videoPanelContainer: {
+    position: "relative",
     color: theme.palette.primary.main,
-    padding: "5 0 0 0",
+    padding: "5px 10px 0 10px",
   },
-  videoPanel: {
-    minHeight: "80vh",
-    backgroundColor: "rgba(20, 20, 25, 0.95)",
+  videoPanel: (props: PlayerProps) => {
+    return props.minimalized
+      ? {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          paddingLeft: "8em",
+          paddingRight: "50px",
+          paddingTop: 0,
+        }
+      : {
+          minHeight: "80vh",
+          backgroundColor: "rgba(20, 30, 35, 1)",
+          paddingBottom: "80px",
+        };
   },
   controlButtons: {
+    display: (props: PlayerProps) => {
+      return props.minimalized ? "none" : "block";
+    },
     textAlign: "center",
     margin: "0 auto",
     padding: "1em 0",
@@ -77,32 +131,91 @@ const useStyles = makeStyles({
     margin: "0 auto 1em auto",
     padding: 0,
   },
-  playlistPanel: {
-    padding: "1em",
-    backgroundColor: "#b2b2b2",
+  playlistPanel: (props: PlayerProps) => {
+    return props.minimalized
+      ? { display: "none" }
+      : {
+          padding: "1em",
+          overflowY: "visible",
+          backgroundColor: "#b2b2b2",
+        };
   },
-  exitBtn: {
+  playerBtns: {
     position: "absolute",
-    top: "0.14em",
-    right: "0.14em",
-    color: "#c2c2c2",
+    display: "flex",
+    flexDirection: "column",
+    top: "5px",
+    right: "15px",
+    zIndex: 9999999,
+    "& button": {
+      color: "#fcfcfc",
+      padding: "5px",
+      borderRadius: "5px",
+      backgroundColor: "rgba(20, 20, 20, 0.75)",
+      marginBottom: "4px",
+    },
+  },
+  videoPanelInfo: (props: PlayerProps) => {
+    return props.minimalized
+      ? {
+          "& h6": {
+            fontSize: "0.8em",
+            textAlign: "left",
+            padding: "0.5em 2.5em 0.5em 0.5em",
+            color: "#fff",
+            [theme.breakpoints.up("lg")]: {
+              fontSize: "1.2em",
+            },
+          },
+        }
+      : {
+          padding: "1em",
+          backgroundColor: "#dfdfdf",
+          "& h6": {
+            color: "#000",
+          },
+          "& p": {
+            color: "#000",
+          },
+        };
   },
 });
 
-const Player: React.FC = () => {
-  const classes = useStyles();
+interface PlayerProps {
+  minimalized: boolean;
+  minimalize: React.Dispatch<React.SetStateAction<boolean>>;
+  close: () => void;
+}
 
-  const [volume, setVolume] = React.useState<number>(30);
+const Player: React.FC<PlayerProps> = (props) => {
+  const { close, minimalize, minimalized } = props;
 
-  const [tab, setTab] = React.useState(0);
+  const classes = useStyles(props);
+
+  const [volume, setVolume] = React.useState<number>(30),
+    [tab, setTab] = React.useState(0);
 
   const handleVolumeChange = (e: any, newValue: number | number[]) => {
-    setVolume(newValue as number);
-  };
-
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setTab(newValue);
-  };
+      setVolume(newValue as number);
+    },
+    handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+      setTab(newValue);
+    },
+    handleClosePlayer = () => {
+      const element = document.querySelector("#main-body")!;
+      element.classList.remove("scroll-lock");
+      close();
+    },
+    handleMinimalizePlayer = (on?: boolean) => {
+      const element = document.querySelector("#main-body")!;
+      if (on) {
+        element.classList.remove("scroll-lock");
+        minimalize(true);
+        return;
+      }
+      element.classList.add("scroll-lock");
+      minimalize(false);
+    };
 
   return (
     <Box className={classes.player}>
@@ -114,32 +227,50 @@ const Player: React.FC = () => {
               src={defaultVideoImg}
               alt="Default video"
             />
-            <IconButton aria-label="delete" className={classes.exitBtn}>
-              <CancelIcon fontSize="large" />
-            </IconButton>
+            {minimalized && (
+              <Box pr="3em">
+                <Typography className={classes.videoTitle} variant="h6">
+                  Lorem ipsum dolor - sit amet consectetur adipisicing dasdas
+                  wqex zdd.
+                </Typography>
+              </Box>
+            )}
+            <Box className={classes.playerBtns}>
+              <IconButton aria-label="close" onClick={handleClosePlayer}>
+                <CloseIcon />
+              </IconButton>
+              <IconButton
+                aria-label="minimalize"
+                onClick={() => handleMinimalizePlayer(!minimalized)}
+              >
+                <MinimizeIcon />
+              </IconButton>
+            </Box>
           </Container>
         </Box>
         <Box pt="1em" className={classes.videoPanel}>
           <Container className={classes.videoPanelContainer}>
-            <Box display="flex">
-              <Typography>5:23</Typography>
-              <Slider
-                className={classes.sliderProgress}
-                defaultValue={0}
-                aria-labelledby="progress time bar"
-                step={1}
-                min={0}
-                max={300}
-                valueLabelDisplay="auto"
-                valueLabelFormat={(x) => {
-                  return x > 59
-                    ? `${Math.floor(x / 60)}:${
-                        x % 60 < 9 ? `0${x % 60}` : x % 60
-                      }`
-                    : `0:${x < 9 ? `0${x}` : x}`;
-                }}
-              />
-            </Box>
+            {!minimalized && (
+              <Box display="flex">
+                <Typography>5:23</Typography>
+                <Slider
+                  className={classes.sliderProgress}
+                  defaultValue={0}
+                  aria-labelledby="progress time bar"
+                  step={1}
+                  min={0}
+                  max={300}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(x) => {
+                    return x > 59
+                      ? `${Math.floor(x / 60)}:${
+                          x % 60 < 9 ? `0${x % 60}` : x % 60
+                        }`
+                      : `0:${x < 9 ? `0${x}` : x}`;
+                  }}
+                />
+              </Box>
+            )}
             <Box className={classes.controlButtons}>
               <IconButton
                 color="primary"
@@ -184,6 +315,20 @@ const Player: React.FC = () => {
                 </Grid>
               </Grid>
             </Box>
+            {!minimalized && (
+              <Box className={classes.videoPanelInfo}>
+                <Typography className={classes.videoTitle} variant="h6">
+                  Lorem ipsum dolor - sit amet consectetur adipisicing dasdas
+                  wqex zdd.
+                </Typography>
+                <Typography variant="body1" className={classes.videoDesc}>
+                  Lorem ipsum dolor - sit amet consectetur adipisicing. Lorem
+                  ipsum dolor sit amet, consectetur adipisicing elit.
+                  Praesentium molestias atque, asperiores laboriosam nobis ex
+                  cupiditate nulla dolorem facere veniam?.
+                </Typography>
+              </Box>
+            )}
             <Box className={classes.playlistPanel}>
               <AppBar className={classes.tabs} position="static">
                 <Tabs
@@ -192,11 +337,11 @@ const Player: React.FC = () => {
                   indicatorColor="primary"
                   textColor="primary"
                   variant="scrollable"
-                  scrollButtons="auto"
+                  scrollButtons="on"
                   aria-label="scrollable auto tabs example"
                 >
                   <Tab label="Collection" />
-                  <Divider />
+
                   <Tab label="Item Two" />
                   <Tab label="Item Three" />
                   <Tab label="Item Four" />
@@ -204,22 +349,84 @@ const Player: React.FC = () => {
               </AppBar>
               <Box p="0" width="100%">
                 <SinglePlaylist value={tab} index={0}>
-                  <Item type="playlist" />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
                 </SinglePlaylist>
                 <SinglePlaylist value={tab} index={1}>
-                  <Item type="playlist" />
-                  <Item type="playlist" />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
                 </SinglePlaylist>
                 <SinglePlaylist value={tab} index={2}>
-                  <Item type="playlist" />
-                  <Item type="playlist" />
-                  <Item type="playlist" />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
                 </SinglePlaylist>
                 <SinglePlaylist value={tab} index={3}>
-                  <Item type="playlist" />
-                  <Item type="playlist" />
-                  <Item type="playlist" />
-                  <Item type="playlist" />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum"
+                    desc={"Lorem ipsum dolor sit amet"}
+                    type="player"
+                  />
+                  <Item
+                    added={new Date()}
+                    title="Lorem ipsum dolor sit ametasdas dasasd asdasd das"
+                    desc={"Lorem ipsum dolor sit ametasdas dasasd asdasd das"}
+                    type="player"
+                  />
                 </SinglePlaylist>
               </Box>
             </Box>

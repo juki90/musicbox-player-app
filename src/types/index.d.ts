@@ -1,5 +1,13 @@
 declare module "react-router-dom";
 
-type stateProps = {
-  collection: object[];
+type Item = {
+  id: number;
+  added: Date;
+  link: string;
+  title: string;
+  desc: string;
+};
+
+type StateProps = {
+  collection: Item[];
 };

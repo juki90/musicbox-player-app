@@ -12,18 +12,59 @@ import Pagination from "@material-ui/lab/Pagination";
 import Item from "../components/Item";
 import { useCommonStyles } from "./Root";
 import { TextField } from "@material-ui/core";
+import { connect } from "react-redux";
+import prepeareToPagination from "../utils/prepeareToPagination";
+import { removeFromCollection as removeFromCollectionAction } from "../actions";
 
 const useStyles = makeStyles({
   searchButton: {
-    margin: "0.5em 0 1em 0",
+    margin: "0.5em 0 1em 0.5em",
   },
 });
 
-const Collection: React.FC = () => {
+interface CollectionProps {
+  collection: Item[];
+  removeFromCollection: (link: string) => void;
+}
+
+const Collection: React.FC<CollectionProps> = ({
+  collection,
+  removeFromCollection,
+}) => {
   const commonClasses = useCommonStyles();
   const classes = useStyles();
-
   const [gridOn, setGridOn] = useState<boolean>(false);
+
+  const [paginationOn, setPaginationOn] = useState<number>(0);
+  const prepearedResults = prepeareToPagination(collection);
+
+  const displayItems =
+    prepearedResults.pages === 1
+      ? prepearedResults.results.map((r: Item) => (
+          <Item
+            key={`i-col-${r.id}`}
+            grid={gridOn}
+            type="collection"
+            title={r.title}
+            desc={r.desc}
+            added={r.added}
+            onRemove={(e) => removeFromCollection(r.link)}
+          />
+        ))
+      : prepearedResults.results.map((p: any) => {
+          const page = p.map((r: Item) => (
+            <Item
+              key={`i-col-${r.id}`}
+              grid={gridOn}
+              type="collection"
+              title={r.title}
+              desc={r.desc}
+              added={r.added}
+              onRemove={(e) => removeFromCollection(r.link)}
+            />
+          ));
+          return page;
+        });
 
   return (
     <Box p="1.5em 0">
@@ -72,25 +113,44 @@ const Collection: React.FC = () => {
           </Box>
           <Box>
             <Grid container spacing={2}>
-              <Item grid={gridOn} type="collection" />
-              <Item grid={gridOn} type="collection" />
-              <Item grid={gridOn} type="collection" />
-              <Item grid={gridOn} type="collection" />
-              <Item grid={gridOn} type="collection" />
-              <Item grid={gridOn} type="collection" />
+              {prepearedResults.pages > 1
+                ? displayItems[paginationOn]
+                : displayItems}
+              {displayItems.length === 0 && (
+                <Typography>No music or videos in collection yet</Typography>
+              )}
             </Grid>
           </Box>
-          <div className={commonClasses.paginationContainer}>
-            <Pagination
-              className={commonClasses.pagination}
-              count={4}
-              size="small"
-            />
-          </div>
+          {prepearedResults.pages > 1 && (
+            <div className={commonClasses.paginationContainer}>
+              <Pagination
+                className={commonClasses.pagination}
+                page={paginationOn}
+                onChange={(e, p) => setPaginationOn(p - 1)}
+                defaultPage={0}
+                count={prepearedResults.pages}
+                size="small"
+              />
+            </div>
+          )}
         </Paper>
       </ThemeProvider>
     </Box>
   );
 };
 
-export default Collection;
+const mapStateToProps = (state: StateProps) => {
+  const { collection } = state;
+  return {
+    collection,
+  };
+};
+
+const mapDispatchToProps = (
+  dispatch: (arg0: { type: string; payload: any }) => any
+) => ({
+  removeFromCollection: (link: string) =>
+    dispatch(removeFromCollectionAction(link)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Collection);

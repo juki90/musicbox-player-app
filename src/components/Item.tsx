@@ -11,10 +11,11 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import AddIcon from "@material-ui/icons/Add";
 import theme from "../styles/theme";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
+import CheckIcon from "@material-ui/icons/Check";
 
 const useStyles = makeStyles({
   videoItem: (props: ItemProps) => {
-    return props.type === "playlist"
+    return props.type === "playlist" || props.type === "player"
       ? {
           display: "flex",
           alignItems: "top",
@@ -26,14 +27,10 @@ const useStyles = makeStyles({
           "& h6": {
             fontSize: "80%",
             wordBreak: "break-word",
-          },
-          [theme.breakpoints.up("sm")]: {
-            "& h6": {
+            [theme.breakpoints.up("sm")]: {
               fontSize: "100%",
             },
-          },
-          [theme.breakpoints.up("lg")]: {
-            "& h6": {
+            [theme.breakpoints.up("lg")]: {
               fontSize: "120%",
             },
           },
@@ -61,6 +58,7 @@ const useStyles = makeStyles({
     width: "100%",
     padding: "0 !important",
   },
+
   videoMiniature: {
     display: "flex",
     margin: "0 0 0.4em 0",
@@ -69,18 +67,24 @@ const useStyles = makeStyles({
   videoImageBig: {
     display: "block",
     height: "auto",
-    maxWidth: "100%",
     minWidth: "246px",
-    margin: "0 auto",
+    alignSelf: "center",
   },
   videoImageSmall: {
     display: "block",
     height: "auto",
-    width: "100px",
+    width: "80px",
+    alignSelf: "center",
   },
   videoInfo: {
-    padding: "0 0 0 0.5em",
+    padding: "0.5em",
     flexDirection: "row",
+    "& h6": {
+      fontWeight: "bold",
+    },
+    [theme.breakpoints.up("sm")]: {
+      padding: " 0 0 0 1em",
+    },
   },
   videoButton: {
     margin: "0.5em 0.5em 0.5em 0",
@@ -103,23 +107,50 @@ const useStyles = makeStyles({
   },
   playlistActions: {
     padding: "0 0.25em",
-    margin: "0 auto",
+    width: "40px",
+    marginLeft: "auto",
     [theme.breakpoints.up("sm")]: {
-      display: "flex",
       alignItems: "center",
       marginLeft: "auto",
       marginRight: "25px",
+    },
+  },
+  caption: {
+    display: "block",
+    textAlign: "center",
+    marginBottom: "0.5em",
+    [theme.breakpoints.up("md")]: {
+      padding: "0 !important",
+      marginLeft: "1em",
+      textAlign: (props: ItemProps) => {
+        return props.grid ? "center" : "left";
+      },
     },
   },
 });
 
 interface ItemProps {
   type: string;
+  added?: Date;
+  title: string;
+  desc: string;
   grid?: boolean;
+  onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
+  onRemove?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  inCollection?: boolean;
 }
 
 const Item: React.FC<ItemProps> = (props) => {
-  const { grid, type } = props;
+  const {
+    grid,
+    type,
+    title,
+    desc,
+    added,
+    onAdd,
+    inCollection,
+    onRemove,
+  } = props;
   const classes = useStyles(props);
   return (
     <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
@@ -131,7 +162,7 @@ const Item: React.FC<ItemProps> = (props) => {
           >
             <img
               className={
-                type !== "playlist"
+                type !== "playlist" && type !== "player"
                   ? classes.videoImageBig
                   : classes.videoImageSmall
               }
@@ -139,21 +170,21 @@ const Item: React.FC<ItemProps> = (props) => {
               alt="Video miniature"
             />
             <Box
-              display={type === "playlist" && "flex"}
-              alignItems={type === "playlist" && "center"}
+              display={(type === "playlist" || type === "player") && "flex"}
+              alignItems={
+                (type === "playlist" || type === "player") && "center"
+              }
               className={classes.videoInfo}
             >
               <Typography variant="h6">
-                Lorem ipsum - Dolor sit amet nesciunt sed repellendus
+                {title.length > 80 ? `${title.slice(0, 80)}...` : title}
               </Typography>
-              {type !== "playlist" && (
+              {type !== "playlist" && type !== "player" && (
                 <Typography variant="body1">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Cumque odio harum obcaecati. Nulla iure, nesciunt sed
-                  repellendus tempore ab qui voluptatem obcaecati molestiae
-                  dolore sequi alias et dolorum doloremque ...
+                  {desc.length > 250 ? `${desc.slice(0, 250)}...` : desc}
                 </Typography>
               )}
+
               {type === "collection" && (
                 <>
                   <Button
@@ -179,6 +210,7 @@ const Item: React.FC<ItemProps> = (props) => {
                     variant="contained"
                     size="small"
                     startIcon={<DeleteForeverIcon />}
+                    onClick={onRemove}
                   >
                     Remove
                   </Button>
@@ -207,16 +239,18 @@ const Item: React.FC<ItemProps> = (props) => {
                   <Button
                     className={classes.videoButton}
                     variant="contained"
-                    color="secondary"
+                    color={inCollection ? "default" : "secondary"}
                     size="small"
-                    startIcon={<AddIcon />}
+                    startIcon={inCollection ? <CheckIcon /> : <AddIcon />}
+                    disabled={inCollection}
+                    onClick={onAdd}
                   >
-                    Collection
+                    {inCollection ? "In collection" : "Collection"}
                   </Button>
                 </>
               )}
             </Box>
-            {type === "playlist" && (
+            {(type === "playlist" || type === "player") && (
               <Box className={classes.playlistActions}>
                 <Button
                   className={classes.videoButtonPlaylist}
@@ -234,6 +268,25 @@ const Item: React.FC<ItemProps> = (props) => {
               </Box>
             )}
           </Box>
+          {type !== "playlist" &&
+            type !== "player" &&
+            type !== "search-result" && (
+              <Typography
+                className={classes.caption}
+                variant="caption"
+                component="small"
+              >
+                <b>Added at:</b>
+                {` ${added!.getDate()} ${added!.toLocaleString("en", {
+                  month: "long",
+                })} ${added!.getFullYear()} `}
+                {`- ${added!.getHours()}:${
+                  added!.getMinutes() < 9
+                    ? `0${added!.getMinutes()}`
+                    : added!.getMinutes()
+                }`}
+              </Typography>
+            )}
         </CardContent>
       </Card>
     </Grid>
