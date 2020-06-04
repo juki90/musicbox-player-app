@@ -47,8 +47,9 @@ const Collection: React.FC<CollectionProps> = ({
             type="collection"
             title={r.title}
             desc={r.desc}
+            link={r.link}
             added={r.added}
-            onRemove={(e) => removeFromCollection(r.link)}
+            onRemove={(e) => removeFromCollection(r.link!)}
           />
         ))
       : prepearedResults.results.map((p: any) => {
@@ -59,8 +60,9 @@ const Collection: React.FC<CollectionProps> = ({
               type="collection"
               title={r.title}
               desc={r.desc}
+              link={r.link}
               added={r.added}
-              onRemove={(e) => removeFromCollection(r.link)}
+              onRemove={(e) => removeFromCollection(r.link!)}
             />
           ));
           return page;

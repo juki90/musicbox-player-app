@@ -4,7 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import blankVideo from "../assets/blank-video.jpg";
-import { makeStyles, Typography, Button } from "@material-ui/core";
+import {
+  makeStyles,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+} from "@material-ui/core";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -12,6 +18,8 @@ import AddIcon from "@material-ui/icons/Add";
 import theme from "../styles/theme";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
 import CheckIcon from "@material-ui/icons/Check";
+import { connect } from "react-redux";
+import { addToPlaylist as addToPlaylistAction } from "../actions";
 
 const useStyles = makeStyles({
   videoItem: (props: ItemProps) => {
@@ -82,6 +90,9 @@ const useStyles = makeStyles({
     "& h6": {
       fontWeight: "bold",
     },
+    "& button": {
+      margin: "0 0 10px 10px",
+    },
     [theme.breakpoints.up("sm")]: {
       padding: " 0 0 0 1em",
     },
@@ -131,13 +142,16 @@ const useStyles = makeStyles({
 
 interface ItemProps {
   type: string;
-  added?: Date;
+  added: Date;
   title: string;
   desc: string;
   grid?: boolean;
-  onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
-  onRemove?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  link?: string;
+  playlists: Playlist[];
   inCollection?: boolean;
+  onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
+  onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
+  addToPlaylist: (name: string, item: Item) => void;
 }
 
 const Item: React.FC<ItemProps> = (props) => {
@@ -147,11 +161,45 @@ const Item: React.FC<ItemProps> = (props) => {
     title,
     desc,
     added,
-    onAdd,
     inCollection,
+    playlists,
+    link,
+    onAdd,
     onRemove,
+    addToPlaylist,
   } = props;
   const classes = useStyles(props);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClickPlaylistAdd = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleAddToPlaylist = (name: string, item: Item) => {
+    setAnchorEl(null);
+    addToPlaylist(name, item);
+  };
+
+  const playlistMenuItems = playlists.map((p: Playlist) => (
+    <MenuItem
+      onClick={() =>
+        handleAddToPlaylist(p.name, {
+          id: 0,
+          title,
+          desc,
+          link,
+          added: added ? added : new Date(),
+        })
+      }
+    >
+      {p.name}
+    </MenuItem>
+  ));
+
   return (
     <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
       <Card className={classes.videoMiniature}>
@@ -201,6 +249,7 @@ const Item: React.FC<ItemProps> = (props) => {
                     variant="contained"
                     color="secondary"
                     size="small"
+                    onClick={handleClickPlaylistAdd}
                     startIcon={<PlaylistAddIcon />}
                   >
                     Playlist
@@ -233,6 +282,7 @@ const Item: React.FC<ItemProps> = (props) => {
                     color="secondary"
                     size="small"
                     startIcon={<PlaylistAddIcon />}
+                    onClick={handleClickPlaylistAdd}
                   >
                     Playlist
                   </Button>
@@ -255,7 +305,7 @@ const Item: React.FC<ItemProps> = (props) => {
                 <Button
                   className={classes.videoButtonPlaylist}
                   variant="contained"
-                  color="primary"
+                  color="default"
                   size="small"
                   startIcon={<UnfoldMoreIcon />}
                 ></Button>
@@ -264,8 +314,20 @@ const Item: React.FC<ItemProps> = (props) => {
                   variant="contained"
                   size="small"
                   startIcon={<DeleteForeverIcon />}
+                  onClick={onRemove}
                 ></Button>
               </Box>
+            )}
+            {(type === "collection" || type === "search-result") && (
+              <Menu
+                id="playlist-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                {playlistMenuItems}
+              </Menu>
             )}
           </Box>
           {type !== "playlist" &&
@@ -293,4 +355,16 @@ const Item: React.FC<ItemProps> = (props) => {
   );
 };
 
-export default Item;
+const mapStateToProps = (state: StateProps) => {
+  const { playlists } = state;
+  return {
+    playlists,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
+  addToPlaylist: (name: string, item: Item) =>
+    dispatch(addToPlaylistAction(name, item)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Item);

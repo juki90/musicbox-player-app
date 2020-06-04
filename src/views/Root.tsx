@@ -42,7 +42,7 @@ export const useCommonStyles = makeStyles({
     margin: "1em 0",
   },
   cardOuter: {
-    padding: "1.5em 1.5em 4em 1.5em",
+    padding: "1.5em 1.5em 6em 1.5em",
     "& .MuiTypography-root": {
       padding: "0.5em",
     },

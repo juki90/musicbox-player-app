@@ -13,6 +13,15 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import SortByAlphaIcon from "@material-ui/icons/SortByAlpha";
 import TitleIcon from "@material-ui/icons/Title";
 import Item from "../components/Item";
+import { connect } from "react-redux";
+import PlaylistModal from "../components/PlaylistModal";
+import {
+  addNewPlaylist as addNewPlaylistAction,
+  renamePlaylist as renamePlaylistAction,
+  removeFromPlaylist as removeFromPlaylistAction,
+  deletePlaylist as deletePlaylistAction,
+  sortPlaylist as sortPlaylistAction,
+} from "./../actions/index";
 
 const useStyles = makeStyles({
   selected: {
@@ -35,13 +44,87 @@ const useStyles = makeStyles({
   },
 });
 
-const Playlists: React.FC = () => {
+interface PlaylistsProps {
+  playlists: Playlist[];
+  collection: Item[];
+  addNewPlaylist: (name: string) => void;
+  renamePlaylist: (name: string, id: number) => void;
+  deletePlaylist: (id: number) => void;
+  sortPlaylist: (id: number) => void;
+  removeFromPlaylist: (id: number, link: string) => void;
+}
+
+const Playlists: React.FC<PlaylistsProps> = ({
+  playlists,
+  collection,
+  addNewPlaylist,
+  renamePlaylist,
+  deletePlaylist,
+  sortPlaylist,
+  removeFromPlaylist,
+}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [activeTab, setActiveTab] = useState<number>(0);
+  const [playlistModal, setPlaylistModal] = useState<string>("");
+
   const handleTabChange = (e: React.ChangeEvent<{}>, n: number) => {
     setActiveTab(n);
   };
+
+  const handlePlaylistModal = (to: string) => {
+    setPlaylistModal(to);
+  };
+
+  const handleAddPlaylist = (name: string) => {
+    setPlaylistModal("");
+    addNewPlaylist(name);
+  };
+
+  const handleDeletePlaylist = (id: number) => {
+    setPlaylistModal("");
+    deletePlaylist(id);
+    setActiveTab(activeTab - 1);
+  };
+
+  const handleEditPlaylist = (name: string, id: number) => {
+    setPlaylistModal("");
+    renamePlaylist(name, id);
+  };
+
+  const playlistsElements = playlists.map((p, i) => {
+    const itemList = p.items.map((it) => {
+      return (
+        <Item
+          added={it.added ? it.added : new Date()}
+          title={it.title}
+          link={it.link}
+          desc={it.desc}
+          type="playlist"
+          onRemove={() => removeFromPlaylist(activeTab - 1, it.link!)}
+        />
+      );
+    });
+    return (
+      <SinglePlaylist value={activeTab} index={i + 1}>
+        {itemList}
+      </SinglePlaylist>
+    );
+  });
+
+  const collectionElements = collection.map((i) => (
+    <Item
+      added={i.added ? i.added : new Date()}
+      title={i.title}
+      link={i.link}
+      desc={i.desc}
+      type="playlist"
+    />
+  ));
+
+  const playlistTabs = playlists.map((p, i) => (
+    <Tab className={classes.selected} value={i + 1} label={p.name} />
+  ));
   return (
     <Box p="1.5em 0">
       <ThemeProvider theme={theme}>
@@ -58,6 +141,7 @@ const Playlists: React.FC = () => {
             variant="contained"
             color="primary"
             startIcon={<PlaylistAddIcon />}
+            onClick={() => handlePlaylistModal("add")}
           >
             Add new
           </Button>
@@ -69,10 +153,8 @@ const Playlists: React.FC = () => {
               variant="scrollable"
               scrollButtons="auto"
             >
-              <Tab className={classes.selected} value={0} label="ALL" />
-              <Tab className={classes.selected} value={1} label="Item Two" />
-              <Tab className={classes.selected} value={2} label="Item Three" />
-              <Tab className={classes.selected} value={3} label="Item Four" />
+              <Tab className={classes.selected} value={0} label="Collection" />
+              {playlistTabs}
             </Tabs>
           </AppBar>
           <AppBar position="static" color="default">
@@ -86,25 +168,29 @@ const Playlists: React.FC = () => {
               >
                 Play
               </Button>
-              <Button
-                variant="contained"
-                className={classes.actionButton}
-                color="default"
-                startIcon={<SortByAlphaIcon />}
-                size="small"
-              >
-                Sort
-              </Button>
               {activeTab > 0 && (
-                <Button
-                  variant="contained"
-                  className={classes.actionButton}
-                  color="default"
-                  startIcon={<TitleIcon />}
-                  size="small"
-                >
-                  Rename
-                </Button>
+                <>
+                  <Button
+                    variant="contained"
+                    className={classes.actionButton}
+                    color="default"
+                    startIcon={<SortByAlphaIcon />}
+                    size="small"
+                    onClick={() => sortPlaylist(activeTab - 1)}
+                  >
+                    Sort
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={classes.actionButton}
+                    color="default"
+                    startIcon={<TitleIcon />}
+                    size="small"
+                    onClick={() => handlePlaylistModal("edit")}
+                  >
+                    Rename
+                  </Button>
+                </>
               )}
               {activeTab > 0 && (
                 <Button
@@ -113,6 +199,7 @@ const Playlists: React.FC = () => {
                   color="default"
                   startIcon={<DeleteForeverIcon />}
                   size="small"
+                  onClick={() => handlePlaylistModal("delete")}
                 >
                   Delete
                 </Button>
@@ -120,72 +207,48 @@ const Playlists: React.FC = () => {
             </Box>
           </AppBar>
           <Card>
-            <SinglePlaylist value={activeTab} index={0}></SinglePlaylist>
-            <SinglePlaylist value={activeTab} index={1}>
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
+            <SinglePlaylist value={activeTab} index={0}>
+              {collectionElements}
             </SinglePlaylist>
-            <SinglePlaylist value={activeTab} index={2}>
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-            </SinglePlaylist>
-            <SinglePlaylist value={activeTab} index={3}>
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-              <Item
-                added={new Date()}
-                title="Ipsum dolor"
-                desc="Lorem ipsum dolor sit amet"
-                type="playlist"
-              />
-            </SinglePlaylist>
+            {playlistsElements}
           </Card>
         </Paper>
+        {playlistModal && (
+          <PlaylistModal
+            type={playlistModal}
+            playlist={activeTab - 1}
+            currentName={
+              playlists.filter((pl) => pl.id === activeTab - 1)[0].name
+            }
+            onEdit={handleEditPlaylist}
+            onSave={handleAddPlaylist}
+            onDelete={handleDeletePlaylist}
+            onCancel={() => handlePlaylistModal("")}
+          />
+        )}
       </ThemeProvider>
     </Box>
   );
 };
 
-export default Playlists;
+const mapStateToProps = (state: StateProps) => {
+  const { playlists, collection } = state;
+  return {
+    playlists,
+    collection,
+  };
+};
+
+const mapDispatchToProps = (
+  dispatch: (arg0: { type: string; payload: any }) => any
+) => ({
+  addNewPlaylist: (name: string) => dispatch(addNewPlaylistAction(name)),
+  renamePlaylist: (name: string, id: number) =>
+    dispatch(renamePlaylistAction(name, id)),
+  removeFromPlaylist: (id: number, link: string) =>
+    dispatch(removeFromPlaylistAction(id, link)),
+  deletePlaylist: (id: number) => dispatch(deletePlaylistAction(id)),
+  sortPlaylist: (id: number) => dispatch(sortPlaylistAction(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Playlists);

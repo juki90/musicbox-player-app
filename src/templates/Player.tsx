@@ -59,11 +59,18 @@ const useStyles = makeStyles({
     },
   },
   videoTitle: {
-    textAlign: "center",
+    textAlign: "left",
     color: "#ffffff",
     fontWeight: "bold",
+    paddingLeft: "1em",
     fontSize: (props: PlayerProps) => {
-      return props.minimalized ? "0.75em" : "1.5em";
+      return props.minimalized ? "0.8em" : "1.3em";
+    },
+    [theme.breakpoints.up("md")]: {
+      textAlign: "center",
+      fontSize: (props: PlayerProps) => {
+        return props.minimalized ? "1em" : "1.5em";
+      },
     },
   },
   videoDesc: {
@@ -135,7 +142,7 @@ const useStyles = makeStyles({
     return props.minimalized
       ? { display: "none" }
       : {
-          padding: "1em",
+          padding: "1em 1em 3em 1em",
           overflowY: "visible",
           backgroundColor: "#b2b2b2",
         };
@@ -159,12 +166,12 @@ const useStyles = makeStyles({
     return props.minimalized
       ? {
           "& h6": {
-            fontSize: "0.8em",
+            fontSize: "1.25em",
             textAlign: "left",
             padding: "0.5em 2.5em 0.5em 0.5em",
             color: "#fff",
             [theme.breakpoints.up("lg")]: {
-              fontSize: "1.2em",
+              fontSize: "1.5em",
             },
           },
         }
@@ -217,6 +224,12 @@ const Player: React.FC<PlayerProps> = (props) => {
       minimalize(false);
     };
 
+  const videoTitle = (
+    <Typography className={classes.videoTitle} variant="h6">
+      Lorem ipsum dolor - sit amet consectetur adipisicing...
+    </Typography>
+  );
+
   return (
     <Box className={classes.player}>
       <ThemeProvider theme={theme}>
@@ -227,14 +240,7 @@ const Player: React.FC<PlayerProps> = (props) => {
               src={defaultVideoImg}
               alt="Default video"
             />
-            {minimalized && (
-              <Box pr="3em">
-                <Typography className={classes.videoTitle} variant="h6">
-                  Lorem ipsum dolor - sit amet consectetur adipisicing dasdas
-                  wqex zdd.
-                </Typography>
-              </Box>
-            )}
+            {minimalized && <Box pr="3em">{videoTitle}</Box>}
             <Box className={classes.playerBtns}>
               <IconButton aria-label="close" onClick={handleClosePlayer}>
                 <CloseIcon />
@@ -317,10 +323,7 @@ const Player: React.FC<PlayerProps> = (props) => {
             </Box>
             {!minimalized && (
               <Box className={classes.videoPanelInfo}>
-                <Typography className={classes.videoTitle} variant="h6">
-                  Lorem ipsum dolor - sit amet consectetur adipisicing dasdas
-                  wqex zdd.
-                </Typography>
+                {videoTitle}
                 <Typography variant="body1" className={classes.videoDesc}>
                   Lorem ipsum dolor - sit amet consectetur adipisicing. Lorem
                   ipsum dolor sit amet, consectetur adipisicing elit.
