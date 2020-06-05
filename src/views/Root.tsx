@@ -64,11 +64,9 @@ export const useCommonStyles = makeStyles({
     },
   },
   paginationContainer: {
-    margin: "1em 0",
-    textAlign: "center",
-  },
-  pagination: {
-    display: "inline-block",
+    display: "flex",
+    justifyContent: "center",
+    padding: "1em",
   },
 });
 

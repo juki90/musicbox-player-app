@@ -8,6 +8,7 @@ import {
   Box,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import theme from "../styles/theme";
 
 const useStyles = makeStyles({
   danger: {
@@ -15,11 +16,14 @@ const useStyles = makeStyles({
   },
   modalBox: {
     position: "fixed",
-    maxWidth: "500px",
-    margin: "0 0.5em",
+    margin: 0,
+    width: "300px",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    [theme.breakpoints.up("md")]: {
+      width: "600px",
+    },
   },
   modalHeader: {
     padding: "1em",

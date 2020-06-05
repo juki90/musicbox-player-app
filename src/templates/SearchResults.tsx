@@ -26,7 +26,7 @@ interface SearchResultsProps {
   addToCollection: (item: Item) => void;
 }
 
-const results: any[] = [
+const results: Item[] = [
   {
     id: 0,
     added: new Date(2020, 5, 3, 9, 20),
@@ -216,7 +216,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const commonClasses = useCommonStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
   const [paginationOn, setPaginationOn] = useState<number>(0);
-  const prepearedResults = prepeareToPagination(results);
+  const prepearedResults = prepeareToPagination(results as Item[], 10);
   const handleAddToCollection = (it: {
     link: string;
     title: string;
@@ -242,8 +242,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const displayItems =
     prepearedResults.pages === 1
-      ? prepearedResults.results.map((r: Item) => {
-          const collected = handleIsInCollection(r.link!);
+      ? (prepearedResults.results as Item[]).map((r: Item) => {
+          const collected = handleIsInCollection(r.link);
           return (
             <Item
               key={`i-sr-${r.id}`}
@@ -256,20 +256,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               inCollection={collected}
               onAdd={
                 !collected
-                  ? (e) =>
+                  ? () =>
                       handleAddToCollection({
                         title: r.title,
                         desc: r.desc,
-                        link: r.link!,
+                        link: r.link,
                       })
                   : undefined
               }
             />
           );
         })
-      : prepearedResults.results.map((p: any) => {
+      : (prepearedResults.results as Item[][]).map((p: Item[]) => {
           const page = p.map((r: Item) => {
-            const collected = handleIsInCollection(r.link!);
+            const collected = handleIsInCollection(r.link);
             return (
               <Item
                 key={`i-sr-${r.id}`}
@@ -282,11 +282,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 inCollection={collected}
                 onAdd={
                   !collected
-                    ? (e) =>
+                    ? () =>
                         handleAddToCollection({
                           title: r.title,
                           desc: r.desc,
-                          link: r.link!,
+                          link: r.link,
                         })
                     : undefined
                 }
@@ -323,12 +323,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       {prepearedResults.pages > 1 && (
         <div className={commonClasses.paginationContainer}>
           <Pagination
-            className={commonClasses.pagination}
             page={paginationOn}
             onChange={(e, p) => setPaginationOn(p - 1)}
             defaultPage={0}
             count={prepearedResults.pages}
             size="small"
+            hideNextButton={true}
+            hidePrevButton={true}
           />
         </div>
       )}
@@ -341,9 +342,7 @@ const mapStateToProps = (state: StateProps) => {
   return { collection };
 };
 
-const mapDispatchToProps = (
-  dispatch: (arg0: { type: string; payload: any }) => any
-) => ({
+const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   addToCollection: (item: Item) => dispatch(addToCollectionAction(item)),
 });
 

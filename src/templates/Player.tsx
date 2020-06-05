@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React from "react";
 import Box from "@material-ui/core/Box";
 import {
@@ -24,6 +25,7 @@ import MinimizeIcon from "@material-ui/icons/Minimize";
 import SinglePlaylist from "../components/SinglePlaylist";
 import Item from "./../components/Item";
 import { ThemeProvider } from "@material-ui/core/styles";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   player: (props: PlayerProps) => {
@@ -202,10 +204,10 @@ const Player: React.FC<PlayerProps> = (props) => {
   const [volume, setVolume] = React.useState<number>(30),
     [tab, setTab] = React.useState(0);
 
-  const handleVolumeChange = (e: any, newValue: number | number[]) => {
+  const handleVolumeChange = (e: unknown, newValue: number | number[]) => {
       setVolume(newValue as number);
     },
-    handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    handleTabChange = (event: React.ChangeEvent<unknown>, newValue: number) => {
       setTab(newValue);
     },
     handleClosePlayer = () => {
@@ -355,80 +357,9 @@ const Player: React.FC<PlayerProps> = (props) => {
                   <Item
                     added={new Date()}
                     title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
+                    desc="Lorem ipsum dolor sit amet"
                     type="player"
-                  />
-                </SinglePlaylist>
-                <SinglePlaylist value={tab} index={1}>
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                </SinglePlaylist>
-                <SinglePlaylist value={tab} index={2}>
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                </SinglePlaylist>
-                <SinglePlaylist value={tab} index={3}>
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc={"Lorem ipsum dolor sit amet"}
-                    type="player"
-                  />
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum dolor sit ametasdas dasasd asdasd das"
-                    desc={"Lorem ipsum dolor sit ametasdas dasasd asdasd das"}
-                    type="player"
+                    link="jupi"
                   />
                 </SinglePlaylist>
               </Box>
@@ -440,4 +371,12 @@ const Player: React.FC<PlayerProps> = (props) => {
   );
 };
 
-export default Player;
+const mapStateToProps = (state: StateProps) => {
+  const { collection, playlists } = state;
+  return {
+    collection,
+    playlists,
+  };
+};
+
+export default connect(mapStateToProps)(Player);

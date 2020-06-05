@@ -40,7 +40,7 @@ const Collection: React.FC<CollectionProps> = ({
 
   const displayItems =
     prepearedResults.pages === 1
-      ? prepearedResults.results.map((r: Item) => (
+      ? (prepearedResults.results as Item[]).map((r: Item) => (
           <Item
             key={`i-col-${r.id}`}
             grid={gridOn}
@@ -49,10 +49,10 @@ const Collection: React.FC<CollectionProps> = ({
             desc={r.desc}
             link={r.link}
             added={r.added}
-            onRemove={(e) => removeFromCollection(r.link!)}
+            onRemove={() => removeFromCollection(r.link)}
           />
         ))
-      : prepearedResults.results.map((p: any) => {
+      : (prepearedResults.results as Item[][]).map((p: Item[]) => {
           const page = p.map((r: Item) => (
             <Item
               key={`i-col-${r.id}`}
@@ -62,7 +62,7 @@ const Collection: React.FC<CollectionProps> = ({
               desc={r.desc}
               link={r.link}
               added={r.added}
-              onRemove={(e) => removeFromCollection(r.link!)}
+              onRemove={() => removeFromCollection(r.link)}
             />
           ));
           return page;
@@ -126,12 +126,11 @@ const Collection: React.FC<CollectionProps> = ({
           {prepearedResults.pages > 1 && (
             <div className={commonClasses.paginationContainer}>
               <Pagination
-                className={commonClasses.pagination}
-                page={paginationOn}
                 onChange={(e, p) => setPaginationOn(p - 1)}
-                defaultPage={0}
                 count={prepearedResults.pages}
                 size="small"
+                hideNextButton={true}
+                hidePrevButton={true}
               />
             </div>
           )}
@@ -148,9 +147,7 @@ const mapStateToProps = (state: StateProps) => {
   };
 };
 
-const mapDispatchToProps = (
-  dispatch: (arg0: { type: string; payload: any }) => any
-) => ({
+const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   removeFromCollection: (link: string) =>
     dispatch(removeFromCollectionAction(link)),
 });

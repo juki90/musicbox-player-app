@@ -15,13 +15,16 @@ import TitleIcon from "@material-ui/icons/Title";
 import Item from "../components/Item";
 import { connect } from "react-redux";
 import PlaylistModal from "../components/PlaylistModal";
+import prepeareToPagination from "./../utils/prepeareToPagination";
 import {
   addNewPlaylist as addNewPlaylistAction,
   renamePlaylist as renamePlaylistAction,
   removeFromPlaylist as removeFromPlaylistAction,
   deletePlaylist as deletePlaylistAction,
   sortPlaylist as sortPlaylistAction,
+  removeFromCollection as removeFromCollectionAction,
 } from "./../actions/index";
+import Pagination from "@material-ui/lab/Pagination";
 
 const useStyles = makeStyles({
   selected: {
@@ -52,6 +55,7 @@ interface PlaylistsProps {
   deletePlaylist: (id: number) => void;
   sortPlaylist: (id: number) => void;
   removeFromPlaylist: (id: number, link: string) => void;
+  removeFromCollection: (link: string) => void;
 }
 
 const Playlists: React.FC<PlaylistsProps> = ({
@@ -62,14 +66,29 @@ const Playlists: React.FC<PlaylistsProps> = ({
   deletePlaylist,
   sortPlaylist,
   removeFromPlaylist,
+  removeFromCollection,
 }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [activeTab, setActiveTab] = useState<number>(0);
+  const [paginationOn, setPaginationOn] = useState<{
+    id: number;
+    page: number;
+  }>({
+    id: 0,
+    page: 0,
+  });
   const [playlistModal, setPlaylistModal] = useState<string>("");
 
-  const handleTabChange = (e: React.ChangeEvent<{}>, n: number) => {
+  const handleTabChange: (
+    event: React.ChangeEvent<Record<string, unknown>>,
+    n: number
+  ) => void = (e, n) => {
     setActiveTab(n);
+    setPaginationOn({
+      id: n,
+      page: 0,
+    });
   };
 
   const handlePlaylistModal = (to: string) => {
@@ -92,38 +111,48 @@ const Playlists: React.FC<PlaylistsProps> = ({
     renamePlaylist(name, id);
   };
 
-  const playlistsElements = playlists.map((p, i) => {
-    const itemList = p.items.map((it) => {
-      return (
-        <Item
-          added={it.added ? it.added : new Date()}
-          title={it.title}
-          link={it.link}
-          desc={it.desc}
-          type="playlist"
-          onRemove={() => removeFromPlaylist(activeTab - 1, it.link!)}
-        />
-      );
-    });
-    return (
-      <SinglePlaylist value={activeTab} index={i + 1}>
-        {itemList}
-      </SinglePlaylist>
-    );
+  const allPlaylistsElements = playlists.map((pl: Playlist) => {
+    const singlePlaylist = prepeareToPagination(pl.items, 5);
+    console.log(singlePlaylist);
   });
 
-  const collectionElements = collection.map((i) => (
-    <Item
-      added={i.added ? i.added : new Date()}
-      title={i.title}
-      link={i.link}
-      desc={i.desc}
-      type="playlist"
-    />
-  ));
+  const prepearedCollection = prepeareToPagination(collection, 5);
 
-  const playlistTabs = playlists.map((p, i) => (
-    <Tab className={classes.selected} value={i + 1} label={p.name} />
+  const displayItems =
+    prepearedCollection.pages === 1 && activeTab === 0
+      ? (prepearedCollection.results as Item[]).map((r: Item) => (
+          <Item
+            key={`i-col-${r.id}`}
+            type="playlist"
+            title={r.title}
+            desc={r.desc}
+            link={r.link}
+            added={r.added}
+            onRemove={() => removeFromCollection(r.link)}
+          />
+        ))
+      : (prepearedCollection.results as Item[][]).map((p: Item[]) => {
+          const page = p.map((r: Item) => (
+            <Item
+              key={`i-col-${r.id}`}
+              type="playlist"
+              title={r.title}
+              desc={r.desc}
+              link={r.link}
+              added={r.added}
+              onRemove={() => removeFromCollection(r.link)}
+            />
+          ));
+          return page;
+        });
+
+  const playlistTabs = playlists.map((p: Playlist, i: number) => (
+    <Tab
+      key={`plt-${p.id}`}
+      className={classes.selected}
+      value={i + 1}
+      label={p.name}
+    />
   ));
   return (
     <Box p="1.5em 0">
@@ -208,10 +237,29 @@ const Playlists: React.FC<PlaylistsProps> = ({
           </AppBar>
           <Card>
             <SinglePlaylist value={activeTab} index={0}>
-              {collectionElements}
+              {prepearedCollection.pages > 1
+                ? displayItems[paginationOn.page]
+                : displayItems}
             </SinglePlaylist>
-            {playlistsElements}
           </Card>
+          <Box>
+            <div className={commonClasses.paginationContainer}>
+              {prepearedCollection.pages > 1 && activeTab === 0 && (
+                <Pagination
+                  onChange={(e, p) =>
+                    setPaginationOn({
+                      id: activeTab,
+                      page: p - 1,
+                    })
+                  }
+                  count={prepearedCollection.pages}
+                  size="small"
+                  hideNextButton={true}
+                  hidePrevButton={true}
+                />
+              )}
+            </div>
+          </Box>
         </Paper>
         {playlistModal && (
           <PlaylistModal
@@ -240,13 +288,21 @@ const mapStateToProps = (state: StateProps) => {
 };
 
 const mapDispatchToProps = (
-  dispatch: (arg0: { type: string; payload: any }) => any
+  dispatch: (
+    arg0:
+      | addToCollectionAction
+      | removeFromCollectionAction
+      | addNewPlaylistAction
+      | deletePlaylistAction
+  ) => unknown
 ) => ({
   addNewPlaylist: (name: string) => dispatch(addNewPlaylistAction(name)),
   renamePlaylist: (name: string, id: number) =>
     dispatch(renamePlaylistAction(name, id)),
   removeFromPlaylist: (id: number, link: string) =>
     dispatch(removeFromPlaylistAction(id, link)),
+  removeFromCollection: (link: string) =>
+    dispatch(removeFromCollectionAction(link)),
   deletePlaylist: (id: number) => dispatch(deletePlaylistAction(id)),
   sortPlaylist: (id: number) => dispatch(sortPlaylistAction(id)),
 });

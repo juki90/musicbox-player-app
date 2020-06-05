@@ -1,22 +1,28 @@
-const prepeareToPagination = (what: Item[], resultsPerPage = 10) => {
-  let paginatedSearchResults: Item[] = [];
-  let paginationPages: number = 0;
+const prepeareToPagination: (
+  what: Item[],
+  resultsPerPage?: number
+) => { results: Item[] | Item[][]; pages: number } = (
+  what: Item[],
+  resultsPerPage = 10
+) => {
+  let paginationPages = 0;
 
   if (what.length > resultsPerPage) {
+    const paginatedSearchResults: Item[][] = [];
+
     paginationPages =
       what.length % resultsPerPage > 0
         ? Math.floor(what.length / resultsPerPage) + 1
         : Math.floor(what.length / resultsPerPage);
-    paginatedSearchResults = (what as any).reduce(
-      (a: any[], c: any, i: number, arr: any[]) => {
-        if (i >= paginationPages) {
-          return a;
-        }
-        a.push(arr.slice(i * 10, (i + 1) * 10));
-        return a;
-      },
-      []
-    );
+    (what as Item[]).forEach((it: Item, i: number) => {
+      if (i >= paginationPages) {
+        return it;
+      }
+      paginatedSearchResults.push(
+        what.slice(i * resultsPerPage, (i + 1) * resultsPerPage)
+      );
+      return it;
+    }, []);
     return { results: paginatedSearchResults, pages: paginationPages };
   }
   return { results: what, pages: 1 };

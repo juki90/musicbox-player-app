@@ -7,9 +7,7 @@ export const RENAME_PLAYLIST = "RENAME_PLAYLIST";
 export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
 
-export const addToCollection: (item: Item) => { type: string; payload: any } = (
-  item: Item
-) => {
+export const addToCollection: (item: Item) => Action = (item: Item) => {
   return {
     type: ADD_TO_COLLECTION,
     payload: {
@@ -18,9 +16,9 @@ export const addToCollection: (item: Item) => { type: string; payload: any } = (
   };
 };
 
-export const removeFromCollection: (
+export const removeFromCollection: (link: string) => Action = (
   link: string
-) => { type: string; payload: any } = (link: string) => {
+) => {
   return {
     type: REMOVE_FROM_COLLECTION,
     payload: {
@@ -29,10 +27,10 @@ export const removeFromCollection: (
   };
 };
 
-export const addToPlaylist: (
+export const addToPlaylist: (name: string, item: Item) => Action = (
   name: string,
   item: Item
-) => { type: string; payload: any } = (name: string, item: Item) => {
+) => {
   return {
     type: ADD_TO_PLAYLIST,
     payload: {
@@ -42,10 +40,10 @@ export const addToPlaylist: (
   };
 };
 
-export const removeFromPlaylist: (
+export const removeFromPlaylist: (id: number, link: string) => Action = (
   id: number,
   link: string
-) => { type: string; payload: any } = (id: number, link: string) => {
+) => {
   return {
     type: REMOVE_FROM_PLAYLIST,
     payload: {
@@ -55,9 +53,7 @@ export const removeFromPlaylist: (
   };
 };
 
-export const addNewPlaylist: (
-  name: string
-) => { type: string; payload: any } = (name: string) => {
+export const addNewPlaylist: (name: string) => Action = (name: string) => {
   return {
     type: ADD_NEW_PLAYLIST,
     payload: {
@@ -66,10 +62,10 @@ export const addNewPlaylist: (
   };
 };
 
-export const renamePlaylist: (
+export const renamePlaylist: (name: string, id: number) => Action = (
   name: string,
   id: number
-) => { type: string; payload: any } = (name: string, id: number) => {
+) => {
   return {
     type: RENAME_PLAYLIST,
     payload: {
@@ -79,9 +75,7 @@ export const renamePlaylist: (
   };
 };
 
-export const deletePlaylist: (id: number) => { type: string; payload: any } = (
-  id: number
-) => {
+export const deletePlaylist: (id: number) => Action = (id: number) => {
   return {
     type: DELETE_PLAYLIST,
     payload: {
@@ -90,9 +84,7 @@ export const deletePlaylist: (id: number) => { type: string; payload: any } = (
   };
 };
 
-export const sortPlaylist: (id: number) => { type: string; payload: any } = (
-  id: number
-) => {
+export const sortPlaylist: (id: number) => Action = (id: number) => {
   return {
     type: SORT_PLAYLIST,
     payload: {

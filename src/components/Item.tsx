@@ -146,7 +146,7 @@ interface ItemProps {
   title: string;
   desc: string;
   grid?: boolean;
-  link?: string;
+  link: string;
   playlists: Playlist[];
   inCollection?: boolean;
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
@@ -186,6 +186,7 @@ const Item: React.FC<ItemProps> = (props) => {
 
   const playlistMenuItems = playlists.map((p: Playlist) => (
     <MenuItem
+      key={`mi-${p.id}`}
       onClick={() =>
         handleAddToPlaylist(p.name, {
           id: 0,
@@ -199,7 +200,7 @@ const Item: React.FC<ItemProps> = (props) => {
       {p.name}
     </MenuItem>
   ));
-
+  console.log(title);
   return (
     <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
       <Card className={classes.videoMiniature}>
@@ -339,13 +340,13 @@ const Item: React.FC<ItemProps> = (props) => {
                 component="small"
               >
                 <b>Added at:</b>
-                {` ${added!.getDate()} ${added!.toLocaleString("en", {
+                {` ${added?.getDate()} ${added?.toLocaleString("en", {
                   month: "long",
-                })} ${added!.getFullYear()} `}
-                {`- ${added!.getHours()}:${
-                  added!.getMinutes() < 9
-                    ? `0${added!.getMinutes()}`
-                    : added!.getMinutes()
+                })} ${added?.getFullYear()} `}
+                {`- ${added?.getHours()}:${
+                  added?.getMinutes() < 9
+                    ? `0${added?.getMinutes()}`
+                    : added?.getMinutes()
                 }`}
               </Typography>
             )}
