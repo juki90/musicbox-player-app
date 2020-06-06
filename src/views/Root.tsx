@@ -76,7 +76,7 @@ const Root: React.FC = () => {
     [playerMinimalized, minimalizePlayer] = useState<boolean>(false);
 
   const handleMinimalizeContext = (on?: boolean) => {
-    const element = document.querySelector("#main-body")!;
+    const element = document.querySelector("#main-body") as HTMLElement;
     if (!on) {
       minimalizePlayer(false);
       element.classList.add("scroll-lock");

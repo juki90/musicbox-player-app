@@ -22,10 +22,13 @@ import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VolumeUp from "@material-ui/icons/VolumeUp";
 import CloseIcon from "@material-ui/icons/Close";
 import MinimizeIcon from "@material-ui/icons/Minimize";
-import SinglePlaylist from "../components/SinglePlaylist";
-import Item from "./../components/Item";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { connect } from "react-redux";
+import ItemList from "../components/ItemList";
+import {
+  removeFromCollection as removeFromCollectionAction,
+  removeFromPlaylist as removeFromPlaylistAction,
+} from "../actions";
 
 const useStyles = makeStyles({
   player: (props: PlayerProps) => {
@@ -192,13 +195,24 @@ const useStyles = makeStyles({
 
 interface PlayerProps {
   minimalized: boolean;
+  playlists: Playlist[];
+  collection: Item[];
   minimalize: React.Dispatch<React.SetStateAction<boolean>>;
   close: () => void;
+  removeFromCollection: (link: string) => void;
+  removeFromPlaylist: (id: number, link: string) => void;
 }
 
 const Player: React.FC<PlayerProps> = (props) => {
-  const { close, minimalize, minimalized } = props;
-
+  const {
+    close,
+    minimalize,
+    minimalized,
+    playlists,
+    collection,
+    removeFromCollection,
+    removeFromPlaylist,
+  } = props;
   const classes = useStyles(props);
 
   const [volume, setVolume] = React.useState<number>(30),
@@ -346,22 +360,19 @@ const Player: React.FC<PlayerProps> = (props) => {
                   aria-label="scrollable auto tabs example"
                 >
                   <Tab label="Collection" />
-
-                  <Tab label="Item Two" />
-                  <Tab label="Item Three" />
-                  <Tab label="Item Four" />
+                  {playlists.map((p: Playlist) => (
+                    <Tab key={`player-t-${p.id}`} label={p.name} />
+                  ))}
                 </Tabs>
               </AppBar>
               <Box p="0" width="100%">
-                <SinglePlaylist value={tab} index={0}>
-                  <Item
-                    added={new Date()}
-                    title="Lorem ipsum"
-                    desc="Lorem ipsum dolor sit amet"
-                    type="player"
-                    link="jupi"
-                  />
-                </SinglePlaylist>
+                <ItemList
+                  fromItems={tab > 0 ? playlists[tab - 1].items : collection}
+                  activeTab={tab}
+                  itemsPerPage={10}
+                  rmCollection={removeFromCollection}
+                  rmPlaylist={removeFromPlaylist}
+                />
               </Box>
             </Box>
           </Container>
@@ -378,5 +389,11 @@ const mapStateToProps = (state: StateProps) => {
     playlists,
   };
 };
+const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
+  removeFromCollection: (link: string) =>
+    dispatch(removeFromCollectionAction(link)),
+  removeFromPlaylist: (id: number, link: string) =>
+    dispatch(removeFromPlaylistAction(id, link)),
+});
 
-export default connect(mapStateToProps)(Player);
+export default connect(mapStateToProps, mapDispatchToProps)(Player);

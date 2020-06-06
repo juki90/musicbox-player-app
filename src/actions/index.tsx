@@ -27,14 +27,14 @@ export const removeFromCollection: (link: string) => Action = (
   };
 };
 
-export const addToPlaylist: (name: string, item: Item) => Action = (
-  name: string,
+export const addToPlaylist: (id: number, item: Item) => Action = (
+  id: number,
   item: Item
 ) => {
   return {
     type: ADD_TO_PLAYLIST,
     payload: {
-      name,
+      id,
       item,
     },
   };

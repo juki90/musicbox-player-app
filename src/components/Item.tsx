@@ -75,7 +75,8 @@ const useStyles = makeStyles({
   videoImageBig: {
     display: "block",
     height: "auto",
-    minWidth: "246px",
+    minWidth: "260px",
+    maxWidth: "260px",
     alignSelf: "center",
   },
   videoImageSmall: {
@@ -151,7 +152,7 @@ interface ItemProps {
   inCollection?: boolean;
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
-  addToPlaylist: (name: string, item: Item) => void;
+  addToPlaylist: (id: number, item: Item) => void;
 }
 
 const Item: React.FC<ItemProps> = (props) => {
@@ -168,6 +169,7 @@ const Item: React.FC<ItemProps> = (props) => {
     onRemove,
     addToPlaylist,
   } = props;
+
   const classes = useStyles(props);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -179,16 +181,39 @@ const Item: React.FC<ItemProps> = (props) => {
     setAnchorEl(null);
   };
 
-  const handleAddToPlaylist = (name: string, item: Item) => {
+  const handleAddToPlaylist = (id: number, item: Item) => {
     setAnchorEl(null);
-    addToPlaylist(name, item);
+    addToPlaylist(id, item);
+  };
+
+  const getVideoThumbnail = (link: string) => {
+    const regexes = {
+      yt: /https\:\/\/www\.youtube\.com\/watch\?v\=/,
+      vim: /https\:\/\/vimeo\.com\//,
+      sc: /https\:\/\/soundcloud\.com\//,
+    };
+    if (regexes.yt.test(link)) {
+      return `https://img.youtube.com/vi/${link.replace(
+        regexes.yt,
+        ""
+      )}/mqdefault.jpg`;
+    }
+    if (regexes.vim.test(link)) {
+      return `https://i.vimeocdn.com/video/${link.replace(
+        regexes.vim,
+        ""
+      )}_295x166.jpg`;
+    }
+    if (regexes.sc.test(link)) {
+      return blankVideo;
+    }
   };
 
   const playlistMenuItems = playlists.map((p: Playlist) => (
     <MenuItem
       key={`mi-${p.id}`}
       onClick={() =>
-        handleAddToPlaylist(p.name, {
+        handleAddToPlaylist(p.id, {
           id: 0,
           title,
           desc,
@@ -200,7 +225,7 @@ const Item: React.FC<ItemProps> = (props) => {
       {p.name}
     </MenuItem>
   ));
-  console.log(title);
+
   return (
     <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
       <Card className={classes.videoMiniature}>
@@ -215,7 +240,10 @@ const Item: React.FC<ItemProps> = (props) => {
                   ? classes.videoImageBig
                   : classes.videoImageSmall
               }
-              src={blankVideo}
+              src={getVideoThumbnail(link)}
+              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                e.currentTarget.src = blankVideo;
+              }}
               alt="Video miniature"
             />
             <Box
@@ -363,9 +391,9 @@ const mapStateToProps = (state: StateProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
-  addToPlaylist: (name: string, item: Item) =>
-    dispatch(addToPlaylistAction(name, item)),
+const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
+  addToPlaylist: (id: number, item: Item) =>
+    dispatch(addToPlaylistAction(id, item)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

@@ -34,13 +34,24 @@ const Collection: React.FC<CollectionProps> = ({
   const commonClasses = useCommonStyles();
   const classes = useStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [paginationOn, setPaginationOn] = useState<number>(1);
+  const [collectionElements, setCollectionElements] = useState<Item[]>(
+    collection
+  );
+  const prepCollection = prepeareToPagination(collectionElements);
 
-  const [paginationOn, setPaginationOn] = useState<number>(0);
-  const prepearedResults = prepeareToPagination(collection);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const regexSearch = new RegExp(`${e.target.value}`, "i");
+    setSearchValue(e.target.value);
+    setCollectionElements(
+      (collection as Item[]).filter((r) => regexSearch.test(r.title))
+    );
+  };
 
   const displayItems =
-    prepearedResults.pages === 1
-      ? (prepearedResults.results as Item[]).map((r: Item) => (
+    prepCollection.pages === 1
+      ? (prepCollection.results as Item[]).map((r: Item) => (
           <Item
             key={`i-col-${r.id}`}
             grid={gridOn}
@@ -52,7 +63,7 @@ const Collection: React.FC<CollectionProps> = ({
             onRemove={() => removeFromCollection(r.link)}
           />
         ))
-      : (prepearedResults.results as Item[][]).map((p: Item[]) => {
+      : (prepCollection.results as Item[][]).map((p: Item[]) => {
           const page = p.map((r: Item) => (
             <Item
               key={`i-col-${r.id}`}
@@ -85,6 +96,8 @@ const Collection: React.FC<CollectionProps> = ({
               id="search"
               className={classes.searchButton}
               label="Search"
+              onChange={handleSearchChange}
+              value={searchValue}
             />
           </Box>
           <Box>
@@ -115,19 +128,26 @@ const Collection: React.FC<CollectionProps> = ({
           </Box>
           <Box>
             <Grid container spacing={2}>
-              {prepearedResults.pages > 1
-                ? displayItems[paginationOn]
+              {prepCollection.pages > 1
+                ? displayItems[paginationOn - 1]
                 : displayItems}
               {displayItems.length === 0 && (
-                <Typography>No music or videos in collection yet</Typography>
+                <Typography>
+                  {searchValue.length
+                    ? "Nothing found"
+                    : "No videos/music in collection yet"}
+                </Typography>
               )}
             </Grid>
           </Box>
-          {prepearedResults.pages > 1 && (
+          {prepCollection.pages > 1 && (
             <div className={commonClasses.paginationContainer}>
               <Pagination
-                onChange={(e, p) => setPaginationOn(p - 1)}
-                count={prepearedResults.pages}
+                variant="outlined"
+                shape="rounded"
+                onChange={(e, p) => setPaginationOn(p)}
+                page={paginationOn}
+                count={prepCollection.pages}
                 size="small"
                 hideNextButton={true}
                 hidePrevButton={true}

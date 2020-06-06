@@ -215,7 +215,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
-  const [paginationOn, setPaginationOn] = useState<number>(0);
+  const [paginationOn, setPaginationOn] = useState<number>(1);
   const prepearedResults = prepeareToPagination(results as Item[], 10);
   const handleAddToCollection = (it: {
     link: string;
@@ -318,13 +318,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         ></Button>
       </Box>
       <Grid container spacing={2}>
-        {prepearedResults.pages > 1 ? displayItems[paginationOn] : displayItems}
+        {prepearedResults.pages > 1
+          ? displayItems[paginationOn - 1]
+          : displayItems}
       </Grid>
       {prepearedResults.pages > 1 && (
         <div className={commonClasses.paginationContainer}>
           <Pagination
+            variant="outlined"
+            shape="rounded"
             page={paginationOn}
-            onChange={(e, p) => setPaginationOn(p - 1)}
+            onChange={(e, p) => setPaginationOn(p)}
             defaultPage={0}
             count={prepearedResults.pages}
             size="small"

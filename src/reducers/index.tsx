@@ -429,7 +429,7 @@ const rootReducer: Reducer<StateProps, Action> = (
     case ADD_TO_PLAYLIST:
       const withAddedToPlaylist = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.name === (action as addToPlaylistAction).payload.name) {
+        if (pl.id === (action as addToPlaylistAction).payload.id) {
           pl.items.push((action as addToPlaylistAction).payload.item);
           pl.items = pl.items.map((it, i) => {
             const item = it;

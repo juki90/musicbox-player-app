@@ -38,7 +38,7 @@ type removeFromCollectionAction = {
 type addToPlaylistAction = {
   type: string;
   payload: {
-    name: string;
+    id: number;
     item: Item;
   };
 };

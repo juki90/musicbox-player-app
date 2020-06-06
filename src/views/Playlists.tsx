@@ -6,16 +6,13 @@ import { theme } from "../styles/theme";
 import Box from "@material-ui/core/Box";
 import { useCommonStyles } from "./Root";
 import { AppBar, Tabs, Tab, Button, Card } from "@material-ui/core";
-import SinglePlaylist from "./../components/SinglePlaylist";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import SortByAlphaIcon from "@material-ui/icons/SortByAlpha";
 import TitleIcon from "@material-ui/icons/Title";
-import Item from "../components/Item";
 import { connect } from "react-redux";
 import PlaylistModal from "../components/PlaylistModal";
-import prepeareToPagination from "./../utils/prepeareToPagination";
 import {
   addNewPlaylist as addNewPlaylistAction,
   renamePlaylist as renamePlaylistAction,
@@ -24,7 +21,8 @@ import {
   sortPlaylist as sortPlaylistAction,
   removeFromCollection as removeFromCollectionAction,
 } from "./../actions/index";
-import Pagination from "@material-ui/lab/Pagination";
+import Item from "./../components/Item";
+import ItemList from "./../components/ItemList";
 
 const useStyles = makeStyles({
   selected: {
@@ -71,13 +69,6 @@ const Playlists: React.FC<PlaylistsProps> = ({
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [paginationOn, setPaginationOn] = useState<{
-    id: number;
-    page: number;
-  }>({
-    id: 0,
-    page: 0,
-  });
   const [playlistModal, setPlaylistModal] = useState<string>("");
 
   const handleTabChange: (
@@ -85,10 +76,6 @@ const Playlists: React.FC<PlaylistsProps> = ({
     n: number
   ) => void = (e, n) => {
     setActiveTab(n);
-    setPaginationOn({
-      id: n,
-      page: 0,
-    });
   };
 
   const handlePlaylistModal = (to: string) => {
@@ -110,41 +97,6 @@ const Playlists: React.FC<PlaylistsProps> = ({
     setPlaylistModal("");
     renamePlaylist(name, id);
   };
-
-  const allPlaylistsElements = playlists.map((pl: Playlist) => {
-    const singlePlaylist = prepeareToPagination(pl.items, 5);
-    console.log(singlePlaylist);
-  });
-
-  const prepearedCollection = prepeareToPagination(collection, 5);
-
-  const displayItems =
-    prepearedCollection.pages === 1 && activeTab === 0
-      ? (prepearedCollection.results as Item[]).map((r: Item) => (
-          <Item
-            key={`i-col-${r.id}`}
-            type="playlist"
-            title={r.title}
-            desc={r.desc}
-            link={r.link}
-            added={r.added}
-            onRemove={() => removeFromCollection(r.link)}
-          />
-        ))
-      : (prepearedCollection.results as Item[][]).map((p: Item[]) => {
-          const page = p.map((r: Item) => (
-            <Item
-              key={`i-col-${r.id}`}
-              type="playlist"
-              title={r.title}
-              desc={r.desc}
-              link={r.link}
-              added={r.added}
-              onRemove={() => removeFromCollection(r.link)}
-            />
-          ));
-          return page;
-        });
 
   const playlistTabs = playlists.map((p: Playlist, i: number) => (
     <Tab
@@ -236,30 +188,17 @@ const Playlists: React.FC<PlaylistsProps> = ({
             </Box>
           </AppBar>
           <Card>
-            <SinglePlaylist value={activeTab} index={0}>
-              {prepearedCollection.pages > 1
-                ? displayItems[paginationOn.page]
-                : displayItems}
-            </SinglePlaylist>
+            <ItemList
+              fromItems={
+                activeTab > 0 ? playlists[activeTab - 1].items : collection
+              }
+              activeTab={activeTab}
+              itemsPerPage={10}
+              rmCollection={removeFromCollection}
+              rmPlaylist={removeFromPlaylist}
+            />
           </Card>
-          <Box>
-            <div className={commonClasses.paginationContainer}>
-              {prepearedCollection.pages > 1 && activeTab === 0 && (
-                <Pagination
-                  onChange={(e, p) =>
-                    setPaginationOn({
-                      id: activeTab,
-                      page: p - 1,
-                    })
-                  }
-                  count={prepearedCollection.pages}
-                  size="small"
-                  hideNextButton={true}
-                  hidePrevButton={true}
-                />
-              )}
-            </div>
-          </Box>
+          <Box></Box>
         </Paper>
         {playlistModal && (
           <PlaylistModal
