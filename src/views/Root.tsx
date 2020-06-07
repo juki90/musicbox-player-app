@@ -39,13 +39,10 @@ export const useCommonStyles = makeStyles({
     marginBottom: "1em",
   },
   contentHeading: {
-    margin: "1em 0",
+    margin: "0.5em 0",
   },
   cardOuter: {
     padding: "1.5em 1.5em 6em 1.5em",
-    "& .MuiTypography-root": {
-      padding: "0.5em",
-    },
   },
   viewButton: {
     margin: "0.5em 0.5em 1em 0",

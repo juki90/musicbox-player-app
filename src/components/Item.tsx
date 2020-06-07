@@ -31,6 +31,7 @@ const useStyles = makeStyles({
           padding: "10px",
           "& img": {
             alignSelf: "center",
+            flexShrink: 0,
           },
           "& h6": {
             fontSize: "80%",
@@ -68,7 +69,6 @@ const useStyles = makeStyles({
   },
 
   videoMiniature: {
-    display: "flex",
     margin: "0 0 0.4em 0",
     padding: 0,
   },
@@ -83,7 +83,9 @@ const useStyles = makeStyles({
     display: "block",
     height: "auto",
     width: "80px",
-    alignSelf: "center",
+    [theme.breakpoints.up("md")]: {
+      width: "150px",
+    },
   },
   videoInfo: {
     padding: "0.5em",
@@ -91,8 +93,11 @@ const useStyles = makeStyles({
     "& h6": {
       fontWeight: "bold",
     },
+    "& p": {
+      padding: "0.5em 0 1.25em 0",
+    },
     "& button": {
-      margin: "0 0 10px 10px",
+      margin: "0 10px 10px 0",
     },
     [theme.breakpoints.up("sm")]: {
       padding: " 0 0 0 1em",
@@ -254,7 +259,7 @@ const Item: React.FC<ItemProps> = (props) => {
               className={classes.videoInfo}
             >
               <Typography variant="h6">
-                {title.length > 80 ? `${title.slice(0, 80)}...` : title}
+                {title.length > 100 ? `${title.slice(0, 100)}...` : title}
               </Typography>
               {type !== "playlist" && type !== "player" && (
                 <Typography variant="body1">

@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     display: "flex",
     margin: "1.5em auto",
     width: "140px",
+    fontSize: "1em",
     justifyContent: "space-around",
     "& a": {
       color: "#000",
@@ -29,6 +30,12 @@ const useStyles = makeStyles({
         textDecoration: "none",
       },
     },
+  },
+  subtitleParagraph: {
+    margin: 0,
+  },
+  homeLink: {
+    padding: 0,
   },
 });
 
@@ -57,7 +64,7 @@ const Home: React.FC = () => {
             </Typography>
             <Typography
               align="center"
-              className={commonClasses.paragraph}
+              className={classes.subtitleParagraph}
               variant="body1"
             >
               Search now
@@ -79,12 +86,24 @@ const Home: React.FC = () => {
               First of all, you will need to search for videos, you may choose
               between searching in youtube, vimeo or both at the same time. Go
               to
-              <Link href={routes.search}> search here</Link>.
+              <Link className={classes.homeLink} href={routes.search}>
+                {" "}
+                search here
+              </Link>
+              .
             </Typography>
             <Typography className={commonClasses.paragraph} variant="body1">
               When you search for videos, you can add them to{" "}
-              <Link href={routes.collection}> collection</Link> or
-              <Link href={routes.playlists}> playlists</Link>.
+              <Link className={classes.homeLink} href={routes.collection}>
+                {" "}
+                collection
+              </Link>{" "}
+              or
+              <Link className={classes.homeLink} href={routes.playlists}>
+                {" "}
+                playlists
+              </Link>
+              .
             </Typography>
             <Typography className={commonClasses.paragraph} variant="body1">
               This app is using Youtube API and Vimeo API

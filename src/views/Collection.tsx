@@ -41,11 +41,24 @@ const Collection: React.FC<CollectionProps> = ({
   );
   const prepCollection = prepeareToPagination(collectionElements);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const regexSearch = new RegExp(`${e.target.value}`, "i");
+  const handleSearchChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    items: Item[]
+  ) => {
+    const regexStrings = e.target.value
+      .replace(/\s+/, " ")
+      .split(" ")
+      .filter((s) => s !== "");
+
+    const regexesSearch = regexStrings.map((s) => {
+      return new RegExp(`${s}`, "i");
+    });
+
+    console.log(regexesSearch);
+
     setSearchValue(e.target.value);
     setCollectionElements(
-      (collection as Item[]).filter((r) => regexSearch.test(r.title))
+      items.filter((ce) => regexesSearch.every((r) => r.test(ce.title)))
     );
   };
 
@@ -96,7 +109,12 @@ const Collection: React.FC<CollectionProps> = ({
               id="search"
               className={classes.searchButton}
               label="Search"
-              onChange={handleSearchChange}
+              onChange={(e) =>
+                handleSearchChange(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                  collection
+                )
+              }
               value={searchValue}
             />
           </Box>

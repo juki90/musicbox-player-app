@@ -84,11 +84,15 @@ export const deletePlaylist: (id: number) => Action = (id: number) => {
   };
 };
 
-export const sortPlaylist: (id: number) => Action = (id: number) => {
+export const sortPlaylist: (id: number, way: string) => Action = (
+  id: number,
+  way: string
+) => {
   return {
     type: SORT_PLAYLIST,
     payload: {
       id,
+      way,
     },
   };
 };

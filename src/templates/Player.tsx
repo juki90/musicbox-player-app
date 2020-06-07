@@ -130,6 +130,10 @@ const useStyles = makeStyles({
     margin: "0 auto",
     padding: "1em 0",
     width: "300px",
+    "& .Mui-disabled": {
+      color: theme.palette.primary.main,
+      opacity: "0.4",
+    },
   },
   controlBtn: {
     display: "inline-block",
@@ -295,9 +299,10 @@ const Player: React.FC<PlayerProps> = (props) => {
             )}
             <Box className={classes.controlButtons}>
               <IconButton
-                color="primary"
+                color="default"
+                disabled={true}
                 className={classes.controlBtn}
-                aria-label="go to previous video or music"
+                aria-label="go to previous video or track"
               >
                 <SkipPreviousIcon fontSize="large" />
               </IconButton>
@@ -319,7 +324,7 @@ const Player: React.FC<PlayerProps> = (props) => {
               <IconButton
                 color="primary"
                 className={classes.controlBtn}
-                aria-label="go to next video or music"
+                aria-label="go to next video or track"
               >
                 <SkipNextIcon fontSize="large" />
               </IconButton>

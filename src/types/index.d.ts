@@ -77,6 +77,7 @@ type sortPlaylistAction = {
   type: string;
   payload: {
     id: number;
+    way: string;
   };
 };
 

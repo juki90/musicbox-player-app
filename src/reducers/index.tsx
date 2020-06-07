@@ -496,12 +496,58 @@ const rootReducer: Reducer<StateProps, Action> = (
     case SORT_PLAYLIST:
       const sortedItems = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.id === (action as sortPlaylistAction).payload.id) {
+        const way = (action as sortPlaylistAction).payload.way;
+        if (
+          pl.id === (action as sortPlaylistAction).payload.id &&
+          way === "name"
+        ) {
           pl.items = pl.items.sort((a, b) => {
             if (a.title < b.title) {
               return -1;
             }
             if (a.title > b.title) {
+              return 1;
+            }
+            return 0;
+          });
+        }
+        if (
+          pl.id === (action as sortPlaylistAction).payload.id &&
+          way === "name-reversed"
+        ) {
+          pl.items = pl.items.sort((a, b) => {
+            if (a.title < b.title) {
+              return 1;
+            }
+            if (a.title > b.title) {
+              return -1;
+            }
+            return 0;
+          });
+        }
+        if (
+          pl.id === (action as sortPlaylistAction).payload.id &&
+          way === "date"
+        ) {
+          pl.items = pl.items.sort((a, b) => {
+            if (a.added.getTime() < b.added.getTime()) {
+              return 1;
+            }
+            if (a.added.getTime() > b.added.getTime()) {
+              return -1;
+            }
+            return 0;
+          });
+        }
+        if (
+          pl.id === (action as sortPlaylistAction).payload.id &&
+          way === "date-reversed"
+        ) {
+          pl.items = pl.items.sort((a, b) => {
+            if (a.added.getTime() < b.added.getTime()) {
+              return -1;
+            }
+            if (a.added.getTime() > b.added.getTime()) {
               return 1;
             }
             return 0;

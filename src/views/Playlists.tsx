@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import { theme } from "../styles/theme";
 import Box from "@material-ui/core/Box";
 import { useCommonStyles } from "./Root";
-import { AppBar, Tabs, Tab, Button, Card } from "@material-ui/core";
+import { AppBar, Tabs, Tab, Button, Card, Menu } from "@material-ui/core";
 import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
@@ -23,6 +23,7 @@ import {
 } from "./../actions/index";
 import Item from "./../components/Item";
 import ItemList from "./../components/ItemList";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles({
   selected: {
@@ -51,7 +52,7 @@ interface PlaylistsProps {
   addNewPlaylist: (name: string) => void;
   renamePlaylist: (name: string, id: number) => void;
   deletePlaylist: (id: number) => void;
-  sortPlaylist: (id: number) => void;
+  sortPlaylist: (id: number, way: string) => void;
   removeFromPlaylist: (id: number, link: string) => void;
   removeFromCollection: (link: string) => void;
 }
@@ -70,6 +71,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
   const commonClasses = useCommonStyles();
   const [activeTab, setActiveTab] = useState<number>(0);
   const [playlistModal, setPlaylistModal] = useState<string>("");
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleTabChange: (
     event: React.ChangeEvent<Record<string, unknown>>,
@@ -96,6 +98,11 @@ const Playlists: React.FC<PlaylistsProps> = ({
   const handleEditPlaylist = (name: string, id: number) => {
     setPlaylistModal("");
     renamePlaylist(name, id);
+  };
+
+  const handleSortPlaylist = (id: number, way: string) => {
+    sortPlaylist(id, way);
+    setAnchorEl(null);
   };
 
   const playlistTabs = playlists.map((p: Playlist, i: number) => (
@@ -157,7 +164,9 @@ const Playlists: React.FC<PlaylistsProps> = ({
                     color="default"
                     startIcon={<SortByAlphaIcon />}
                     size="small"
-                    onClick={() => sortPlaylist(activeTab - 1)}
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      setAnchorEl(e.currentTarget)
+                    }
                   >
                     Sort
                   </Button>
@@ -213,6 +222,30 @@ const Playlists: React.FC<PlaylistsProps> = ({
             onCancel={() => handlePlaylistModal("")}
           />
         )}
+        <Menu
+          id="sort-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={() => setAnchorEl(null)}
+        >
+          <MenuItem onClick={() => handleSortPlaylist(activeTab - 1, "name")}>
+            By name A-Z
+          </MenuItem>
+          <MenuItem
+            onClick={() => handleSortPlaylist(activeTab - 1, "name-reversed")}
+          >
+            By name reversed Z-A
+          </MenuItem>
+          <MenuItem onClick={() => handleSortPlaylist(activeTab - 1, "date")}>
+            From most recent to oldest
+          </MenuItem>
+          <MenuItem
+            onClick={() => handleSortPlaylist(activeTab - 1, "date-reversed")}
+          >
+            From oldest to most recent
+          </MenuItem>
+        </Menu>
       </ThemeProvider>
     </Box>
   );
@@ -243,7 +276,8 @@ const mapDispatchToProps = (
   removeFromCollection: (link: string) =>
     dispatch(removeFromCollectionAction(link)),
   deletePlaylist: (id: number) => dispatch(deletePlaylistAction(id)),
-  sortPlaylist: (id: number) => dispatch(sortPlaylistAction(id)),
+  sortPlaylist: (id: number, way: string) =>
+    dispatch(sortPlaylistAction(id, way)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playlists);
