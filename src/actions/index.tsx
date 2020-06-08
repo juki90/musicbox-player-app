@@ -6,6 +6,7 @@ export const ADD_NEW_PLAYLIST = "ADD_NEW_PLAYLIST";
 export const RENAME_PLAYLIST = "RENAME_PLAYLIST";
 export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
+export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
 
 export const addToCollection: (item: Item) => Action = (item: Item) => {
   return {
@@ -93,6 +94,21 @@ export const sortPlaylist: (id: number, way: string) => Action = (
     payload: {
       id,
       way,
+    },
+  };
+};
+
+export const moveInPlaylist: (
+  id: number,
+  vidId: number,
+  toVid: number
+) => Action = (id: number, vidId: number, toVid: number) => {
+  return {
+    type: MOVE_IN_PLAYLIST,
+    payload: {
+      id,
+      vidId,
+      toVid,
     },
   };
 };

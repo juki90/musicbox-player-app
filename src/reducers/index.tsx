@@ -9,6 +9,7 @@ import {
   SORT_PLAYLIST,
 } from "../actions";
 import { Reducer } from "redux";
+import { MOVE_IN_PLAYLIST } from "./../actions/index";
 
 const initialState: StateProps = {
   collection: [
@@ -553,11 +554,50 @@ const rootReducer: Reducer<StateProps, Action> = (
             return 0;
           });
         }
+        pl.items = pl.items.map((it, i) => {
+          const item = it;
+          item.id = i;
+          return item;
+        });
         return pl;
       });
       return {
         ...state,
         playlists: sortedItems,
+      };
+    case MOVE_IN_PLAYLIST:
+      const withMovedInPlaylist = [...state.playlists].map((p) => {
+        const pl = p;
+        if (pl.id === (action as moveInPlaylistAction).payload.id) {
+          pl.items.map((it) => {
+            const item = it;
+            if (item.id === (action as moveInPlaylistAction).payload.vidId) {
+              item.id = (action as moveInPlaylistAction).payload.toVid + 0.5;
+            }
+            return item;
+          });
+
+          pl.items = pl.items.sort((a, b) => {
+            if (a.id < b.id) {
+              return -1;
+            }
+            if (a.id > b.id) {
+              return 1;
+            }
+            return 0;
+          });
+
+          pl.items = pl.items.map((it, i) => {
+            const item = it;
+            item.id = i;
+            return item;
+          });
+        }
+        return pl;
+      });
+      return {
+        ...state,
+        playlists: withMovedInPlaylist,
       };
   }
   return state;

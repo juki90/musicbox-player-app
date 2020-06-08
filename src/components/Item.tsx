@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MutableRefObject } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -155,12 +155,17 @@ interface ItemProps {
   link: string;
   playlists: Playlist[];
   inCollection?: boolean;
+  num?: number;
+  inTab?: number;
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
   addToPlaylist: (id: number, item: Item) => void;
+  onMove?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
-const Item: React.FC<ItemProps> = (props) => {
+const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
+  props
+) => {
   const {
     grid,
     type,
@@ -170,9 +175,12 @@ const Item: React.FC<ItemProps> = (props) => {
     inCollection,
     playlists,
     link,
+    num,
+    inTab,
     onAdd,
     onRemove,
     addToPlaylist,
+    onMove,
   } = props;
 
   const classes = useStyles(props);
@@ -232,7 +240,15 @@ const Item: React.FC<ItemProps> = (props) => {
   ));
 
   return (
-    <Grid item xs={12} sm={grid && 6} md={grid && 4} lg={grid && 3}>
+    <Grid
+      item
+      xs={12}
+      sm={grid && 6}
+      md={grid && 4}
+      lg={grid && 3}
+      data-num={num}
+      data-type="item"
+    >
       <Card className={classes.videoMiniature}>
         <CardContent className={classes.videoMiniatureContent}>
           <Box
@@ -334,24 +350,28 @@ const Item: React.FC<ItemProps> = (props) => {
                 </>
               )}
             </Box>
-            {(type === "playlist" || type === "player") && (
-              <Box className={classes.playlistActions}>
-                <Button
-                  className={classes.videoButtonPlaylist}
-                  variant="contained"
-                  color="default"
-                  size="small"
-                  startIcon={<UnfoldMoreIcon />}
-                ></Button>
-                <Button
-                  className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
-                  variant="contained"
-                  size="small"
-                  startIcon={<DeleteForeverIcon />}
-                  onClick={onRemove}
-                ></Button>
-              </Box>
-            )}
+            {inTab !== undefined &&
+              inTab > 0 &&
+              (type === "playlist" || type === "player") && (
+                <Box className={classes.playlistActions}>
+                  <Button
+                    className={classes.videoButtonPlaylist}
+                    variant="contained"
+                    color="default"
+                    size="small"
+                    startIcon={<UnfoldMoreIcon />}
+                    onMouseDown={onMove}
+                    data-num={num}
+                  ></Button>
+                  <Button
+                    className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
+                    variant="contained"
+                    size="small"
+                    startIcon={<DeleteForeverIcon />}
+                    onClick={onRemove}
+                  ></Button>
+                </Box>
+              )}
             {(type === "collection" || type === "search-result") && (
               <Menu
                 id="playlist-menu"

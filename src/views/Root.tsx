@@ -26,7 +26,6 @@ export const useCommonStyles = makeStyles({
   introHeading: {
     textAlign: "center",
     fontWeight: "bold",
-    marginTop: "0.5em",
     marginBottom: "1em",
     borderRadius: "5px",
     padding: "1em",

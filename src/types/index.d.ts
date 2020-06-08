@@ -81,6 +81,15 @@ type sortPlaylistAction = {
   };
 };
 
+type moveInPlaylistAction = {
+  type: string;
+  payload: {
+    id: number;
+    vidId: number;
+    toVid: number;
+  };
+};
+
 type Action =
   | addToCollectionAction
   | removeFromCollectionAction
@@ -88,4 +97,5 @@ type Action =
   | removeFromPlaylistAction
   | addNewPlaylistAction
   | deletePlaylistAction
-  | sortPlaylistAction;
+  | sortPlaylistAction
+  | moveInPlaylistAction;

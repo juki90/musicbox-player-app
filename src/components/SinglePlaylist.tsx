@@ -1,4 +1,4 @@
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { Box } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
@@ -7,11 +7,9 @@ interface SinglePlaylistProps {
   value: number;
 }
 
-const SinglePlaylist: React.FC<SinglePlaylistProps> = ({
-  index,
-  value,
-  children,
-}) => {
+const SinglePlaylist: React.FC<
+  SinglePlaylistProps & HTMLAttributes<HTMLDivElement>
+> = ({ index, value, children }) => {
   if (value === index) {
     return (
       <Box p="0">
