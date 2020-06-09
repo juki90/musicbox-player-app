@@ -1,4 +1,4 @@
-import React, { MutableRefObject } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -64,27 +64,69 @@ const useStyles = makeStyles({
     padding: "10px",
   },
   videoMiniatureContent: {
+    position: "relative",
+    zIndex: 10,
     width: "100%",
     padding: "0 !important",
   },
 
   videoMiniature: {
+    position: "relative",
     margin: "0 0 0.4em 0",
     padding: 0,
+    zIndex: 9,
+    "&:before": {
+      content: "''",
+      position: "absolute",
+      top: 0,
+      left: "-100%",
+      display: "block",
+      width: "200%",
+      height: "100%",
+      zIndex: 9,
+      backgroundSize: "100%",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "left center",
+      animation: (props) => {
+        return props.playing ? "slideLeftRight 1s infinite alternate" : "none";
+      },
+      backgroundImage: (props) => {
+        return props.playing
+          ? "linear-gradient(90deg, rgba(186,251,255,0) 0%, rgba(133,234,255,1) 50%, rgba(152,238,255,0) 100%)"
+          : "none";
+      },
+    },
   },
-  videoImageBig: {
+  videoImage: {
     display: "block",
     height: "auto",
-    minWidth: "260px",
-    maxWidth: "260px",
+    minWidth: (props) => {
+      return props.type !== "playlist" && props.type !== "player"
+        ? "240px"
+        : "90px";
+    },
+    width: (props) => {
+      return props.type !== "playlist" && props.type !== "player"
+        ? "240px"
+        : "90px";
+    },
     alignSelf: "center",
-  },
-  videoImageSmall: {
-    display: "block",
-    height: "auto",
-    width: "80px",
+    cursor: "pointer",
+    textAlign: "center",
+    "& img": {
+      width: "100%",
+    },
     [theme.breakpoints.up("md")]: {
-      width: "150px",
+      minWidth: (props) => {
+        return props.type !== "playlist" && props.type !== "player"
+          ? "280px"
+          : "110px";
+      },
+      width: (props) => {
+        return props.type !== "playlist" && props.type !== "player"
+          ? "280px"
+          : "140px";
+      },
     },
   },
   videoInfo: {
@@ -157,6 +199,7 @@ interface ItemProps {
   inCollection?: boolean;
   num?: number;
   inTab?: number;
+  playing?: boolean;
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
   addToPlaylist: (id: number, item: Item) => void;
@@ -177,6 +220,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     link,
     num,
     inTab,
+    playing = false,
     onAdd,
     onRemove,
     addToPlaylist,
@@ -255,18 +299,15 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
             display="flex"
             className={grid ? classes.videoItemGrid : classes.videoItem}
           >
-            <img
-              className={
-                type !== "playlist" && type !== "player"
-                  ? classes.videoImageBig
-                  : classes.videoImageSmall
-              }
-              src={getVideoThumbnail(link)}
-              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                e.currentTarget.src = blankVideo;
-              }}
-              alt="Video miniature"
-            />
+            <Box className={classes.videoImage}>
+              <img
+                src={getVideoThumbnail(link)}
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  e.currentTarget.src = blankVideo;
+                }}
+                alt="Video miniature"
+              />
+            </Box>
             <Box
               display={(type === "playlist" || type === "player") && "flex"}
               alignItems={
@@ -276,6 +317,12 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
             >
               <Typography variant="h6">
                 {title.length > 100 ? `${title.slice(0, 100)}...` : title}
+                {playing && (type === "playlist" || type === "player") && (
+                  <>
+                    <br />
+                    <Typography variant="h6">(NOW PLAYING)</Typography>
+                  </>
+                )}
               </Typography>
               {type !== "playlist" && type !== "player" && (
                 <Typography variant="body1">

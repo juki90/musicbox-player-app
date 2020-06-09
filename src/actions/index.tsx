@@ -7,6 +7,7 @@ export const RENAME_PLAYLIST = "RENAME_PLAYLIST";
 export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
 export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
+export const PLAY_VIDEO = "PLAY_VIDEO";
 
 export const addToCollection: (item: Item) => Action = (item: Item) => {
   return {
@@ -109,6 +110,19 @@ export const moveInPlaylist: (
       id,
       vidId,
       toVid,
+    },
+  };
+};
+
+export const playVideo: (id: number, vidId: number) => Action = (
+  id: number,
+  vidId: number
+) => {
+  return {
+    type: PLAY_VIDEO,
+    payload: {
+      id,
+      vidId,
     },
   };
 };

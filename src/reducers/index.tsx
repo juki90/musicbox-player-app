@@ -386,6 +386,18 @@ const initialState: StateProps = {
       name: "Second playlist",
     },
   ],
+  inPlayer: {
+    id: 0,
+    added: new Date(2020, 5, 3, 9, 20),
+    link: "https://www.youtube.com/watch?v=fMR6pXMCMYo",
+    title: "Tiësto - Adagio For Strings",
+    desc: `Stream & Download: https://tiesto.choons.at/justbe
+  
+  Subscribe to Black Hole Recordings TV : ‪http://bit.ly/SubscribeToYoutube‬
+  Spotify: ‪http://bit.ly/BlackHoleSpotify‬
+  Facebook: ‪https://www.facebook.com/blackholerec...
+  Twitter: ‪http://twitter.com/BlackHoleRec‬`,
+  },
 };
 
 const rootReducer: Reducer<StateProps, Action> = (

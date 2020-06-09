@@ -41,6 +41,7 @@ const useStyles = makeStyles({
           height: "80px",
           paddingRight: "50px",
           backgroundColor: "#121212",
+          zIndex: 999,
         }
       : {
           position: "fixed",

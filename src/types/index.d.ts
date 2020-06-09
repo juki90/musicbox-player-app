@@ -6,6 +6,7 @@ type Item = {
   link: string;
   title: string;
   desc: string;
+  playing?: boolean;
 };
 
 type Playlist = {
@@ -17,6 +18,7 @@ type Playlist = {
 type StateProps = {
   collection: Item[];
   playlists: Playlist[];
+  inPlayer: Item;
 };
 
 // ACTIONS
@@ -90,6 +92,14 @@ type moveInPlaylistAction = {
   };
 };
 
+type playVideoAction = {
+  type: string;
+  payload: {
+    id: number;
+    vidId: number;
+  };
+};
+
 type Action =
   | addToCollectionAction
   | removeFromCollectionAction
@@ -98,4 +108,5 @@ type Action =
   | addNewPlaylistAction
   | deletePlaylistAction
   | sortPlaylistAction
-  | moveInPlaylistAction;
+  | moveInPlaylistAction
+  | playVideoAction;
