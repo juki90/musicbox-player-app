@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -18,8 +18,12 @@ import AddIcon from "@material-ui/icons/Add";
 import theme from "../styles/theme";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
 import CheckIcon from "@material-ui/icons/Check";
+import StopIcon from "@material-ui/icons/Stop";
 import { connect } from "react-redux";
-import { addToPlaylist as addToPlaylistAction } from "../actions";
+import {
+  addToPlaylist as addToPlaylistAction,
+  playVideo as playVideoAction,
+} from "../actions";
 
 const useStyles = makeStyles({
   videoItem: (props: ItemProps) => {
@@ -68,6 +72,16 @@ const useStyles = makeStyles({
     zIndex: 10,
     width: "100%",
     padding: "0 !important",
+    "&:hover": {
+      cursor: (props) => {
+        return props.type === "player" ? "pointer" : "normal";
+      },
+      backgroundImage: (props) => {
+        return props.type === "player"
+          ? "linear-gradient(90deg, rgba(186,251,255,0) 0%, rgba(133,234,255,1) 50%, rgba(152,238,255,0) 100%)"
+          : "none";
+      },
+    },
   },
 
   videoMiniature: {
@@ -197,13 +211,14 @@ interface ItemProps {
   link: string;
   playlists: Playlist[];
   inCollection?: boolean;
-  num?: number;
-  inTab?: number;
-  playing?: boolean;
+  num: number;
+  inTab: number;
+  playing: boolean;
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
   addToPlaylist: (id: number, item: Item) => void;
   onMove?: (e: React.MouseEvent<HTMLElement>) => void;
+  playVideo: (vidId: number, plId?: number) => void;
 }
 
 const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
@@ -220,15 +235,16 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     link,
     num,
     inTab,
-    playing = false,
+    playing,
     onAdd,
     onRemove,
     addToPlaylist,
     onMove,
+    playVideo,
   } = props;
 
   const classes = useStyles(props);
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClickPlaylistAdd = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -266,6 +282,18 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     }
   };
 
+  const handlePlayVideo = () => {
+    if (playing) {
+      playVideo(-1);
+      return;
+    }
+    if (inTab === 0) {
+      playVideo(num);
+      return;
+    }
+    playVideo(num, inTab - 1);
+  };
+
   const playlistMenuItems = playlists.map((p: Playlist) => (
     <MenuItem
       key={`mi-${p.id}`}
@@ -294,7 +322,10 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
       data-type="item"
     >
       <Card className={classes.videoMiniature}>
-        <CardContent className={classes.videoMiniatureContent}>
+        <CardContent
+          className={classes.videoMiniatureContent}
+          onClick={type === "player" ? handlePlayVideo : undefined}
+        >
           <Box
             display="flex"
             className={grid ? classes.videoItemGrid : classes.videoItem}
@@ -317,6 +348,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
             >
               <Typography variant="h6">
                 {title.length > 100 ? `${title.slice(0, 100)}...` : title}
+
                 {playing && (type === "playlist" || type === "player") && (
                   <>
                     <br />
@@ -329,7 +361,6 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                   {desc.length > 250 ? `${desc.slice(0, 250)}...` : desc}
                 </Typography>
               )}
-
               {type === "collection" && (
                 <>
                   <Button
@@ -337,9 +368,10 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     variant="contained"
                     color="primary"
                     size="small"
-                    startIcon={<PlayArrowIcon />}
+                    onClick={handlePlayVideo}
+                    startIcon={playing ? <StopIcon /> : <PlayArrowIcon />}
                   >
-                    Play
+                    {playing ? "Stop" : "Play"}
                   </Button>
                   <Button
                     className={classes.videoButton}
@@ -397,28 +429,26 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                 </>
               )}
             </Box>
-            {inTab !== undefined &&
-              inTab > 0 &&
-              (type === "playlist" || type === "player") && (
-                <Box className={classes.playlistActions}>
-                  <Button
-                    className={classes.videoButtonPlaylist}
-                    variant="contained"
-                    color="default"
-                    size="small"
-                    startIcon={<UnfoldMoreIcon />}
-                    onMouseDown={onMove}
-                    data-num={num}
-                  ></Button>
-                  <Button
-                    className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
-                    variant="contained"
-                    size="small"
-                    startIcon={<DeleteForeverIcon />}
-                    onClick={onRemove}
-                  ></Button>
-                </Box>
-              )}
+            {inTab !== undefined && inTab > 0 && type === "playlist" && (
+              <Box className={classes.playlistActions}>
+                <Button
+                  className={classes.videoButtonPlaylist}
+                  variant="contained"
+                  color="default"
+                  size="small"
+                  startIcon={<UnfoldMoreIcon />}
+                  onMouseDown={onMove}
+                  data-num={num}
+                ></Button>
+                <Button
+                  className={`${classes.videoButtonPlaylist} ${classes.dangerButton}`}
+                  variant="contained"
+                  size="small"
+                  startIcon={<DeleteForeverIcon />}
+                  onClick={onRemove}
+                ></Button>
+              </Box>
+            )}
             {(type === "collection" || type === "search-result") && (
               <Menu
                 id="playlist-menu"
@@ -466,6 +496,8 @@ const mapStateToProps = (state: StateProps) => {
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   addToPlaylist: (id: number, item: Item) =>
     dispatch(addToPlaylistAction(id, item)),
+  playVideo: (vidId: number, plId?: number) =>
+    dispatch(playVideoAction(vidId, plId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

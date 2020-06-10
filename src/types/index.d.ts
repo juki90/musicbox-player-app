@@ -18,7 +18,7 @@ type Playlist = {
 type StateProps = {
   collection: Item[];
   playlists: Playlist[];
-  inPlayer: Item;
+  inPlayer: Item | undefined;
 };
 
 // ACTIONS
@@ -95,8 +95,8 @@ type moveInPlaylistAction = {
 type playVideoAction = {
   type: string;
   payload: {
-    id: number;
     vidId: number;
+    plId?: number;
   };
 };
 

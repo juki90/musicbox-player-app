@@ -114,15 +114,15 @@ export const moveInPlaylist: (
   };
 };
 
-export const playVideo: (id: number, vidId: number) => Action = (
-  id: number,
-  vidId: number
+export const playVideo: (vidId: number, plId?: number) => Action = (
+  vidId: number,
+  plId?: number
 ) => {
   return {
     type: PLAY_VIDEO,
     payload: {
-      id,
       vidId,
+      plId,
     },
   };
 };

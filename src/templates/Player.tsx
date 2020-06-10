@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React from "react";
+import React, { useEffect, SetStateAction } from "react";
 import Box from "@material-ui/core/Box";
 import {
   makeStyles,
@@ -28,6 +28,7 @@ import ItemList from "../components/ItemList";
 import {
   removeFromCollection as removeFromCollectionAction,
   removeFromPlaylist as removeFromPlaylistAction,
+  playVideo as playVideoAction,
 } from "../actions";
 
 const useStyles = makeStyles({
@@ -202,21 +203,27 @@ interface PlayerProps {
   minimalized: boolean;
   playlists: Playlist[];
   collection: Item[];
+  inPlayer: Item | undefined;
   minimalize: React.Dispatch<React.SetStateAction<boolean>>;
   close: () => void;
   removeFromCollection: (link: string) => void;
   removeFromPlaylist: (id: number, link: string) => void;
+  playVideo: (vidId: number, plId?: number) => void;
+  setPlayerOn: (on: boolean) => void;
 }
 
 const Player: React.FC<PlayerProps> = (props) => {
   const {
-    close,
-    minimalize,
     minimalized,
     playlists,
     collection,
+    inPlayer,
+    close,
+    minimalize,
     removeFromCollection,
     removeFromPlaylist,
+    playVideo,
+    setPlayerOn,
   } = props;
   const classes = useStyles(props);
 
@@ -232,6 +239,7 @@ const Player: React.FC<PlayerProps> = (props) => {
     handleClosePlayer = () => {
       const element = document.querySelector("#main-body")!;
       element.classList.remove("scroll-lock");
+      playVideo(-1);
       close();
     },
     handleMinimalizePlayer = (on?: boolean) => {
@@ -376,6 +384,7 @@ const Player: React.FC<PlayerProps> = (props) => {
                   fromItems={tab > 0 ? playlists[tab - 1].items : collection}
                   activeTab={tab}
                   itemsPerPage={10}
+                  type="player"
                   rmCollection={removeFromCollection}
                   rmPlaylist={removeFromPlaylist}
                 />
@@ -389,10 +398,11 @@ const Player: React.FC<PlayerProps> = (props) => {
 };
 
 const mapStateToProps = (state: StateProps) => {
-  const { collection, playlists } = state;
+  const { collection, playlists, inPlayer } = state;
   return {
     collection,
     playlists,
+    inPlayer,
   };
 };
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
@@ -400,6 +410,8 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
     dispatch(removeFromCollectionAction(link)),
   removeFromPlaylist: (id: number, link: string) =>
     dispatch(removeFromPlaylistAction(id, link)),
+  playVideo: (vidId: number, plId?: number) =>
+    dispatch(playVideoAction(vidId, plId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Player);

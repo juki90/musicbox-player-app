@@ -73,6 +73,9 @@ const Collection: React.FC<CollectionProps> = ({
             desc={r.desc}
             link={r.link}
             added={r.added}
+            num={r.id}
+            inTab={0}
+            playing={r.playing as boolean}
             onRemove={() => removeFromCollection(r.link)}
           />
         ))
@@ -86,6 +89,9 @@ const Collection: React.FC<CollectionProps> = ({
               desc={r.desc}
               link={r.link}
               added={r.added}
+              num={r.id}
+              inTab={0}
+              playing={r.playing as boolean}
               onRemove={() => removeFromCollection(r.link)}
             />
           ));

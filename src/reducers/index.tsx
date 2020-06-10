@@ -7,6 +7,7 @@ import {
   RENAME_PLAYLIST,
   DELETE_PLAYLIST,
   SORT_PLAYLIST,
+  PLAY_VIDEO,
 } from "../actions";
 import { Reducer } from "redux";
 import { MOVE_IN_PLAYLIST } from "./../actions/index";
@@ -386,18 +387,7 @@ const initialState: StateProps = {
       name: "Second playlist",
     },
   ],
-  inPlayer: {
-    id: 0,
-    added: new Date(2020, 5, 3, 9, 20),
-    link: "https://www.youtube.com/watch?v=fMR6pXMCMYo",
-    title: "Tiësto - Adagio For Strings",
-    desc: `Stream & Download: https://tiesto.choons.at/justbe
-  
-  Subscribe to Black Hole Recordings TV : ‪http://bit.ly/SubscribeToYoutube‬
-  Spotify: ‪http://bit.ly/BlackHoleSpotify‬
-  Facebook: ‪https://www.facebook.com/blackholerec...
-  Twitter: ‪http://twitter.com/BlackHoleRec‬`,
-  },
+  inPlayer: undefined,
 };
 
 const rootReducer: Reducer<StateProps, Action> = (
@@ -610,6 +600,76 @@ const rootReducer: Reducer<StateProps, Action> = (
       return {
         ...state,
         playlists: withMovedInPlaylist,
+      };
+    case PLAY_VIDEO:
+      if ((action as playVideoAction).payload.vidId === -1) {
+        return {
+          collection: state.collection.map((i) => {
+            const item = i;
+            item.playing = false;
+            return item;
+          }),
+          playlists: state.playlists.map((pl) => {
+            const playlist = pl;
+            playlist.items = playlist.items.map((i) => {
+              const item = i;
+              item.playing = false;
+              return item;
+            });
+            return playlist;
+          }),
+          inPlayer: undefined,
+        };
+      }
+
+      const withPlayingVideo: Playlist[] | Item[] =
+        (action as playVideoAction).payload.plId !== undefined
+          ? state.playlists.map((pl) => {
+              const playlist = pl;
+              if (playlist.id === (action as playVideoAction).payload.plId) {
+                playlist.items = playlist.items.map((i) => {
+                  const item = i;
+                  item.playing = false;
+                  if (item.id === (action as playVideoAction).payload.vidId) {
+                    item.playing = true;
+                  }
+                  return item;
+                });
+              }
+              return playlist;
+            })
+          : state.collection.map((i) => {
+              const item = i;
+              item.playing = false;
+              if (item.id === (action as playVideoAction).payload.vidId) {
+                item.playing = true;
+              }
+              return item;
+            });
+
+      return {
+        collection:
+          (action as playVideoAction).payload.plId !== undefined
+            ? state.collection
+            : (withPlayingVideo as Item[]),
+        playlists:
+          (action as playVideoAction).payload.plId !== undefined
+            ? (withPlayingVideo as Playlist[])
+            : state.playlists,
+        inPlayer:
+          (action as playVideoAction).payload.plId !== undefined
+            ? state.playlists
+                .filter(
+                  (pl) =>
+                    (pl.id === (action as playVideoAction).payload.plId) !==
+                    undefined
+                )[0]
+                .items.filter(
+                  (i) => i.id === (action as playVideoAction).payload.vidId
+                )[0]
+            : state.collection.filter(
+                (i) => i.id === (action as playVideoAction).payload.vidId
+              )[0],
       };
   }
   return state;

@@ -203,6 +203,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
               }
               activeTab={activeTab}
               itemsPerPage={10}
+              type="playlist"
               rmCollection={removeFromCollection}
               rmPlaylist={removeFromPlaylist}
             />
@@ -259,15 +260,7 @@ const mapStateToProps = (state: StateProps) => {
   };
 };
 
-const mapDispatchToProps = (
-  dispatch: (
-    arg0:
-      | addToCollectionAction
-      | removeFromCollectionAction
-      | addNewPlaylistAction
-      | deletePlaylistAction
-  ) => unknown
-) => ({
+const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   addNewPlaylist: (name: string) => dispatch(addNewPlaylistAction(name)),
   renamePlaylist: (name: string, id: number) =>
     dispatch(renamePlaylistAction(name, id)),

@@ -32,6 +32,7 @@ interface ItemListProps {
   activeTab: number;
   itemsPerPage: number;
   playlists?: Playlist[];
+  type: string;
   rmCollection: (link: string) => void;
   rmPlaylist: (id: number, link: string) => void;
   moveInPlaylist: (id: number, vidId: number, toVid: number) => void;
@@ -41,6 +42,7 @@ const ItemList: React.FC<ItemListProps> = ({
   fromItems,
   activeTab,
   itemsPerPage,
+  type,
   rmCollection,
   rmPlaylist,
   moveInPlaylist,
@@ -140,7 +142,7 @@ const ItemList: React.FC<ItemListProps> = ({
         ? (prepearedItems.results as Item[]).map((it: Item) => (
             <Item
               key={`i-col-${it.id}`}
-              type="playlist"
+              type={type}
               title={it.title}
               desc={it.desc}
               link={it.link}
@@ -149,13 +151,14 @@ const ItemList: React.FC<ItemListProps> = ({
               onMove={handleMoveItem}
               num={it.id}
               inTab={activeTab}
+              playing={it.playing as boolean}
             />
           ))
         : (prepearedItems.results as Item[][]).map((p: Item[]) => {
             const page = p.map((it: Item) => (
               <Item
                 key={`i-col-${it.id}`}
-                type="playlist"
+                type={type}
                 title={it.title}
                 desc={it.desc}
                 link={it.link}
@@ -164,6 +167,7 @@ const ItemList: React.FC<ItemListProps> = ({
                 onRemove={() => rmCollection(it.link)}
                 num={it.id}
                 inTab={activeTab}
+                playing={it.playing as boolean}
               />
             ));
             return page;
@@ -172,7 +176,7 @@ const ItemList: React.FC<ItemListProps> = ({
       ? (prepearedItems.results as Item[]).map((it: Item) => (
           <Item
             key={`i-pl-${it.id}`}
-            type="playlist"
+            type={type}
             title={it.title}
             desc={it.desc}
             link={it.link}
@@ -181,13 +185,14 @@ const ItemList: React.FC<ItemListProps> = ({
             onMove={handleMoveItem}
             num={it.id}
             inTab={activeTab}
+            playing={it.playing as boolean}
           />
         ))
       : (prepearedItems.results as Item[][]).map((pl: Item[]) => {
           const page = pl.map((it: Item) => (
             <Item
               key={`i-pl-${it.id}`}
-              type="playlist"
+              type={type}
               title={it.title}
               desc={it.desc}
               link={it.link}
@@ -196,6 +201,7 @@ const ItemList: React.FC<ItemListProps> = ({
               onMove={handleMoveItem}
               num={it.id}
               inTab={activeTab}
+              playing={it.playing as boolean}
             />
           ));
           return page;

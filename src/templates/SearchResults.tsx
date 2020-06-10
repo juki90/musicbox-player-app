@@ -254,6 +254,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               desc={r.desc}
               added={r.added}
               inCollection={collected}
+              num={r.id}
+              inTab={-1}
               onAdd={
                 !collected
                   ? () =>
@@ -264,6 +266,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       })
                   : undefined
               }
+              playing={r.playing as boolean}
             />
           );
         })
@@ -280,6 +283,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 link={r.link}
                 added={r.added}
                 inCollection={collected}
+                num={r.id}
+                inTab={-1}
                 onAdd={
                   !collected
                     ? () =>
@@ -290,6 +295,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         })
                     : undefined
                 }
+                playing={r.playing as boolean}
               />
             );
           });

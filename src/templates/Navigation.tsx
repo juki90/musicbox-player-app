@@ -106,8 +106,12 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
     },
     handlePlayerClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
+      const bodyEl = document.querySelector("#main-body")!;
+      bodyEl?.classList.add("scroll-lock");
+
       setPlayerOn(true);
       setAnchorEl(null);
+
       if (minimalizePlayer.currently) {
         minimalizePlayer.minimalize(false);
       }

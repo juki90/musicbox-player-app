@@ -13,7 +13,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Player from "./../templates/Player";
 import { PlayerContext, MinimalizeContext } from "../context";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import store from "../store";
 
 const useStyles = makeStyles({
@@ -66,7 +66,11 @@ export const useCommonStyles = makeStyles({
   },
 });
 
-const Root: React.FC = () => {
+interface RootProps {
+  inPlayer: Item | undefined;
+}
+
+const Root: React.FC<RootProps> = ({ inPlayer }) => {
   const classes = useStyles(),
     [playerOn, setPlayerOn] = useState<boolean>(false),
     [playerMinimalized, minimalizePlayer] = useState<boolean>(false);
@@ -78,6 +82,7 @@ const Root: React.FC = () => {
       element.classList.add("scroll-lock");
       return;
     }
+
     minimalizePlayer(true);
     element.classList.remove("scroll-lock");
   };
@@ -91,50 +96,56 @@ const Root: React.FC = () => {
   };
 
   return (
-    <Provider store={store}>
-      <Router>
-        <PlayerContext.Provider value={handlePlayerContext}>
-          <MinimalizeContext.Provider
-            value={{
-              minimalize: handleMinimalizeContext,
-              currently: playerMinimalized,
-            }}
-          >
-            <Header />
-          </MinimalizeContext.Provider>
-        </PlayerContext.Provider>
-        <Container className={classes.container}>
-          <Switch>
-            <Route exact path={routes.home}>
-              <Home />
-            </Route>
-            <Route exact path={routes.search}>
-              <Search />
-            </Route>
-            <Route exact path={routes.collection}>
-              <Collection />
-            </Route>
-            <Route exact path={routes.playlists}>
-              <Playlists />
-            </Route>
-            <Route exact path={routes.login}>
-              <Login />
-            </Route>
-            <Route exact path={routes.register}>
-              <Register />
-            </Route>
-          </Switch>
-        </Container>
-        {playerOn && (
-          <Player
-            minimalized={playerMinimalized}
-            minimalize={minimalizePlayer}
-            close={() => setPlayerOn(false)}
-          />
-        )}
-      </Router>
-    </Provider>
+    <Router>
+      <PlayerContext.Provider value={handlePlayerContext}>
+        <MinimalizeContext.Provider
+          value={{
+            minimalize: handleMinimalizeContext,
+            currently: playerMinimalized,
+          }}
+        >
+          <Header />
+        </MinimalizeContext.Provider>
+      </PlayerContext.Provider>
+      <Container className={classes.container}>
+        <Switch>
+          <Route exact path={routes.home}>
+            <Home />
+          </Route>
+          <Route exact path={routes.search}>
+            <Search />
+          </Route>
+          <Route exact path={routes.collection}>
+            <Collection />
+          </Route>
+          <Route exact path={routes.playlists}>
+            <Playlists />
+          </Route>
+          <Route exact path={routes.login}>
+            <Login />
+          </Route>
+          <Route exact path={routes.register}>
+            <Register />
+          </Route>
+        </Switch>
+      </Container>
+      {(playerOn || inPlayer) && (
+        <Player
+          minimalized={playerMinimalized}
+          minimalize={minimalizePlayer}
+          close={() => setPlayerOn(false)}
+          setPlayerOn={setPlayerOn}
+        />
+      )}
+    </Router>
   );
 };
 
-export default Root;
+const mapStateToProps = (state: StateProps) => {
+  const { inPlayer } = state;
+  return {
+    inPlayer,
+  };
+};
+
+export default connect(mapStateToProps)(Root);
