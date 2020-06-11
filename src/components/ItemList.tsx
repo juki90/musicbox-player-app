@@ -56,7 +56,9 @@ const ItemList: React.FC<ItemListProps> = ({
     setPaginationOn(1);
   }, [activeTab]);
 
-  const handleMoveItem = (e: React.MouseEvent<HTMLElement>) => {
+  const handleMoveItem = (
+    e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
+  ) => {
     const currentHeight = e.currentTarget.getBoundingClientRect().height;
     const currentDividerH =
       e.currentTarget.getBoundingClientRect().top + currentHeight;
@@ -73,6 +75,10 @@ const ItemList: React.FC<ItemListProps> = ({
       };
       return item;
     });
+
+    const bodyEl = document.querySelector("#main-body");
+    bodyEl?.classList.add("scroll-lock");
+
     let target: {
       id: number;
       height: number;
@@ -84,15 +90,20 @@ const ItemList: React.FC<ItemListProps> = ({
     };
     const playlist = document.getElementById("playlist");
 
-    const handleMove = (e: MouseEvent) => {
-      if (e.clientY < allHeights[0].dividerH - allHeights[0].height / 2) {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      const yPos =
+        e instanceof MouseEvent
+          ? (e as MouseEvent).clientY
+          : (e as TouchEvent).touches[0].clientY;
+
+      if (yPos < allHeights[0].dividerH - allHeights[0].height / 2) {
         target = {
           id: -1,
           height: allHeights[0].height,
           dividerH: (playlist as HTMLDivElement).getBoundingClientRect().top,
         };
       }
-      if (e.clientY > allHeights[allHeights.length - 1].dividerH) {
+      if (yPos > allHeights[allHeights.length - 1].dividerH) {
         target = {
           id: allHeights[allHeights.length - 1].id,
           height: allHeights[allHeights.length - 1].height,
@@ -101,8 +112,8 @@ const ItemList: React.FC<ItemListProps> = ({
       }
       for (let i = 0; i < allHeights.length - 1; i++) {
         if (
-          e.clientY > allHeights[i].dividerH - allHeights[i].height / 2 &&
-          e.clientY < allHeights[i].dividerH + allHeights[i].height / 2
+          yPos > allHeights[i].dividerH - allHeights[i].height / 2 &&
+          yPos < allHeights[i].dividerH + allHeights[i].height / 2
         ) {
           target = {
             id: i,
@@ -123,16 +134,25 @@ const ItemList: React.FC<ItemListProps> = ({
       (document.querySelector("#divider") as HTMLDivElement).style.top =
         "-10000em";
       moveInPlaylist(activeTab - 1, currentId, target.id);
+      bodyEl?.classList.remove("scroll-lock");
       document.removeEventListener("mousemove", handleMove);
       document.removeEventListener("mouseup", handleReplacePosition);
+      document.removeEventListener("touchmove", handleMove);
+      document.removeEventListener("touchend", handleReplacePosition);
     };
 
     if (e.type === "mousedown") {
       document.addEventListener("mousemove", handleMove);
     }
+    if (e.type === "touchstart") {
+      document.addEventListener("touchmove", handleMove);
+    }
 
     if (e.type === "mousedown") {
       document.addEventListener("mouseup", handleReplacePosition);
+    }
+    if (e.type === "touchstart") {
+      document.addEventListener("touchend", handleReplacePosition);
     }
   };
 

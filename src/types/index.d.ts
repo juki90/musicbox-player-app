@@ -7,6 +7,7 @@ type Item = {
   title: string;
   desc: string;
   playing?: boolean;
+  fromPlaylist?: number;
 };
 
 type Playlist = {
@@ -100,6 +101,14 @@ type playVideoAction = {
   };
 };
 
+type skipToVideoAction = {
+  type: string;
+  payload: {
+    skipTo: number;
+    inPlaylist?: number;
+  };
+};
+
 type Action =
   | addToCollectionAction
   | removeFromCollectionAction
@@ -109,4 +118,5 @@ type Action =
   | deletePlaylistAction
   | sortPlaylistAction
   | moveInPlaylistAction
-  | playVideoAction;
+  | playVideoAction
+  | skipToVideoAction;

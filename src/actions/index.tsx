@@ -8,6 +8,7 @@ export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
 export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
 export const PLAY_VIDEO = "PLAY_VIDEO";
+export const SKIP_TO_VIDEO = "SKIP_TO_VIDEO";
 
 export const addToCollection: (item: Item) => Action = (item: Item) => {
   return {
@@ -123,6 +124,19 @@ export const playVideo: (vidId: number, plId?: number) => Action = (
     payload: {
       vidId,
       plId,
+    },
+  };
+};
+
+export const skipToVideo: (skipTo: number, inPlaylist?: number) => Action = (
+  skipTo: number,
+  inPlaylist?: number
+) => {
+  return {
+    type: SKIP_TO_VIDEO,
+    payload: {
+      skipTo,
+      inPlaylist,
     },
   };
 };

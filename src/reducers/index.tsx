@@ -8,6 +8,7 @@ import {
   DELETE_PLAYLIST,
   SORT_PLAYLIST,
   PLAY_VIDEO,
+  SKIP_TO_VIDEO,
 } from "../actions";
 import { Reducer } from "redux";
 import { MOVE_IN_PLAYLIST } from "./../actions/index";
@@ -632,6 +633,7 @@ const rootReducer: Reducer<StateProps, Action> = (
                   item.playing = false;
                   if (item.id === (action as playVideoAction).payload.vidId) {
                     item.playing = true;
+                    item.fromPlaylist = playlist.id;
                   }
                   return item;
                 });
@@ -670,6 +672,89 @@ const rootReducer: Reducer<StateProps, Action> = (
             : state.collection.filter(
                 (i) => i.id === (action as playVideoAction).payload.vidId
               )[0],
+      };
+
+    case SKIP_TO_VIDEO:
+      let collectionIdx = 0;
+      let playlistIdx = 0;
+      let playlistItemIdx = 0;
+      const isInPlaylist =
+        (action as skipToVideoAction).payload.inPlaylist !== undefined;
+      const withSkippedVideo = isInPlaylist
+        ? state.playlists.map((pl) => {
+            const playlist = pl;
+            if (
+              (action as skipToVideoAction).payload.skipTo < 0 &&
+              playlist.id === (action as skipToVideoAction).payload.inPlaylist
+            ) {
+              const plItems = [...playlist.items];
+              playlist.items.forEach((it, i) => {
+                if (plItems[i].playing) {
+                  plItems[i - 1].playing = true;
+                  plItems[i].playing = false;
+                  playlistIdx = playlist.id;
+                  playlistItemIdx = it.id - 1;
+                }
+              });
+              playlist.items = plItems;
+            }
+            if (
+              (action as skipToVideoAction).payload.skipTo > 0 &&
+              playlist.id === (action as skipToVideoAction).payload.inPlaylist
+            ) {
+              const plItems = [...playlist.items];
+              playlist.items.forEach((it, i) => {
+                if (plItems[i].playing) {
+                  playlistItemIdx = plItems[i].id + 1;
+                  plItems[i].playing = false;
+                  playlistIdx = playlist.id;
+                }
+              });
+              plItems[playlistItemIdx].playing = true;
+              playlist.items = plItems;
+            }
+            return playlist;
+          })
+        : state.collection.map((it) => {
+            const item = it;
+            if (
+              (action as skipToVideoAction).payload.skipTo > 0 &&
+              item.playing
+            ) {
+              item.playing = false;
+              collectionIdx = item.id + 1;
+            }
+            if (
+              (action as skipToVideoAction).payload.skipTo < 0 &&
+              item.playing
+            ) {
+              item.playing = false;
+              collectionIdx = item.id - 1;
+            }
+            return item;
+          });
+
+      let playingItem: Item;
+
+      if (!isInPlaylist) {
+        (withSkippedVideo[collectionIdx] as Item).playing = true;
+        playingItem = { ...(withSkippedVideo[collectionIdx] as Item) };
+      } else {
+        playingItem = (withSkippedVideo[playlistIdx] as Playlist).items[
+          playlistItemIdx
+        ];
+        playingItem.fromPlaylist = playlistIdx;
+        playingItem = { ...playingItem };
+      }
+
+      return {
+        collection: !isInPlaylist
+          ? (withSkippedVideo as Item[])
+          : state.collection,
+        playlists: isInPlaylist
+          ? (withSkippedVideo as Playlist[])
+          : state.playlists,
+        inPlayer: playingItem as Item,
       };
   }
   return state;

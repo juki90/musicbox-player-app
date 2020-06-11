@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useEffect, SetStateAction } from "react";
-import Box from "@material-ui/core/Box";
+import React, {
+  useEffect,
+  SetStateAction,
+  useState,
+  useRef,
+  ChangeEvent,
+} from "react";
 import {
   makeStyles,
   IconButton,
@@ -8,6 +13,7 @@ import {
   AppBar,
   Tabs,
   Tab,
+  Box,
 } from "@material-ui/core";
 import defaultVideoImg from "../assets/blank-video.jpg";
 import theme from "../styles/theme";
@@ -29,7 +35,9 @@ import {
   removeFromCollection as removeFromCollectionAction,
   removeFromPlaylist as removeFromPlaylistAction,
   playVideo as playVideoAction,
+  skipToVideo as skipToVideoAction,
 } from "../actions";
+import ReactPlayer from "react-player";
 
 const useStyles = makeStyles({
   player: (props: PlayerProps) => {
@@ -101,6 +109,9 @@ const useStyles = makeStyles({
       width: (props: PlayerProps) => {
         return props.minimalized ? "120px" : "480px";
       },
+    },
+    "& img": {
+      width: "100%",
     },
   },
   videoPanelContainer: {
@@ -197,7 +208,12 @@ const useStyles = makeStyles({
           },
         };
   },
+  volumeIcon: {
+    cursor: "pointer",
+  },
 });
+
+let mutedVolume: number;
 
 interface PlayerProps {
   minimalized: boolean;
@@ -210,6 +226,7 @@ interface PlayerProps {
   removeFromPlaylist: (id: number, link: string) => void;
   playVideo: (vidId: number, plId?: number) => void;
   setPlayerOn: (on: boolean) => void;
+  skipToVideo: (skipTO: number, inPlaylist?: number) => void;
 }
 
 const Player: React.FC<PlayerProps> = (props) => {
@@ -224,11 +241,19 @@ const Player: React.FC<PlayerProps> = (props) => {
     removeFromPlaylist,
     playVideo,
     setPlayerOn,
+    skipToVideo,
   } = props;
   const classes = useStyles(props);
-
-  const [volume, setVolume] = React.useState<number>(30),
-    [tab, setTab] = React.useState(0);
+  const [playing, setPlaying] = useState<boolean>(true);
+  const [volume, setVolume] = useState<number>(30);
+  const [tab, setTab] = useState<number>(0);
+  const [progress, goToProgress] = useState<number>(0);
+  const thePlayer = useRef<ReactPlayer>(new ReactPlayer({}));
+  useEffect(() => {
+    if (playing) {
+      goToProgress(0);
+    }
+  }, [inPlayer]);
 
   const handleVolumeChange = (e: unknown, newValue: number | number[]) => {
       setVolume(newValue as number);
@@ -251,6 +276,60 @@ const Player: React.FC<PlayerProps> = (props) => {
       }
       element.classList.add("scroll-lock");
       minimalize(false);
+    },
+    handleSkipToVideo = (dir: number) => {
+      console.log(dir, inPlayer);
+      if (inPlayer === undefined) {
+        return;
+      }
+      if (dir < 0 && inPlayer.id !== 0 && inPlayer.fromPlaylist! >= 0) {
+        skipToVideo(dir, inPlayer!.fromPlaylist);
+        return;
+      }
+      if (
+        dir > 0 &&
+        inPlayer.fromPlaylist! >= 0 &&
+        inPlayer.id !== playlists[inPlayer.fromPlaylist!].items.length - 1
+      ) {
+        skipToVideo(dir, inPlayer!.fromPlaylist);
+        return;
+      }
+      if (
+        dir > 0 &&
+        inPlayer.id !== collection.length - 1 &&
+        inPlayer.fromPlaylist === undefined
+      ) {
+        skipToVideo(dir);
+      }
+      if (dir < 0 && inPlayer.id !== 0 && inPlayer.fromPlaylist === undefined) {
+        skipToVideo(dir);
+      }
+    },
+    playButton = () => {
+      if (playing) {
+        goToProgress(0);
+        setPlaying(false);
+        return;
+      }
+      setPlaying(true);
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    handleSeekTo: (e: ChangeEvent<{}>, v: number | number[]) => void = (
+      e,
+      v
+    ) => {
+      if (thePlayer.current) {
+        goToProgress(v as number);
+        thePlayer.current.seekTo(v as number, "seconds");
+      }
+    },
+    handleVolumeMute = () => {
+      if (volume) {
+        mutedVolume = volume;
+        setVolume(0);
+        return;
+      }
+      setVolume(mutedVolume);
     };
 
   const videoTitle = (
@@ -264,11 +343,26 @@ const Player: React.FC<PlayerProps> = (props) => {
       <ThemeProvider theme={theme}>
         <Box className={classes.videoBox}>
           <Container className={classes.videoContainer}>
-            <img
-              className={classes.video}
-              src={defaultVideoImg}
-              alt="Default video"
-            />
+            <Box className={classes.video}>
+              {inPlayer ? (
+                <ReactPlayer
+                  url={inPlayer.link}
+                  playing={playing}
+                  width={minimalized ? "120px" : "480px"}
+                  height={minimalized ? "68px" : "273px"}
+                  volume={volume / 100}
+                  controls={false}
+                  ref={thePlayer}
+                  onProgress={(obj) => {
+                    goToProgress(Math.floor(obj.playedSeconds));
+                  }}
+                  onPlay={() => setPlaying(true)}
+                  onPause={() => setPlaying(false)}
+                />
+              ) : (
+                <img src={defaultVideoImg} alt="Blank video" />
+              )}
+            </Box>
             {minimalized && <Box pr="3em">{videoTitle}</Box>}
             <Box className={classes.playerBtns}>
               <IconButton aria-label="close" onClick={handleClosePlayer}>
@@ -287,51 +381,79 @@ const Player: React.FC<PlayerProps> = (props) => {
           <Container className={classes.videoPanelContainer}>
             {!minimalized && (
               <Box display="flex">
-                <Typography>5:23</Typography>
+                <Typography>
+                  {progress > 59
+                    ? `${Math.floor(progress / 60)}:${
+                        progress % 60 < 10 ? `0${progress % 60}` : progress % 60
+                      }`
+                    : `0:${progress < 10 ? `0${progress}` : progress}`}
+                </Typography>
                 <Slider
                   className={classes.sliderProgress}
                   defaultValue={0}
                   aria-labelledby="progress time bar"
                   step={1}
                   min={0}
-                  max={300}
+                  max={thePlayer.current ? thePlayer.current.getDuration() : 0}
+                  value={progress}
                   valueLabelDisplay="auto"
+                  onChange={handleSeekTo}
                   valueLabelFormat={(x) => {
                     return x > 59
                       ? `${Math.floor(x / 60)}:${
-                          x % 60 < 9 ? `0${x % 60}` : x % 60
+                          x % 60 < 10 ? `0${x % 60}` : x % 60
                         }`
-                      : `0:${x < 9 ? `0${x}` : x}`;
+                      : `0:${x < 10 ? `0${x}` : x}`;
                   }}
                 />
               </Box>
             )}
             <Box className={classes.controlButtons}>
               <IconButton
-                color="default"
-                disabled={true}
+                color="primary"
+                disabled={
+                  (inPlayer && inPlayer.id === 0) || inPlayer === undefined
+                }
                 className={classes.controlBtn}
                 aria-label="go to previous video or track"
+                onClick={() => handleSkipToVideo(-1)}
               >
                 <SkipPreviousIcon fontSize="large" />
               </IconButton>
 
+              {playing && (
+                <IconButton
+                  color="primary"
+                  disabled={!inPlayer}
+                  className={classes.controlBtn}
+                  aria-label="play"
+                  onClick={playButton}
+                >
+                  <PlayCircleFilledIcon fontSize="large" />
+                </IconButton>
+              )}
+              {!playing && (
+                <IconButton
+                  color="primary"
+                  disabled={!inPlayer}
+                  className={classes.controlBtn}
+                  aria-label="pause"
+                  onClick={playButton}
+                >
+                  <PauseCircleFilledIcon fontSize="large" />
+                </IconButton>
+              )}
               <IconButton
                 color="primary"
-                className={classes.controlBtn}
-                aria-label="play"
-              >
-                <PlayCircleFilledIcon fontSize="large" />
-              </IconButton>
-              <IconButton
-                color="primary"
-                className={classes.controlBtn}
-                aria-label="pause"
-              >
-                <PauseCircleFilledIcon fontSize="large" />
-              </IconButton>
-              <IconButton
-                color="primary"
+                disabled={
+                  (inPlayer &&
+                    (inPlayer.fromPlaylist! >= 0
+                      ? playlists[inPlayer.fromPlaylist!].items.length - 1 ===
+                        inPlayer.id
+                      : collection.length - 1 === inPlayer.id!)) ||
+                  inPlayer === undefined
+                }
+                onClick={() => handleSkipToVideo(1)}
                 className={classes.controlBtn}
                 aria-label="go to next video or track"
               >
@@ -339,8 +461,20 @@ const Player: React.FC<PlayerProps> = (props) => {
               </IconButton>
               <Grid container spacing={2}>
                 <Grid item>
-                  <VolumeUp color="primary" />
-                  <VolumeOffIcon color="primary" />
+                  {!!volume && (
+                    <VolumeUp
+                      className={classes.volumeIcon}
+                      color="primary"
+                      onClick={handleVolumeMute}
+                    />
+                  )}
+                  {!volume && (
+                    <VolumeOffIcon
+                      className={classes.volumeIcon}
+                      color="primary"
+                      onClick={handleVolumeMute}
+                    />
+                  )}
                 </Grid>
                 <Grid item xs>
                   <Slider
@@ -412,6 +546,8 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
     dispatch(removeFromPlaylistAction(id, link)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
+  skipToVideo: (skipTO: number, inPlaylist?: number) =>
+    dispatch(skipToVideoAction(skipTO, inPlaylist)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Player);

@@ -92,7 +92,7 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
   const handleNaviconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
     },
-    handleNaviconClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+    handleNaviconClose = () => {
       setAnchorEl(null);
     },
     handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -106,7 +106,7 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
     },
     handlePlayerClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      const bodyEl = document.querySelector("#main-body")!;
+      const bodyEl = document.querySelector("#main-body");
       bodyEl?.classList.add("scroll-lock");
 
       setPlayerOn(true);

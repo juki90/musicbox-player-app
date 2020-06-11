@@ -217,7 +217,9 @@ interface ItemProps {
   onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?: ((e: React.MouseEvent<HTMLButtonElement>) => void) | (() => void);
   addToPlaylist: (id: number, item: Item) => void;
-  onMove?: (e: React.MouseEvent<HTMLElement>) => void;
+  onMove?: (
+    e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
+  ) => void;
   playVideo: (vidId: number, plId?: number) => void;
 }
 
@@ -438,6 +440,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                   size="small"
                   startIcon={<UnfoldMoreIcon />}
                   onMouseDown={onMove}
+                  onTouchStart={onMove}
                   data-num={num}
                 ></Button>
                 <Button
