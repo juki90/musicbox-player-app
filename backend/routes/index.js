@@ -3,14 +3,11 @@ const axios = require("axios");
 const encodeurl = require("encodeurl");
 const auth = require("../middleware/auth");
 const { user } = require("../controllers");
+const { playlists } = require("../controllers");
 
 router.post("/register", user.register);
 router.post("/login", user.login);
-router.post("/", auth, user.save);
 
-router.post("/search", (req, res) => {
-  const { search, ua } = req.body;
-  const searchEncoded = encodeurl(search);
-});
+router.post("/playlists", auth, playlists.addPlaylist);
 
 module.exports = router;
