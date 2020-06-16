@@ -14,6 +14,7 @@ import Register from "./Register";
 import Player from "./../templates/Player";
 import { PlayerContext, MinimalizeContext } from "../context";
 import { connect } from "react-redux";
+import Message from "../components/Message";
 
 const useStyles = makeStyles({
   container: {
@@ -67,9 +68,13 @@ export const useCommonStyles = makeStyles({
 
 interface RootProps {
   inPlayer: Item | undefined;
+  message: {
+    message: string;
+    error: string;
+  };
 }
 
-const Root: React.FC<RootProps> = ({ inPlayer }) => {
+const Root: React.FC<RootProps> = ({ inPlayer, message }) => {
   const classes = useStyles(),
     [playerOn, setPlayerOn] = useState<boolean>(false),
     [playerMinimalized, minimalizePlayer] = useState<boolean>(false);
@@ -135,14 +140,16 @@ const Root: React.FC<RootProps> = ({ inPlayer }) => {
           close={() => setPlayerOn(false)}
         />
       )}
+      {(message.message || message.error) && <Message message={message} />}
     </Router>
   );
 };
 
 const mapStateToProps = (state: StateProps) => {
-  const { inPlayer } = state;
+  const { inPlayer, message } = state;
   return {
     inPlayer,
+    message,
   };
 };
 

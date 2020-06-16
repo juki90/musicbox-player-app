@@ -3,14 +3,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/User.model");
+const Playlists = require("../models/Playlists.model");
+const theCollection = require("../models/theCollection.model");
 
 const user = {
   register: async (req, res) => {
     const emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-    const { email, password, state } = req.body;
+    const { name, email, password, data } = req.body;
 
     if (!email || !password) {
       return res.json({ error: "One or both fields are not filled up" });
+    }
+    if (!name) {
+      return res.json({ error: "No name is specified" });
     }
     if (!emailRegex.test(email)) {
       return res.json({ error: "Wrong e-mail format" });
@@ -29,15 +34,27 @@ const user = {
       }
 
       user = new User({
+        name,
         email,
         password,
-        state,
+      });
+
+      let userPlaylists = new Playlists({
+        email,
+        playlists: data.playlists,
+      });
+
+      let userCollection = new theCollection({
+        email,
+        theCollection: data.collection,
       });
 
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
 
       await user.save();
+      await userPlaylists.save();
+      await userCollection.save();
 
       const payload = {
         user: { id: user.id },
@@ -54,7 +71,7 @@ const user = {
             console.log(err);
             throw err;
           }
-          res.json({ token, email });
+          res.json({ token, name });
         }
       );
     } catch (error) {
@@ -81,6 +98,10 @@ const user = {
           id: user.id,
         },
       };
+
+      const userPlaylists = await Playlists.findOne({ email });
+      const userCollection = await theCollection.findOne({ email });
+
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
@@ -89,7 +110,12 @@ const user = {
         },
         (err, token) => {
           if (err) throw err;
-          res.json({ token, state: user.state });
+          res.json({
+            token,
+            playlists: userPlaylists.playlists,
+            collection: userCollection.theCollection,
+            loggedAs: user.name,
+          });
         }
       );
     } catch (err) {

@@ -7,6 +7,8 @@ import { theme } from "../styles/theme";
 import { useCommonStyles } from "./Root";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import { routes } from "../routes";
+import { loginRequest as loginRequestAction } from "../actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   form: {
@@ -22,15 +24,23 @@ const useStyles = makeStyles({
   loginBtn: {
     margin: "1em 2em",
   },
+  loginError: {
+    color: "#ff2222",
+  },
 });
 
-const Login: React.FC = () => {
+interface LoginProps {
+  loginRequest: (email: string, password: string) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ loginRequest }) => {
   const commonClasses = useCommonStyles(),
     classes = useStyles(),
     [emailInput, setEmailInput] = useState<string>(""),
     [pswdInput, setPswdInput] = useState<string>(""),
     [emailError, setEmailError] = useState<boolean>(false),
     [pswdError, setPswdError] = useState<boolean>(false),
+    [loginError, setLoginError] = useState<boolean>(false),
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const type = e.target.getAttribute("id"),
         val = e.target.value;
@@ -48,6 +58,7 @@ const Login: React.FC = () => {
     handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       const type = e.target.getAttribute("id"),
         val = e.target.value;
+      setLoginError(false);
       if (val.length === 0) {
         return;
       }
@@ -59,6 +70,20 @@ const Login: React.FC = () => {
         setPswdError(true);
         return;
       }
+    },
+    handleLoginButton = () => {
+      if (loginError) {
+        return;
+      }
+      if (emailError || pswdError) {
+        setLoginError(true);
+        return;
+      }
+      if (!emailInput || !pswdInput) {
+        setLoginError(true);
+        return;
+      }
+      loginRequest(emailInput, pswdInput);
     };
 
   return (
@@ -103,11 +128,22 @@ const Login: React.FC = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<VpnKeyIcon />}
+                onClick={handleLoginButton}
               >
                 Login
               </Button>
             </form>
+            {loginError && (
+              <Typography
+                className={classes.loginError}
+                variant="body1"
+                align="center"
+              >
+                Please, fill the form up correctly
+              </Typography>
+            )}
           </Box>
+
           <Typography align="center">
             If you haven&apos;t registered yet, please
             <Link href={routes.register}> register</Link>.
@@ -118,4 +154,9 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
+  loginRequest: (email: string, password: string) =>
+    dispatch(loginRequestAction(email, password)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);

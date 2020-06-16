@@ -10,7 +10,17 @@ export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
 export const PLAY_VIDEO = "PLAY_VIDEO";
 export const SKIP_TO_VIDEO = "SKIP_TO_VIDEO";
 
-export const addToCollection: (item: Item) => Action = (item: Item) => {
+export const REGISTER_REQUEST = "REGISTER_REQUEST";
+export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
+export const REGISTER_FAILED = "REGISTER_FAILED";
+
+export const LOGIN_REQUEST = "LOGIN_REQUEST";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILED = "LOGIN_FAILED";
+
+export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION";
+
+export const addToCollection: (item: Item) => Action = (item) => {
   return {
     type: ADD_TO_COLLECTION,
     payload: {
@@ -19,7 +29,7 @@ export const addToCollection: (item: Item) => Action = (item: Item) => {
   };
 };
 
-export const removeFromCollection: (id: number) => Action = (id: number) => {
+export const removeFromCollection: (id: number) => Action = (id) => {
   return {
     type: REMOVE_FROM_COLLECTION,
     payload: {
@@ -28,10 +38,7 @@ export const removeFromCollection: (id: number) => Action = (id: number) => {
   };
 };
 
-export const addToPlaylist: (id: number, item: Item) => Action = (
-  id: number,
-  item: Item
-) => {
+export const addToPlaylist: (id: number, item: Item) => Action = (id, item) => {
   return {
     type: ADD_TO_PLAYLIST,
     payload: {
@@ -42,8 +49,8 @@ export const addToPlaylist: (id: number, item: Item) => Action = (
 };
 
 export const removeFromPlaylist: (id: number, vidId: number) => Action = (
-  id: number,
-  vidId: number
+  id,
+  vidId
 ) => {
   return {
     type: REMOVE_FROM_PLAYLIST,
@@ -54,7 +61,7 @@ export const removeFromPlaylist: (id: number, vidId: number) => Action = (
   };
 };
 
-export const addNewPlaylist: (name: string) => Action = (name: string) => {
+export const addNewPlaylist: (name: string) => Action = (name) => {
   return {
     type: ADD_NEW_PLAYLIST,
     payload: {
@@ -64,8 +71,8 @@ export const addNewPlaylist: (name: string) => Action = (name: string) => {
 };
 
 export const renamePlaylist: (name: string, id: number) => Action = (
-  name: string,
-  id: number
+  name,
+  id
 ) => {
   return {
     type: RENAME_PLAYLIST,
@@ -76,7 +83,7 @@ export const renamePlaylist: (name: string, id: number) => Action = (
   };
 };
 
-export const deletePlaylist: (id: number) => Action = (id: number) => {
+export const deletePlaylist: (id: number) => Action = (id) => {
   return {
     type: DELETE_PLAYLIST,
     payload: {
@@ -85,10 +92,7 @@ export const deletePlaylist: (id: number) => Action = (id: number) => {
   };
 };
 
-export const sortPlaylist: (id: number, way: string) => Action = (
-  id: number,
-  way: string
-) => {
+export const sortPlaylist: (id: number, way: string) => Action = (id, way) => {
   return {
     type: SORT_PLAYLIST,
     payload: {
@@ -102,7 +106,7 @@ export const moveInPlaylist: (
   id: number,
   vidId: number,
   toVid: number
-) => Action = (id: number, vidId: number, toVid: number) => {
+) => Action = (id, vidId, toVid) => {
   return {
     type: MOVE_IN_PLAYLIST,
     payload: {
@@ -114,8 +118,8 @@ export const moveInPlaylist: (
 };
 
 export const playVideo: (vidId: number, plId?: number) => Action = (
-  vidId: number,
-  plId?: number
+  vidId,
+  plId?
 ) => {
   return {
     type: PLAY_VIDEO,
@@ -127,14 +131,103 @@ export const playVideo: (vidId: number, plId?: number) => Action = (
 };
 
 export const skipToVideo: (skipTo: number, inPlaylist?: number) => Action = (
-  skipTo: number,
-  inPlaylist?: number
+  skipTo,
+  inPlaylist?
 ) => {
   return {
     type: SKIP_TO_VIDEO,
     payload: {
       skipTo,
       inPlaylist,
+    },
+  };
+};
+
+export const registerRequest: (
+  name: string,
+  email: string,
+  password: string,
+  data: {
+    playlists: Playlist[];
+    collection: Item[];
+  }
+) => Action = (name, email, password, data) => {
+  return {
+    type: REGISTER_REQUEST,
+    payload: {
+      name,
+      email,
+      password,
+      data,
+    },
+  };
+};
+
+export const registerSuccess: (
+  text: string,
+  name: string,
+  token: string
+) => Action = (text, name, token) => {
+  return {
+    type: REGISTER_SUCCESS,
+    payload: {
+      text,
+      name,
+      token,
+    },
+  };
+};
+
+export const registerFailed: (text: string) => Action = (text) => {
+  return {
+    type: REGISTER_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+
+export const removeNotification: () => Action = () => {
+  return {
+    type: REMOVE_NOTIFICATION,
+  };
+};
+
+export const loginRequest: (email: string, password: string) => Action = (
+  email,
+  password
+) => {
+  return {
+    type: LOGIN_REQUEST,
+    payload: {
+      email,
+      password,
+    },
+  };
+};
+
+export const loginSuccess: (
+  text: string,
+  loggedAs: string,
+  collection: Item[],
+  playlists: Playlist[]
+) => Action = (text, loggedAs, collection, playlists) => {
+  return {
+    type: LOGIN_SUCCESS,
+    payload: {
+      text,
+      loggedAs,
+      collection,
+      playlists,
+    },
+  };
+};
+
+export const loginFailed: (text: string) => Action = (text) => {
+  return {
+    type: LOGIN_FAILED,
+    payload: {
+      text,
     },
   };
 };

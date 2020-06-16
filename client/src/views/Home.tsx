@@ -9,6 +9,7 @@ import Fab from "@material-ui/core/Fab";
 import SearchIcon from "@material-ui/icons/Search";
 import { routes } from "../routes";
 import { useCommonStyles } from "./Root";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   introImg: {
@@ -39,7 +40,11 @@ const useStyles = makeStyles({
   },
 });
 
-const Home: React.FC = () => {
+interface HomeProps {
+  loggedAs: string | undefined;
+}
+
+const Home: React.FC<HomeProps> = ({ loggedAs }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   return (
@@ -59,14 +64,14 @@ const Home: React.FC = () => {
             align="center"
             variant="h4"
           >
-            Welcome to our player!
+            {loggedAs ? `Hello, ${loggedAs}` : "Welcome to our player!"}
           </Typography>
           <Typography
             align="center"
             className={classes.subtitleParagraph}
             variant="body1"
           >
-            Search now
+            Search music and videos now:
           </Typography>
           <Fab
             className={classes.fab}
@@ -77,10 +82,12 @@ const Home: React.FC = () => {
             <SearchIcon />
             <Link href={routes.search}>Search</Link>
           </Fab>
-          <Typography className={commonClasses.paragraph} variant="body1">
-            With this app you can search, collect, listen and watch videos from
-            youtube and vimeo.
-          </Typography>
+          {!loggedAs && (
+            <Typography className={commonClasses.paragraph} variant="body1">
+              With this app you can search, collect, listen and watch videos
+              from youtube and vimeo.
+            </Typography>
+          )}
           <Typography className={commonClasses.paragraph} variant="body1">
             First of all, you will need to search for videos, you may choose
             between searching in youtube, vimeo or both at the same time. Go to
@@ -112,4 +119,11 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+const mapStateToProps = (state: StateProps) => {
+  const { loggedAs } = state;
+  return {
+    loggedAs,
+  };
+};
+
+export default connect(mapStateToProps)(Home);

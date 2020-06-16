@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const theCollectionSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
   },
-  collection: [
+  theCollection: [
     {
       id: {
         type: Number,
@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema({
       },
       desc: {
         type: String,
-        required: true,
+        required: false,
       },
     },
   ],
 });
 
-module.exports = mongoose.model("collection", userSchema);
+module.exports = mongoose.model("theCollection", theCollectionSchema);

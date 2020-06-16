@@ -20,6 +20,11 @@ type StateProps = {
   collection: Item[];
   playlists: Playlist[];
   inPlayer: Item | undefined;
+  loggedAs: string | undefined;
+  message: {
+    error: string;
+    message: string;
+  };
 };
 
 // ACTIONS
@@ -109,6 +114,63 @@ type skipToVideoAction = {
   };
 };
 
+type registerRequestAction = {
+  type: string;
+  payload: {
+    name: string;
+    email: string;
+    password: string;
+    data: {
+      playlists: Playlist[];
+      collection: Item[];
+    };
+  };
+};
+
+type registerSuccessAction = {
+  type: string;
+  payload: {
+    text: string;
+    name: string;
+  };
+};
+
+type registerFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+
+type removeNotificationAction = {
+  type: string;
+};
+
+type loginRequestAction = {
+  type: string;
+  payload: {
+    email: string;
+    password: string;
+  };
+};
+
+type loginSuccessAction = {
+  type: string;
+  payload: {
+    text: string;
+    loggedAs: string;
+    collection: Item[];
+    playlists: Playlist[];
+  };
+};
+
+type loginFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+
 type Action =
   | addToCollectionAction
   | removeFromCollectionAction
@@ -120,4 +182,11 @@ type Action =
   | moveInPlaylistAction
   | playVideoAction
   | skipToVideoAction
+  | registerRequestAction
+  | registerSuccessAction
+  | registerFailedAction
+  | removeNotificationAction
+  | loginRequestAction
+  | loginSuccessAction
+  | loginFailedAction
   | AnyAction;

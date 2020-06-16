@@ -7,11 +7,16 @@ import {
   RENAME_PLAYLIST,
   DELETE_PLAYLIST,
   SORT_PLAYLIST,
+  MOVE_IN_PLAYLIST,
   PLAY_VIDEO,
   SKIP_TO_VIDEO,
+  REGISTER_SUCCESS,
+  REGISTER_FAILED,
+  REMOVE_NOTIFICATION,
+  LOGIN_FAILED,
+  LOGIN_SUCCESS,
 } from "../actions";
 import { Reducer } from "redux";
-import { MOVE_IN_PLAYLIST } from "./../actions/index";
 
 const initialState: StateProps = {
   collection: [
@@ -389,6 +394,11 @@ const initialState: StateProps = {
     },
   ],
   inPlayer: undefined,
+  loggedAs: undefined,
+  message: {
+    error: "",
+    message: "",
+  },
 };
 
 const rootReducer: Reducer<StateProps, Action> = (
@@ -608,6 +618,7 @@ const rootReducer: Reducer<StateProps, Action> = (
     case PLAY_VIDEO:
       if ((action as playVideoAction).payload.vidId === -1) {
         return {
+          ...state,
           collection: state.collection.map((i) => {
             const item = i;
             item.playing = false;
@@ -653,6 +664,7 @@ const rootReducer: Reducer<StateProps, Action> = (
             });
 
       return {
+        ...state,
         collection:
           (action as playVideoAction).payload.plId !== undefined
             ? state.collection.map((i) => {
@@ -763,6 +775,7 @@ const rootReducer: Reducer<StateProps, Action> = (
       }
 
       return {
+        ...state,
         collection: !isInPlaylist
           ? (withSkippedVideo as Item[])
           : state.collection,
@@ -770,6 +783,44 @@ const rootReducer: Reducer<StateProps, Action> = (
           ? (withSkippedVideo as Playlist[])
           : state.playlists,
         inPlayer: playingItem as Item,
+      };
+    case REGISTER_SUCCESS:
+      return {
+        ...state,
+        message: {
+          ...state.message,
+          message: "Successfully registered",
+        },
+        loggedAs: action.payload.name,
+      };
+    case LOGIN_SUCCESS:
+      return {
+        ...state,
+        collection: action.payload.collection,
+        playlists: action.payload.playlists,
+        loggedAs: action.payload.loggedAs,
+        message: {
+          error: "",
+          message: action.payload.text,
+        },
+      };
+    case REGISTER_FAILED:
+    case LOGIN_FAILED:
+      return {
+        ...state,
+        message: {
+          ...state.message,
+          error: action.payload.text,
+        },
+      };
+
+    case REMOVE_NOTIFICATION:
+      return {
+        ...state,
+        message: {
+          message: "",
+          error: "",
+        },
       };
   }
   return state;

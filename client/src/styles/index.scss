@@ -1,5 +1,11 @@
 $default-body-background-color: #333;
 
+*,
+*:before,
+*:after {
+  outline: 0 none;
+}
+
 a,
 button {
   cursor: pointer;

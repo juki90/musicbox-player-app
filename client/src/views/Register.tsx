@@ -6,6 +6,8 @@ import { Box, TextField, Button } from "@material-ui/core";
 import { theme } from "../styles/theme";
 import { useCommonStyles } from "./Root";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
+import { registerRequest as registerRequestAction } from "../actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   form: {
@@ -21,9 +23,30 @@ const useStyles = makeStyles({
   loginBtn: {
     margin: "1em 2em",
   },
+  submitError: {
+    color: "#ff2222",
+  },
 });
 
-const Register: React.FC = () => {
+interface RegisterProps {
+  registerRequest: (
+    name: string,
+    email: string,
+    password: string,
+    data: {
+      playlists: Playlist[];
+      collection: Item[];
+    }
+  ) => void;
+  collection: Item[];
+  playlists: Playlist[];
+}
+
+const Register: React.FC<RegisterProps> = ({
+  registerRequest,
+  collection,
+  playlists,
+}) => {
   const commonClasses = useCommonStyles(),
     classes = useStyles(),
     [nameInput, setNameInput] = useState<string>(""),
@@ -32,9 +55,11 @@ const Register: React.FC = () => {
     [nameError, setNameError] = useState<boolean>(false),
     [emailError, setEmailError] = useState<boolean>(false),
     [pswdError, setPswdError] = useState<boolean>(false),
+    [submitError, setSubmitError] = useState<boolean>(false),
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const type = e.target.getAttribute("id"),
         val = e.target.value;
+      setSubmitError(false);
       if (type === "name") {
         setNameInput(val);
         setNameError(false);
@@ -69,6 +94,23 @@ const Register: React.FC = () => {
         setPswdError(true);
         return;
       }
+    },
+    handleSubmitButton = () => {
+      if (submitError) {
+        return;
+      }
+      if (nameError || emailError || pswdError) {
+        setSubmitError(true);
+        return;
+      }
+      if (!nameInput.length || !emailInput.length || !pswdInput.length) {
+        setSubmitError(true);
+        return;
+      }
+      registerRequest(nameInput, emailInput, pswdInput, {
+        collection,
+        playlists,
+      });
     };
 
   return (
@@ -122,10 +164,16 @@ const Register: React.FC = () => {
                 variant="contained"
                 color="primary"
                 startIcon={<VpnKeyIcon />}
+                onClick={handleSubmitButton}
               >
                 Register
               </Button>
             </form>
+            {submitError && (
+              <Typography className={classes.submitError} variant="body1">
+                Please, fill the form up correctly
+              </Typography>
+            )}
           </Box>
         </Paper>
       </ThemeProvider>
@@ -133,4 +181,24 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state: StateProps) => {
+  const { collection, playlists } = state;
+  return {
+    collection,
+    playlists,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
+  registerRequest: (
+    name: string,
+    email: string,
+    password: string,
+    data: {
+      playlists: Playlist[];
+      collection: Item[];
+    }
+  ) => dispatch(registerRequestAction(name, email, password, data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
