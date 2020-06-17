@@ -20,7 +20,7 @@ type StateProps = {
   collection: Item[];
   playlists: Playlist[];
   inPlayer: Item | undefined;
-  loggedAs: string | undefined;
+  loggedAs: string;
   message: {
     error: string;
     message: string;
@@ -29,7 +29,19 @@ type StateProps = {
 
 // ACTIONS
 
-type addToCollectionAction = {
+type addToCollectionRequestAction = {
+  type: string;
+  payload: {
+    item: Item;
+  };
+};
+type addToCollectionFailedAction = {
+  type: string;
+  payload: {
+    item: Item;
+  };
+};
+type addToCollectionSuccessAction = {
   type: string;
   payload: {
     item: Item;

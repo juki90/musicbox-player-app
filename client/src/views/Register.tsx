@@ -13,11 +13,11 @@ const useStyles = makeStyles({
   form: {
     display: "flex",
     flexDirection: "column",
-    "& .MuiTextField-root": {
-      marginBottom: "1em",
-      [theme.breakpoints.up("md")]: {
-        width: "400px",
-      },
+  },
+  field: {
+    marginBottom: "1em",
+    [theme.breakpoints.up("md")]: {
+      width: "400px",
     },
   },
   loginBtn: {
@@ -111,6 +111,9 @@ const Register: React.FC<RegisterProps> = ({
         collection,
         playlists,
       });
+      setNameInput("");
+      setEmailInput("");
+      setPswdInput("");
     };
 
   return (
@@ -133,6 +136,7 @@ const Register: React.FC<RegisterProps> = ({
             <form className={classes.form} noValidate autoComplete="off">
               <TextField
                 id="name"
+                className={classes.field}
                 label="Name"
                 error={nameError}
                 onChange={handleInputChange}
@@ -142,6 +146,7 @@ const Register: React.FC<RegisterProps> = ({
               />
               <TextField
                 id="email"
+                className={classes.field}
                 label="Email"
                 error={emailError}
                 helperText={emailError && "Wrong email address"}
@@ -150,8 +155,9 @@ const Register: React.FC<RegisterProps> = ({
                 value={emailInput}
               />
               <TextField
-                type="password"
                 id="password"
+                className={classes.field}
+                type="password"
                 label="Password"
                 error={pswdError}
                 onChange={handleInputChange}

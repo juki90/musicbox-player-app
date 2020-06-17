@@ -16,7 +16,6 @@ function* loginWorker(action: Action) {
         })
         .then((res) => res.data)
         .catch((err) => {
-          console.log(err);
           return {
             error: "An error occured making this request",
           };

@@ -57,7 +57,7 @@ const user = {
       await userCollection.save();
 
       const payload = {
-        user: { id: user.id },
+        user: { id: user.id, email: user.email },
       };
 
       jwt.sign(

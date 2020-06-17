@@ -167,7 +167,7 @@ const useStyles = makeStyles({
     width: "1em",
     minWidth: 0,
     margin: "0 2px 5px 2px",
-    "& .MuiButton-startIcon": {
+    "& span": {
       padding: 0,
       margin: 0,
     },

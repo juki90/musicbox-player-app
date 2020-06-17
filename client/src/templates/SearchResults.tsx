@@ -8,7 +8,7 @@ import AppsIcon from "@material-ui/icons/Apps";
 import Pagination from "@material-ui/lab/Pagination";
 import { useCommonStyles } from "../views/Root";
 import theme from "../styles/theme";
-import { addToCollection as addToCollectionAction } from "../actions";
+import { addToCollectionRequest as addToCollectionRequestAction } from "../actions";
 import { connect } from "react-redux";
 import prepeareToPagination from "../utils/prepeareToPagination";
 
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 
 interface SearchResultsProps {
   collection: Item[];
-  addToCollection: (item: Item) => void;
+  addToCollectionRequest: (item: Item) => void;
 }
 
 const results: Item[] = [
@@ -210,7 +210,7 @@ const results: Item[] = [
 
 const SearchResults: React.FC<SearchResultsProps> = ({
   collection,
-  addToCollection,
+  addToCollectionRequest,
 }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
@@ -226,7 +226,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     const title = it.title;
     const desc = it.desc;
     const added = new Date();
-    addToCollection({
+    addToCollectionRequest({
       title,
       link,
       desc,
@@ -357,7 +357,8 @@ const mapStateToProps = (state: StateProps) => {
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  addToCollection: (item: Item) => dispatch(addToCollectionAction(item)),
+  addToCollectionRequest: (item: Item) =>
+    dispatch(addToCollectionRequestAction(item)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchResults);

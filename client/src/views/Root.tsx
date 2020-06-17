@@ -4,17 +4,17 @@ import Header from "../templates/Header";
 import Home from "./Home";
 import Search from "./Search";
 import Container from "@material-ui/core/Container";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import { routes } from "../routes";
 import Collection from "./Collection";
-import { headingGradient } from "../styles/theme";
+import theme, { headingGradient } from "../styles/theme";
 import Playlists from "./Playlists";
 import Login from "./Login";
 import Register from "./Register";
-import Player from "./../templates/Player";
+import Player from "../templates/Player";
+import Message from "../components/Message";
 import { PlayerContext, MinimalizeContext } from "../context";
 import { connect } from "react-redux";
-import Message from "../components/Message";
 
 const useStyles = makeStyles({
   container: {
@@ -101,46 +101,48 @@ const Root: React.FC<RootProps> = ({ inPlayer, message }) => {
 
   return (
     <Router>
-      <PlayerContext.Provider value={handlePlayerContext}>
-        <MinimalizeContext.Provider
-          value={{
-            minimalize: handleMinimalizeContext,
-            currently: playerMinimalized,
-          }}
-        >
-          <Header />
-        </MinimalizeContext.Provider>
-      </PlayerContext.Provider>
-      <Container className={classes.container}>
-        <Switch>
-          <Route exact path={routes.home}>
-            <Home />
-          </Route>
-          <Route exact path={routes.search}>
-            <Search />
-          </Route>
-          <Route exact path={routes.collection}>
-            <Collection />
-          </Route>
-          <Route exact path={routes.playlists}>
-            <Playlists />
-          </Route>
-          <Route exact path={routes.login}>
-            <Login />
-          </Route>
-          <Route exact path={routes.register}>
-            <Register />
-          </Route>
-        </Switch>
-      </Container>
-      {(playerOn || inPlayer) && (
-        <Player
-          minimalized={playerMinimalized}
-          minimalize={minimalizePlayer}
-          close={() => setPlayerOn(false)}
-        />
-      )}
-      {(message.message || message.error) && <Message message={message} />}
+      <ThemeProvider theme={theme}>
+        <PlayerContext.Provider value={handlePlayerContext}>
+          <MinimalizeContext.Provider
+            value={{
+              minimalize: handleMinimalizeContext,
+              currently: playerMinimalized,
+            }}
+          >
+            <Header />
+          </MinimalizeContext.Provider>
+        </PlayerContext.Provider>
+        <Container className={classes.container}>
+          <Switch>
+            <Route exact path={routes.home}>
+              <Home />
+            </Route>
+            <Route exact path={routes.search}>
+              <Search />
+            </Route>
+            <Route exact path={routes.collection}>
+              <Collection />
+            </Route>
+            <Route exact path={routes.playlists}>
+              <Playlists />
+            </Route>
+            <Route exact path={routes.login}>
+              <Login />
+            </Route>
+            <Route exact path={routes.register}>
+              <Register />
+            </Route>
+          </Switch>
+        </Container>
+        {(playerOn || inPlayer) && (
+          <Player
+            minimalized={playerMinimalized}
+            minimalize={minimalizePlayer}
+            close={() => setPlayerOn(false)}
+          />
+        )}
+        {(message.message || message.error) && <Message message={message} />}
+      </ThemeProvider>
     </Router>
   );
 };

@@ -1,4 +1,7 @@
-export const ADD_TO_COLLECTION = "ADD_TO_COLLECTION";
+export const ADD_TO_COLLECTION_REQUEST = "ADD_TO_COLLECTION_REQUEST";
+export const ADD_TO_COLLECTION_FAILED = "ADD_TO_COLLECTION_FAILED";
+export const ADD_TO_COLLECTION_SUCCESS = "ADD_TO_COLLECTION_SUCCESS";
+
 export const REMOVE_FROM_COLLECTION = "REMOVE_FROM_COLLECTION";
 export const ADD_TO_PLAYLIST = "ADD_TO_PLAYLIST";
 export const REMOVE_FROM_PLAYLIST = "REMOVE_FROM_PLAYLIST";
@@ -20,9 +23,27 @@ export const LOGIN_FAILED = "LOGIN_FAILED";
 
 export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION";
 
-export const addToCollection: (item: Item) => Action = (item) => {
+export const LOGOUT = "LOGOUT";
+
+export const addToCollectionRequest: (item: Item) => Action = (item) => {
   return {
-    type: ADD_TO_COLLECTION,
+    type: ADD_TO_COLLECTION_REQUEST,
+    payload: {
+      item,
+    },
+  };
+};
+export const addToCollectionFailed: (text: string) => Action = (text) => {
+  return {
+    type: ADD_TO_COLLECTION_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const addToCollectionSuccess: (item: Item) => Action = (item) => {
+  return {
+    type: ADD_TO_COLLECTION_SUCCESS,
     payload: {
       item,
     },
@@ -229,5 +250,11 @@ export const loginFailed: (text: string) => Action = (text) => {
     payload: {
       text,
     },
+  };
+};
+
+export const logout: () => { type: string } = () => {
+  return {
+    type: LOGOUT,
   };
 };

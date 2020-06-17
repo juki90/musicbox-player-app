@@ -27,7 +27,6 @@ function* registerWorker(action: Action) {
           };
         });
     } catch {
-      console.log("HAS ERROR");
       return {
         error: "An error occured making this request",
       };

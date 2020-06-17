@@ -1,5 +1,6 @@
 import {
-  ADD_TO_COLLECTION,
+  ADD_TO_COLLECTION_FAILED,
+  ADD_TO_COLLECTION_SUCCESS,
   REMOVE_FROM_COLLECTION,
   ADD_TO_PLAYLIST,
   REMOVE_FROM_PLAYLIST,
@@ -15,6 +16,7 @@ import {
   REMOVE_NOTIFICATION,
   LOGIN_FAILED,
   LOGIN_SUCCESS,
+  LOGOUT,
 } from "../actions";
 import { Reducer } from "redux";
 
@@ -394,7 +396,7 @@ const initialState: StateProps = {
     },
   ],
   inPlayer: undefined,
-  loggedAs: undefined,
+  loggedAs: "",
   message: {
     error: "",
     message: "",
@@ -406,9 +408,9 @@ const rootReducer: Reducer<StateProps, Action> = (
   action: Action
 ) => {
   switch (action.type) {
-    case ADD_TO_COLLECTION:
+    case ADD_TO_COLLECTION_SUCCESS:
       let withAddedToCollection = [
-        (action as addToCollectionAction).payload.item,
+        (action as addToCollectionSuccessAction).payload.item,
         ...state.collection,
       ].sort((a: Item, b: Item) => {
         const aDate = new Date(a.added);
@@ -806,6 +808,7 @@ const rootReducer: Reducer<StateProps, Action> = (
       };
     case REGISTER_FAILED:
     case LOGIN_FAILED:
+    case ADD_TO_COLLECTION_FAILED:
       return {
         ...state,
         message: {
@@ -820,6 +823,16 @@ const rootReducer: Reducer<StateProps, Action> = (
         message: {
           message: "",
           error: "",
+        },
+      };
+    case LOGOUT:
+      localStorage.removeItem("token");
+      return {
+        ...state,
+        loggedAs: "",
+        message: {
+          error: "",
+          message: "You have been logged out",
         },
       };
   }

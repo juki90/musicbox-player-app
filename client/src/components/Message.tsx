@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "@material-ui/core/Container";
-import { makeStyles, Typography, Button } from "@material-ui/core";
+import { makeStyles, Typography, Button, Box } from "@material-ui/core";
 import { connect } from "react-redux";
 import { removeNotification as removeNotificationAction } from "../actions";
 
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     margin: "0 auto",
     width: "calc(100% - 2em)",
   },
-  button: {
+  okButton: {
     marginLeft: "auto",
     padding: 0,
     height: "2.5em",
@@ -47,13 +47,13 @@ const Message: React.FC<MessageProps> = (props) => {
   const { message, removeNotification } = props;
   const classes = useStyles(props);
   return (
-    <div className={classes.message}>
+    <Box className={classes.message}>
       <Container className={classes.messageContainer}>
         <Typography variant="body1" className={classes.messageText}>
           {message.error ? message.error : message.message}
         </Typography>
         <Button
-          className={classes.button}
+          className={classes.okButton}
           variant="outlined"
           color="default"
           onClick={removeNotification}
@@ -61,7 +61,7 @@ const Message: React.FC<MessageProps> = (props) => {
           OK
         </Button>
       </Container>
-    </div>
+    </Box>
   );
 };
 

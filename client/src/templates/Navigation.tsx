@@ -11,6 +11,8 @@ import theme from "../styles/theme";
 import { routes } from "../routes";
 import { PlayerContext, MinimalizeContext } from "../context";
 import { withRouter, RouteComponentProps } from "react-router";
+import { logout as logoutAction } from "../actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   button: {
@@ -77,9 +79,19 @@ const useStyles = makeStyles({
   },
 });
 
-const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
+interface NavigationProps extends RouteComponentProps {
+  loggedAs: string;
+  logout: () => void;
+}
+
+const Navigation: React.FC<NavigationProps> = ({
+  history,
+  loggedAs,
+  logout,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null),
-    [docWidth, setDocWidth] = useState<number>(document.body.offsetWidth);
+    [docWidth, setDocWidth] = useState<number>(document.body.offsetWidth),
+    [logged, setLogged] = useState<boolean>(!!loggedAs.length);
 
   const classes = useStyles();
 
@@ -88,6 +100,10 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
       minimalize: (on?: boolean) => void;
       currently: boolean;
     }>(MinimalizeContext);
+
+  useEffect(() => {
+    setLogged(!!loggedAs.length);
+  }, [loggedAs]);
 
   const handleNaviconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
@@ -115,6 +131,11 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
       if (minimalizePlayer.currently) {
         minimalizePlayer.minimalize(false);
       }
+    },
+    handleLogout = (e: React.MouseEvent) => {
+      e.preventDefault();
+      logout();
+      history.push("/");
     };
 
   const handleResize = () => {
@@ -193,9 +214,9 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
                 <Link
                   className={classes.menuLink}
                   href={routes.login}
-                  onClick={handleLinkClick}
+                  onClick={logged ? handleLogout : handleLinkClick}
                 >
-                  Log in
+                  {logged ? "Log out" : "Log in"}
                 </Link>
               </MenuItem>
               <MenuItem>
@@ -255,9 +276,9 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
               <Link
                 className={classes.menuLink}
                 href={routes.login}
-                onClick={handleLinkClick}
+                onClick={logged ? handleLogout : handleLinkClick}
               >
-                Login
+                {logged ? "Log out" : "Log in"}
               </Link>
             </Button>
             <Button className={classes.navButton} variant="contained">
@@ -276,4 +297,18 @@ const Navigation: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(Navigation);
+const mapStateToProps = (state: StateProps) => {
+  const { loggedAs } = state;
+  return {
+    loggedAs,
+  };
+};
+
+const mapDispatchToProps = (dispatch: (arg0: { type: string }) => any) => ({
+  logout: () => dispatch(logoutAction()),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Navigation));

@@ -40,30 +40,28 @@ const useStyles = makeStyles({
 const Header: React.FC = () => {
   const classes = useStyles();
   return (
-    <ThemeProvider theme={theme}>
-      <AppBar
-        className={classes.header}
-        position="fixed"
-        component="header"
-        aria-label="menu"
-      >
-        <Container className={classes.headerContainer} maxWidth="lg">
-          <Box
-            className={classes.headerBox}
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-          >
-            <IconButton className={classes.button} aria-label="home link">
-              <a className={classes.homeLink} href="/">
-                <img src={logo} alt="Logo" />
-              </a>
-            </IconButton>
-            <Navigation />
-          </Box>
-        </Container>
-      </AppBar>
-    </ThemeProvider>
+    <AppBar
+      className={classes.header}
+      position="fixed"
+      component="header"
+      aria-label="menu"
+    >
+      <Container className={classes.headerContainer} maxWidth="lg">
+        <Box
+          className={classes.headerBox}
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+        >
+          <IconButton className={classes.button} aria-label="home link">
+            <a className={classes.homeLink} href="/">
+              <img src={logo} alt="Logo" />
+            </a>
+          </IconButton>
+          <Navigation />
+        </Box>
+      </Container>
+    </AppBar>
   );
 };
 
