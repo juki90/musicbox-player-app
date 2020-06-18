@@ -62,13 +62,12 @@ const user = {
 
       jwt.sign(
         payload,
-        process.env.SECRET,
+        process.env.JWT_SECRET,
         {
-          expiresIn: 3600,
+          expiresIn: 36000,
         },
         (err, token) => {
           if (err) {
-            console.log(err);
             throw err;
           }
           res.json({ token, name });
@@ -96,6 +95,7 @@ const user = {
       const payload = {
         user: {
           id: user.id,
+          email: user.email,
         },
       };
 

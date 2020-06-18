@@ -8,10 +8,11 @@ const auth = (req, res, next) => {
     return res.json({ msg: "No token, authorization denied" });
   }
   try {
-    const decoded = jwt.verify(token, process.env.SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.body.email = decoded.user.email;
     return next();
   } catch (err) {
+    console.log(err);
     return res.status(401).json({ error: "Invalid Token" });
   }
 };

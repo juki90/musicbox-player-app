@@ -1,9 +1,12 @@
 import {
   ADD_TO_COLLECTION_FAILED,
   ADD_TO_COLLECTION_SUCCESS,
-  REMOVE_FROM_COLLECTION,
-  ADD_TO_PLAYLIST,
-  REMOVE_FROM_PLAYLIST,
+  REMOVE_FROM_COLLECTION_FAILED,
+  REMOVE_FROM_COLLECTION_SUCCESS,
+  ADD_TO_PLAYLIST_FAILED,
+  ADD_TO_PLAYLIST_SUCCESS,
+  REMOVE_FROM_PLAYLIST_FAILED,
+  REMOVE_FROM_PLAYLIST_SUCCESS,
   ADD_NEW_PLAYLIST,
   RENAME_PLAYLIST,
   DELETE_PLAYLIST,
@@ -428,9 +431,11 @@ const rootReducer: Reducer<StateProps, Action> = (
         ...state,
         collection: withAddedToCollection,
       };
-    case REMOVE_FROM_COLLECTION:
+    case REMOVE_FROM_COLLECTION_SUCCESS:
       const withRemovedCollection = [...state.collection].filter((e) => {
-        return e.id !== (action as removeFromCollectionAction).payload.id;
+        return (
+          e.id !== (action as removeFromCollectionSuccessAction).payload.id
+        );
       });
 
       return {
@@ -441,11 +446,12 @@ const rootReducer: Reducer<StateProps, Action> = (
           return cl;
         }),
       };
-    case ADD_TO_PLAYLIST:
+
+    case ADD_TO_PLAYLIST_SUCCESS:
       const withAddedToPlaylist = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.id === (action as addToPlaylistAction).payload.id) {
-          pl.items.push((action as addToPlaylistAction).payload.item);
+        if (pl.id === (action as addToPlaylistSuccessAction).payload.id) {
+          pl.items.push((action as addToPlaylistSuccessAction).payload.item);
           pl.items = pl.items.map((it, i) => {
             const item = it;
             item.id = i;
@@ -458,12 +464,13 @@ const rootReducer: Reducer<StateProps, Action> = (
         ...state,
         playlists: withAddedToPlaylist,
       };
-    case REMOVE_FROM_PLAYLIST:
+    case REMOVE_FROM_PLAYLIST_SUCCESS:
       const withRemovedFromPlaylist = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.id === (action as removeFromPlaylistAction).payload.id) {
+        if (pl.id === (action as removeFromPlaylistSuccessAction).payload.id) {
           pl.items = pl.items.filter(
-            (i) => i.id !== (action as removeFromPlaylistAction).payload.vidId
+            (i) =>
+              i.id !== (action as removeFromPlaylistSuccessAction).payload.vidId
           );
           pl.items = pl.items.map((it, i) => {
             const item = it;
@@ -809,6 +816,9 @@ const rootReducer: Reducer<StateProps, Action> = (
     case REGISTER_FAILED:
     case LOGIN_FAILED:
     case ADD_TO_COLLECTION_FAILED:
+    case REMOVE_FROM_COLLECTION_FAILED:
+    case ADD_TO_PLAYLIST_FAILED:
+    case REMOVE_FROM_PLAYLIST_FAILED:
       return {
         ...state,
         message: {

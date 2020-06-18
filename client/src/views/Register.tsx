@@ -8,6 +8,7 @@ import { useCommonStyles } from "./Root";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import { registerRequest as registerRequestAction } from "../actions";
 import { connect } from "react-redux";
+import { withRouter, RouteComponentProps } from "react-router";
 
 const useStyles = makeStyles({
   form: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles({
   },
 });
 
-interface RegisterProps {
+interface RegisterProps extends RouteComponentProps {
   registerRequest: (
     name: string,
     email: string,
@@ -46,6 +47,7 @@ const Register: React.FC<RegisterProps> = ({
   registerRequest,
   collection,
   playlists,
+  history,
 }) => {
   const commonClasses = useCommonStyles(),
     classes = useStyles(),
@@ -114,6 +116,7 @@ const Register: React.FC<RegisterProps> = ({
       setNameInput("");
       setEmailInput("");
       setPswdInput("");
+      history.push("/");
     };
 
   return (
@@ -207,4 +210,7 @@ const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
   ) => dispatch(registerRequestAction(name, email, password, data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Register));

@@ -1,26 +1,27 @@
-import { put, call, takeLatest } from "redux-saga/effects";
+import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  ADD_TO_COLLECTION_SUCCESS,
-  ADD_TO_COLLECTION_FAILED,
-  ADD_TO_COLLECTION_REQUEST,
+  ADD_TO_PLAYLIST_SUCCESS,
+  ADD_TO_PLAYLIST_FAILED,
+  ADD_TO_PLAYLIST_REQUEST,
 } from "../actions";
 
-function* addToCollectionWatcher() {
-  yield takeLatest(ADD_TO_COLLECTION_REQUEST, addToCollectionWorker);
+function* addToPlaylistWatcher() {
+  yield takeEvery(ADD_TO_PLAYLIST_REQUEST, addToPlaylistWorker);
 }
 
-function* addToCollectionWorker(action: Action) {
+function* addToPlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { item: action.payload.item };
+        return { id: action.payload.id, item: action.payload.item };
       }
       return axios
         .post(
-          "/api/collection",
+          "/api/playlists/item",
           {
+            id: action.payload.id,
             item: action.payload.item,
           },
           {
@@ -32,27 +33,27 @@ function* addToCollectionWorker(action: Action) {
         .then((res) => res.data)
         .catch((err) => {
           return {
-            error: "An error occured adding new item to collection",
+            error: "An error occured adding video to the playlist",
           };
         });
     } catch (err) {
       return {
-        error: "An error occured adding new item to collection",
+        error: "An error occured adding video to the playlist",
       };
     }
   });
-
-  if (typeof response.item === "object") {
+  if (response.id && response.item) {
     yield put({
-      type: ADD_TO_COLLECTION_SUCCESS,
+      type: ADD_TO_PLAYLIST_SUCCESS,
       payload: {
+        id: response.id,
         item: response.item,
       },
     });
   }
   if (response.error) {
     yield put({
-      type: ADD_TO_COLLECTION_FAILED,
+      type: ADD_TO_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -60,4 +61,4 @@ function* addToCollectionWorker(action: Action) {
   }
 }
 
-export default addToCollectionWatcher;
+export default addToPlaylistWatcher;

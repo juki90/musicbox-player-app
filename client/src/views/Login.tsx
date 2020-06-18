@@ -9,6 +9,7 @@ import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import { routes } from "../routes";
 import { loginRequest as loginRequestAction } from "../actions";
 import { connect } from "react-redux";
+import { RouteComponentProps, withRouter } from "react-router";
 
 const useStyles = makeStyles({
   form: {
@@ -29,11 +30,11 @@ const useStyles = makeStyles({
   },
 });
 
-interface LoginProps {
+interface LoginProps extends RouteComponentProps {
   loginRequest: (email: string, password: string) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ loginRequest }) => {
+const Login: React.FC<LoginProps> = ({ loginRequest, history }) => {
   const commonClasses = useCommonStyles(),
     classes = useStyles(),
     [emailInput, setEmailInput] = useState<string>(""),
@@ -86,6 +87,7 @@ const Login: React.FC<LoginProps> = ({ loginRequest }) => {
       loginRequest(emailInput, pswdInput);
       setEmailInput("");
       setPswdInput("");
+      history.push("/");
     };
 
   return (
@@ -163,4 +165,4 @@ const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
     dispatch(loginRequestAction(email, password)),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(null, mapDispatchToProps)(withRouter(Login));

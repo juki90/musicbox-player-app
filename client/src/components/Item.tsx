@@ -21,7 +21,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import StopIcon from "@material-ui/icons/Stop";
 import { connect } from "react-redux";
 import {
-  addToPlaylist as addToPlaylistAction,
+  addToPlaylistRequest as addToPlaylistRequestAction,
   playVideo as playVideoAction,
 } from "../actions";
 
@@ -219,7 +219,7 @@ interface ItemProps {
     | ((e: React.MouseEvent<HTMLButtonElement>) => void)
     | ((id: number) => void)
     | (() => void);
-  addToPlaylist: (id: number, item: Item) => void;
+  addToPlaylistRequest: (id: number, item: Item) => void;
   onMove?: (
     e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
   ) => void;
@@ -243,7 +243,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     playing,
     onAdd,
     onRemove,
-    addToPlaylist,
+    addToPlaylistRequest,
     onMove,
     playVideo,
   } = props;
@@ -263,7 +263,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
 
   const handleAddToPlaylist = (id: number, item: Item) => {
     setAnchorEl(null);
-    addToPlaylist(id, item);
+    addToPlaylistRequest(id, item);
   };
 
   const getVideoThumbnail = (link: string) => {
@@ -505,8 +505,8 @@ const mapStateToProps = (state: StateProps) => {
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  addToPlaylist: (id: number, item: Item) =>
-    dispatch(addToPlaylistAction(id, item)),
+  addToPlaylistRequest: (id: number, item: Item) =>
+    dispatch(addToPlaylistRequestAction(id, item)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
 });

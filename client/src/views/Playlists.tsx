@@ -16,7 +16,7 @@ import PlaylistModal from "../components/PlaylistModal";
 import {
   addNewPlaylist as addNewPlaylistAction,
   renamePlaylist as renamePlaylistAction,
-  removeFromPlaylist as removeFromPlaylistAction,
+  removeFromPlaylistRequest as removeFromPlaylistRequestAction,
   deletePlaylist as deletePlaylistAction,
   sortPlaylist as sortPlaylistAction,
   playVideo as playVideoAction,
@@ -53,7 +53,7 @@ interface PlaylistsProps {
   renamePlaylist: (name: string, id: number) => void;
   deletePlaylist: (id: number) => void;
   sortPlaylist: (id: number, way: string) => void;
-  removeFromPlaylist: (id: number, vidId: number) => void;
+  removeFromPlaylistRequest: (id: number, vidId: number) => void;
   playVideo: (vidId: number, plId?: number) => void;
 }
 
@@ -64,7 +64,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
   renamePlaylist,
   deletePlaylist,
   sortPlaylist,
-  removeFromPlaylist,
+  removeFromPlaylistRequest,
   playVideo,
 }) => {
   const classes = useStyles();
@@ -207,7 +207,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
               activeTab={activeTab}
               itemsPerPage={10}
               type="playlist"
-              rmPlaylist={removeFromPlaylist}
+              rmPlaylist={removeFromPlaylistRequest}
             />
           </Card>
         </Paper>
@@ -265,8 +265,8 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   addNewPlaylist: (name: string) => dispatch(addNewPlaylistAction(name)),
   renamePlaylist: (name: string, id: number) =>
     dispatch(renamePlaylistAction(name, id)),
-  removeFromPlaylist: (id: number, vidId: number) =>
-    dispatch(removeFromPlaylistAction(id, vidId)),
+  removeFromPlaylistRequest: (id: number, vidId: number) =>
+    dispatch(removeFromPlaylistRequestAction(id, vidId)),
 
   deletePlaylist: (id: number) => dispatch(deletePlaylistAction(id)),
   sortPlaylist: (id: number, way: string) =>

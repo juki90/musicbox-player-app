@@ -2,14 +2,24 @@ export const ADD_TO_COLLECTION_REQUEST = "ADD_TO_COLLECTION_REQUEST";
 export const ADD_TO_COLLECTION_FAILED = "ADD_TO_COLLECTION_FAILED";
 export const ADD_TO_COLLECTION_SUCCESS = "ADD_TO_COLLECTION_SUCCESS";
 
-export const REMOVE_FROM_COLLECTION = "REMOVE_FROM_COLLECTION";
-export const ADD_TO_PLAYLIST = "ADD_TO_PLAYLIST";
-export const REMOVE_FROM_PLAYLIST = "REMOVE_FROM_PLAYLIST";
+export const REMOVE_FROM_COLLECTION_REQUEST = "REMOVE_FROM_COLLECTION_REQUEST";
+export const REMOVE_FROM_COLLECTION_FAILED = "REMOVE_FROM_COLLECTION_FAILED";
+export const REMOVE_FROM_COLLECTION_SUCCESS = "REMOVE_FROM_COLLECTION_SUCCESS";
+
+export const ADD_TO_PLAYLIST_REQUEST = "ADD_TO_PLAYLIST_REQUEST";
+export const ADD_TO_PLAYLIST_FAILED = "ADD_TO_PLAYLIST_FAILED";
+export const ADD_TO_PLAYLIST_SUCCESS = "ADD_TO_PLAYLIST_SUCCESS";
+
+export const REMOVE_FROM_PLAYLIST_REQUEST = "REMOVE_FROM_PLAYLIST_REQUEST";
+export const REMOVE_FROM_PLAYLIST_FAILED = "REMOVE_FROM_PLAYLIST_FAILED";
+export const REMOVE_FROM_PLAYLIST_SUCCESS = "REMOVE_FROM_PLAYLIST_SUCCESS";
+
 export const ADD_NEW_PLAYLIST = "ADD_NEW_PLAYLIST";
 export const RENAME_PLAYLIST = "RENAME_PLAYLIST";
 export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
 export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
+
 export const PLAY_VIDEO = "PLAY_VIDEO";
 export const SKIP_TO_VIDEO = "SKIP_TO_VIDEO";
 
@@ -50,18 +60,57 @@ export const addToCollectionSuccess: (item: Item) => Action = (item) => {
   };
 };
 
-export const removeFromCollection: (id: number) => Action = (id) => {
+export const removeFromCollectionRequest: (id: number) => Action = (id) => {
   return {
-    type: REMOVE_FROM_COLLECTION,
+    type: REMOVE_FROM_COLLECTION_REQUEST,
+    payload: {
+      id,
+    },
+  };
+};
+export const removeFromCollectionFailed: (text: string) => Action = (text) => {
+  return {
+    type: REMOVE_FROM_COLLECTION_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const removeFromCollectionSuccess: (id: number) => Action = (id) => {
+  return {
+    type: REMOVE_FROM_COLLECTION_SUCCESS,
     payload: {
       id,
     },
   };
 };
 
-export const addToPlaylist: (id: number, item: Item) => Action = (id, item) => {
+export const addToPlaylistRequest: (id: number, item: Item) => Action = (
+  id,
+  item
+) => {
   return {
-    type: ADD_TO_PLAYLIST,
+    type: ADD_TO_PLAYLIST_REQUEST,
+    payload: {
+      id,
+      item,
+    },
+  };
+};
+export const addToPlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: ADD_TO_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const addToPlaylistSuccess: (id: number, item: Item) => Action = (
+  id,
+  item
+) => {
+  return {
+    type: ADD_TO_PLAYLIST_SUCCESS,
     payload: {
       id,
       item,
@@ -69,12 +118,32 @@ export const addToPlaylist: (id: number, item: Item) => Action = (id, item) => {
   };
 };
 
-export const removeFromPlaylist: (id: number, vidId: number) => Action = (
-  id,
-  vidId
-) => {
+export const removeFromPlaylistRequest: (
+  id: number,
+  vidId: number
+) => Action = (id, vidId) => {
   return {
-    type: REMOVE_FROM_PLAYLIST,
+    type: REMOVE_FROM_PLAYLIST_REQUEST,
+    payload: {
+      id,
+      vidId,
+    },
+  };
+};
+export const removeFromPlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: REMOVE_FROM_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const removeFromPlaylistSuccess: (
+  id: number,
+  vidId: number
+) => Action = (id, vidId) => {
+  return {
+    type: REMOVE_FROM_PLAYLIST_SUCCESS,
     payload: {
       id,
       vidId,

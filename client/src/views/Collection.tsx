@@ -14,7 +14,7 @@ import { useCommonStyles } from "./Root";
 import { TextField } from "@material-ui/core";
 import { connect } from "react-redux";
 import prepeareToPagination from "../utils/prepeareToPagination";
-import { removeFromCollection as removeFromCollectionAction } from "../actions";
+import { removeFromCollectionRequest as removeFromCollectionRequestAction } from "../actions";
 
 const useStyles = makeStyles({
   searchButton: {
@@ -24,12 +24,12 @@ const useStyles = makeStyles({
 
 interface CollectionProps {
   collection: Item[];
-  removeFromCollection: (id: number) => void;
+  removeFromCollectionRequest: (id: number) => void;
 }
 
 const Collection: React.FC<CollectionProps> = ({
   collection,
-  removeFromCollection,
+  removeFromCollectionRequest,
 }) => {
   const commonClasses = useCommonStyles();
   const classes = useStyles();
@@ -79,7 +79,7 @@ const Collection: React.FC<CollectionProps> = ({
             num={r.id}
             inTab={0}
             playing={r.playing as boolean}
-            onRemove={removeFromCollection}
+            onRemove={removeFromCollectionRequest}
           />
         ))
       : (prepCollection.results as Item[][]).map((p: Item[]) => {
@@ -95,7 +95,7 @@ const Collection: React.FC<CollectionProps> = ({
               num={r.id}
               inTab={0}
               playing={r.playing as boolean}
-              onRemove={removeFromCollection}
+              onRemove={removeFromCollectionRequest}
             />
           ));
           return page;
@@ -199,8 +199,8 @@ const mapStateToProps = (state: StateProps) => {
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  removeFromCollection: (id: number) =>
-    dispatch(removeFromCollectionAction(id)),
+  removeFromCollectionRequest: (id: number) =>
+    dispatch(removeFromCollectionRequestAction(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Collection);

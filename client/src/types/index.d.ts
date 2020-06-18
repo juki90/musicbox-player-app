@@ -48,14 +48,39 @@ type addToCollectionSuccessAction = {
   };
 };
 
-type removeFromCollectionAction = {
+type removeFromCollectionRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+  };
+};
+type removeFromCollectionFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type removeFromCollectionSuccessAction = {
   type: string;
   payload: {
     id: number;
   };
 };
 
-type addToPlaylistAction = {
+type addToPlaylistRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+    item: Item;
+  };
+};
+type addToPlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type addToPlaylistSuccessAction = {
   type: string;
   payload: {
     id: number;
@@ -63,7 +88,20 @@ type addToPlaylistAction = {
   };
 };
 
-type removeFromPlaylistAction = {
+type removeFromPlaylistRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+    vidId: number;
+  };
+};
+type removeFromPlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type removeFromPlaylistSuccessAction = {
   type: string;
   payload: {
     id: number;
@@ -186,8 +224,12 @@ type loginFailedAction = {
 type Action =
   | addToCollectionAction
   | removeFromCollectionAction
-  | addToPlaylistAction
-  | removeFromPlaylistAction
+  | addToPlaylistRequestAction
+  | addToPlaylistFailedAction
+  | addToPlaylistSuccessAction
+  | removeFromPlaylistRequestAction
+  | removeFromPlaylistFailedAction
+  | removeFromPlaylistSuccessAction
   | addNewPlaylistAction
   | deletePlaylistAction
   | sortPlaylistAction

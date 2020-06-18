@@ -10,20 +10,21 @@ const theCollection = {
 
     let collectionObj = await theCollectionModel.findOne({ email });
 
-    console.log(collectionObj);
+    if (!collectionObj) {
+      res.status(404).json({ error: "Server Error" });
+    }
 
-    let withAddedToCollection = [item, ...collectionObj.theCollection].sort(
-      (a, b) => {
+    let withAddedToCollection = [item, ...collectionObj.theCollection]
+      .sort((a, b) => {
         const aDate = new Date(a.added);
         const bDate = new Date(b.added);
         return bDate.getTime() - aDate.getTime();
-      }
-    );
-    withAddedToCollection = withAddedToCollection.map((c, i) => {
-      const cl = c;
-      cl.id = i;
-      return cl;
-    });
+      })
+      .map((c, i) => {
+        const cl = c;
+        cl.id = i;
+        return cl;
+      });
 
     collectionObj.theCollection = withAddedToCollection;
 
@@ -35,7 +36,40 @@ const theCollection = {
         });
       }
     } catch (error) {
-      console.error(error.message);
+      console.log(error);
+      res.status(500).json({ error: "Document not found" });
+    }
+  },
+  removeFromCollection: async (req, res) => {
+    const { id, email } = req.body;
+
+    let collectionObj = await theCollectionModel.findOne({ email });
+
+    if (!collectionObj) {
+      res.status(404).json({ error: "Document not found" });
+      return;
+    }
+
+    const withRemovedCollection = [...collectionObj.theCollection]
+      .filter((e) => {
+        return e.id !== id;
+      })
+      .map((c, i) => {
+        const cl = c;
+        cl.id = i;
+        return cl;
+      });
+
+    collectionObj.theCollection = withRemovedCollection;
+
+    try {
+      const saved = await collectionObj.save();
+      if (saved) {
+        res.json({
+          id,
+        });
+      }
+    } catch (error) {
       res.status(500).json({ error: "Server Error" });
     }
   },

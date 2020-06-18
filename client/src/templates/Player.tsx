@@ -25,8 +25,8 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import ItemList from "../components/ItemList";
 import {
-  removeFromCollection as removeFromCollectionAction,
-  removeFromPlaylist as removeFromPlaylistAction,
+  removeFromCollectionRequest as removeFromCollectionRequestAction,
+  removeFromPlaylistRequest as removeFromPlaylistRequestAction,
   playVideo as playVideoAction,
   skipToVideo as skipToVideoAction,
 } from "../actions";
@@ -219,8 +219,8 @@ interface PlayerProps {
   inPlayer: Item | undefined;
   minimalize: React.Dispatch<React.SetStateAction<boolean>>;
   close: () => void;
-  removeFromCollection: (id: number) => void;
-  removeFromPlaylist: (id: number, vidId: number) => void;
+  removeFromCollectionRequest: (id: number) => void;
+  removeFromPlaylistRequest: (id: number, vidId: number) => void;
   playVideo: (vidId: number, plId?: number) => void;
   skipToVideo: (skipTO: number, inPlaylist?: number) => void;
 }
@@ -540,10 +540,10 @@ const mapStateToProps = (state: StateProps) => {
   };
 };
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  removeFromCollection: (id: number) =>
-    dispatch(removeFromCollectionAction(id)),
-  removeFromPlaylist: (id: number, vidId: number) =>
-    dispatch(removeFromPlaylistAction(id, vidId)),
+  removeFromCollectionRequest: (id: number) =>
+    dispatch(removeFromCollectionRequestAction(id)),
+  removeFromPlaylistRequest: (id: number, vidId: number) =>
+    dispatch(removeFromPlaylistRequestAction(id, vidId)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
   skipToVideo: (skipTO: number, inPlaylist?: number) =>
