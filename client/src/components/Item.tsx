@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -23,6 +23,7 @@ import { connect } from "react-redux";
 import {
   addToPlaylistRequest as addToPlaylistRequestAction,
   playVideo as playVideoAction,
+  addToCollectionRequest as addToCollectionRequestAction,
 } from "../actions";
 
 const useStyles = makeStyles({
@@ -214,7 +215,6 @@ interface ItemProps {
   num: number;
   inTab: number;
   playing: boolean;
-  onAdd?: undefined | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   onRemove?:
     | ((e: React.MouseEvent<HTMLButtonElement>) => void)
     | ((id: number) => void)
@@ -224,6 +224,7 @@ interface ItemProps {
     e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
   ) => void;
   playVideo: (vidId: number, plId?: number) => void;
+  addToCollectionRequest: (item: Item) => void;
 }
 
 const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
@@ -241,11 +242,11 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     num,
     inTab,
     playing,
-    onAdd,
     onRemove,
     addToPlaylistRequest,
     onMove,
     playVideo,
+    addToCollectionRequest,
   } = props;
 
   const addedAt = new Date(added);
@@ -299,6 +300,16 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
       return;
     }
     playVideo(num, inTab - 1);
+  };
+
+  const handleAddToCollection = () => {
+    addToCollectionRequest({
+      id: num,
+      title,
+      desc,
+      link,
+      added: added ? added : new Date(),
+    });
   };
 
   const playlistMenuItems = playlists.map((p: Playlist) => (
@@ -428,7 +439,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     startIcon={inCollection ? <CheckIcon /> : <AddIcon />}
                     disabled={inCollection}
-                    onClick={onAdd}
+                    onClick={handleAddToCollection}
                   >
                     {inCollection ? "In collection" : "Collection"}
                   </Button>
@@ -509,6 +520,8 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
     dispatch(addToPlaylistRequestAction(id, item)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
+  addToCollectionRequest: (item: Item) =>
+    dispatch(addToCollectionRequestAction(item)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

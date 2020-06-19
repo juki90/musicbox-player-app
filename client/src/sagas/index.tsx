@@ -4,7 +4,7 @@ import loginWatcher from "./loginSaga";
 import addToCollectionWatcher from "./addToCollectionSaga";
 import removeFromCollectionWatcher from "./removeFromCollectionSaga";
 import addToPlaylistWatcher from "./addToPlaylistSaga";
-import removeFromPlaylistWatcher from "./addToCollectionSaga";
+import removeFromPlaylistWatcher from "./removeFromPlaylistSaga";
 
 function* rootSaga() {
   yield all([

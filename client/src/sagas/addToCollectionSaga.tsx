@@ -1,4 +1,4 @@
-import { put, call, takeLatest } from "redux-saga/effects";
+import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
   ADD_TO_COLLECTION_SUCCESS,
@@ -7,7 +7,7 @@ import {
 } from "../actions";
 
 function* addToCollectionWatcher() {
-  yield takeLatest(ADD_TO_COLLECTION_REQUEST, addToCollectionWorker);
+  yield takeEvery(ADD_TO_COLLECTION_REQUEST, addToCollectionWorker);
 }
 
 function* addToCollectionWorker(action: Action) {
@@ -42,7 +42,7 @@ function* addToCollectionWorker(action: Action) {
     }
   });
 
-  if (typeof response.item === "object") {
+  if (response.item) {
     yield put({
       type: ADD_TO_COLLECTION_SUCCESS,
       payload: {

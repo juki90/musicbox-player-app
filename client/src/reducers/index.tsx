@@ -838,7 +838,7 @@ const rootReducer: Reducer<StateProps, Action> = (
     case LOGOUT:
       localStorage.removeItem("token");
       return {
-        ...state,
+        ...initialState,
         loggedAs: "",
         message: {
           error: "",

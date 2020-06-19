@@ -8,7 +8,6 @@ import AppsIcon from "@material-ui/icons/Apps";
 import Pagination from "@material-ui/lab/Pagination";
 import { useCommonStyles } from "../views/Root";
 import theme from "../styles/theme";
-import { addToCollectionRequest as addToCollectionRequestAction } from "../actions";
 import { connect } from "react-redux";
 import prepeareToPagination from "../utils/prepeareToPagination";
 
@@ -23,7 +22,6 @@ const useStyles = makeStyles({
 
 interface SearchResultsProps {
   collection: Item[];
-  addToCollectionRequest: (item: Item) => void;
 }
 
 const results: Item[] = [
@@ -208,32 +206,13 @@ const results: Item[] = [
   },
 ];
 
-const SearchResults: React.FC<SearchResultsProps> = ({
-  collection,
-  addToCollectionRequest,
-}) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ collection }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
   const [paginationOn, setPaginationOn] = useState<number>(1);
   const prepearedResults = prepeareToPagination(results as Item[], 10);
-  const handleAddToCollection = (it: {
-    link: string;
-    title: string;
-    desc: string;
-  }) => {
-    const link = it.link;
-    const title = it.title;
-    const desc = it.desc;
-    const added = new Date();
-    addToCollectionRequest({
-      title,
-      link,
-      desc,
-      added,
-      id: collection.length,
-    });
-  };
+
   const handleIsInCollection = (link: string) => {
     return collection.some((i) => {
       return i.link === link;
@@ -256,16 +235,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               inCollection={collected}
               num={r.id}
               inTab={-1}
-              onAdd={
-                !collected
-                  ? () =>
-                      handleAddToCollection({
-                        title: r.title,
-                        desc: r.desc,
-                        link: r.link,
-                      })
-                  : undefined
-              }
               playing={r.playing as boolean}
             />
           );
@@ -285,16 +254,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 inCollection={collected}
                 num={r.id}
                 inTab={-1}
-                onAdd={
-                  !collected
-                    ? () =>
-                        handleAddToCollection({
-                          title: r.title,
-                          desc: r.desc,
-                          link: r.link,
-                        })
-                    : undefined
-                }
                 playing={r.playing as boolean}
               />
             );
@@ -356,9 +315,4 @@ const mapStateToProps = (state: StateProps) => {
   return { collection };
 };
 
-const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  addToCollectionRequest: (item: Item) =>
-    dispatch(addToCollectionRequestAction(item)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SearchResults);
+export default connect(mapStateToProps)(SearchResults);
