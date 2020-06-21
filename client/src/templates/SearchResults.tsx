@@ -10,6 +10,7 @@ import { useCommonStyles } from "../views/Root";
 import theme from "../styles/theme";
 import { connect } from "react-redux";
 import prepeareToPagination from "../utils/prepeareToPagination";
+import { addToCollectionRequest as addToCollectionRequestAction } from "../actions";
 
 const useStyles = makeStyles({
   viewOptions: {
@@ -22,6 +23,7 @@ const useStyles = makeStyles({
 
 interface SearchResultsProps {
   collection: Item[];
+  addToCollectionRequest: (item: Item) => void;
 }
 
 const results: Item[] = [
@@ -206,7 +208,10 @@ const results: Item[] = [
   },
 ];
 
-const SearchResults: React.FC<SearchResultsProps> = ({ collection }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({
+  collection,
+  addToCollectionRequest,
+}) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
@@ -236,6 +241,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({ collection }) => {
               num={r.id}
               inTab={-1}
               playing={r.playing as boolean}
+              onAdd={() =>
+                addToCollectionRequest({
+                  id: r.id,
+                  title: r.title,
+                  desc: r.desc,
+                  link: r.link,
+                  added: new Date(),
+                })
+              }
             />
           );
         })
@@ -255,6 +269,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({ collection }) => {
                 num={r.id}
                 inTab={-1}
                 playing={r.playing as boolean}
+                onAdd={() =>
+                  addToCollectionRequest({
+                    id: r.id,
+                    title: r.title,
+                    desc: r.desc,
+                    link: r.link,
+                    added: new Date(),
+                  })
+                }
               />
             );
           });
@@ -315,4 +338,9 @@ const mapStateToProps = (state: StateProps) => {
   return { collection };
 };
 
-export default connect(mapStateToProps)(SearchResults);
+const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
+  addToCollectionRequest: (item: Item) =>
+    dispatch(addToCollectionRequestAction(item)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchResults);

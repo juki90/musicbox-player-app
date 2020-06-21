@@ -13,4 +13,7 @@ router.delete("/collection", auth, theCollection.removeFromCollection);
 router.post("/playlists/item", auth, playlists.addToPlaylist);
 router.delete("/playlists/item", auth, playlists.removeFromPlaylist);
 
+router.post("/playlists", auth, playlists.addNewPlaylist);
+router.put("/playlists", auth, playlists.renamePlaylist);
+
 module.exports = router;

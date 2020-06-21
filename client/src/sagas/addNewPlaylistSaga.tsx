@@ -1,28 +1,28 @@
 import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  ADD_TO_COLLECTION_SUCCESS,
-  ADD_TO_COLLECTION_FAILED,
-  ADD_TO_COLLECTION_REQUEST,
+  ADD_NEW_PLAYLIST_SUCCESS,
+  ADD_NEW_PLAYLIST_FAILED,
+  ADD_NEW_PLAYLIST_REQUEST,
   LOGOUT,
 } from "../actions";
 
-function* addToCollectionWatcher() {
-  yield takeEvery(ADD_TO_COLLECTION_REQUEST, addToCollectionWorker);
+function* addNewPlaylistWatcher() {
+  yield takeEvery(ADD_NEW_PLAYLIST_REQUEST, addNewPlaylistWorker);
 }
 
-function* addToCollectionWorker(action: Action) {
+function* addNewPlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { item: action.payload.item };
+        return { name: action.payload.name };
       }
       return axios
         .post(
-          "/api/collection",
+          "/api/playlists",
           {
-            item: action.payload.item,
+            name: action.payload.name,
           },
           {
             headers: {
@@ -33,21 +33,20 @@ function* addToCollectionWorker(action: Action) {
         .then((res) => res.data)
         .catch((err) => {
           return {
-            error: "An error occured adding new item to collection",
+            error: "An error occured adding new playlist",
           };
         });
     } catch (err) {
       return {
-        error: "An error occured adding new item to collection",
+        error: "An error occured adding new playlist",
       };
     }
   });
-
-  if (response.item) {
+  if (response.name) {
     yield put({
-      type: ADD_TO_COLLECTION_SUCCESS,
+      type: ADD_NEW_PLAYLIST_SUCCESS,
       payload: {
-        item: response.item,
+        name: response.name,
       },
     });
   }
@@ -61,7 +60,7 @@ function* addToCollectionWorker(action: Action) {
   }
   if (response.error) {
     yield put({
-      type: ADD_TO_COLLECTION_FAILED,
+      type: ADD_NEW_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -69,4 +68,4 @@ function* addToCollectionWorker(action: Action) {
   }
 }
 
-export default addToCollectionWatcher;
+export default addNewPlaylistWatcher;

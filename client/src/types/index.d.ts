@@ -109,14 +109,39 @@ type removeFromPlaylistSuccessAction = {
   };
 };
 
-type addNewPlaylistAction = {
+type addNewPlaylistRequestAction = {
+  type: string;
+  payload: {
+    name: string;
+  };
+};
+type addNewPlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type addNewPlaylistSuccessAction = {
   type: string;
   payload: {
     name: string;
   };
 };
 
-type renamePlaylistAction = {
+type renamePlaylistRequestAction = {
+  type: string;
+  payload: {
+    name: string;
+    id: number;
+  };
+};
+type renamePlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type renamePlaylistSuccessAction = {
   type: string;
   payload: {
     name: string;

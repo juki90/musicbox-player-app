@@ -14,14 +14,13 @@ import TitleIcon from "@material-ui/icons/Title";
 import { connect } from "react-redux";
 import PlaylistModal from "../components/PlaylistModal";
 import {
-  addNewPlaylist as addNewPlaylistAction,
-  renamePlaylist as renamePlaylistAction,
+  addNewPlaylistRequest as addNewPlaylistRequestAction,
+  renamePlaylistRequest as renamePlaylistRequestAction,
   removeFromPlaylistRequest as removeFromPlaylistRequestAction,
   deletePlaylist as deletePlaylistAction,
   sortPlaylist as sortPlaylistAction,
   playVideo as playVideoAction,
 } from "./../actions/index";
-import Item from "./../components/Item";
 import ItemList from "./../components/ItemList";
 import MenuItem from "@material-ui/core/MenuItem";
 
@@ -49,8 +48,8 @@ const useStyles = makeStyles({
 interface PlaylistsProps {
   playlists: Playlist[];
   collection: Item[];
-  addNewPlaylist: (name: string) => void;
-  renamePlaylist: (name: string, id: number) => void;
+  addNewPlaylistRequest: (name: string) => void;
+  renamePlaylistRequest: (name: string, id: number) => void;
   deletePlaylist: (id: number) => void;
   sortPlaylist: (id: number, way: string) => void;
   removeFromPlaylistRequest: (id: number, vidId: number) => void;
@@ -60,8 +59,8 @@ interface PlaylistsProps {
 const Playlists: React.FC<PlaylistsProps> = ({
   playlists,
   collection,
-  addNewPlaylist,
-  renamePlaylist,
+  addNewPlaylistRequest,
+  renamePlaylistRequest,
   deletePlaylist,
   sortPlaylist,
   removeFromPlaylistRequest,
@@ -86,7 +85,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
 
   const handleAddPlaylist = (name: string) => {
     setPlaylistModal("");
-    addNewPlaylist(name);
+    addNewPlaylistRequest(name);
   };
 
   const handleDeletePlaylist = (id: number) => {
@@ -97,7 +96,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
 
   const handleEditPlaylist = (name: string, id: number) => {
     setPlaylistModal("");
-    renamePlaylist(name, id);
+    renamePlaylistRequest(name, id);
   };
 
   const handleSortPlaylist = (id: number, way: string) => {
@@ -214,9 +213,11 @@ const Playlists: React.FC<PlaylistsProps> = ({
         {playlistModal && (
           <PlaylistModal
             type={playlistModal}
-            playlist={activeTab - 1}
+            playlist={activeTab ? activeTab - 1 : 1}
             currentName={
-              playlists.filter((pl) => pl.id === activeTab - 1)[0].name
+              playlists.filter((pl) => pl.id === activeTab - 1)[0]
+                ? playlists.filter((pl) => pl.id === activeTab - 1)[0].name
+                : ""
             }
             onEdit={handleEditPlaylist}
             onSave={handleAddPlaylist}
@@ -262,9 +263,10 @@ const mapStateToProps = (state: StateProps) => {
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  addNewPlaylist: (name: string) => dispatch(addNewPlaylistAction(name)),
-  renamePlaylist: (name: string, id: number) =>
-    dispatch(renamePlaylistAction(name, id)),
+  addNewPlaylistRequest: (name: string) =>
+    dispatch(addNewPlaylistRequestAction(name)),
+  renamePlaylistRequest: (name: string, id: number) =>
+    dispatch(renamePlaylistRequestAction(name, id)),
   removeFromPlaylistRequest: (id: number, vidId: number) =>
     dispatch(removeFromPlaylistRequestAction(id, vidId)),
 

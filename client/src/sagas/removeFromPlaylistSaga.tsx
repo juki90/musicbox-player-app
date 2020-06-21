@@ -4,6 +4,7 @@ import {
   REMOVE_FROM_PLAYLIST_SUCCESS,
   REMOVE_FROM_PLAYLIST_FAILED,
   REMOVE_FROM_PLAYLIST_REQUEST,
+  LOGOUT,
 } from "../actions";
 
 function* removeFromPlaylistWatcher() {
@@ -45,6 +46,14 @@ function* removeFromPlaylistWorker(action: Action) {
       payload: {
         id: response.id,
         vidId: response.vidId,
+      },
+    });
+  }
+  if (response.authError) {
+    yield put({
+      type: LOGOUT,
+      payload: {
+        text: response.authError,
       },
     });
   }

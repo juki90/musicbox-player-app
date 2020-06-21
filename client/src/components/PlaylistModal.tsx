@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 interface PlaylistModalProps {
   type: string;
   playlist: number;
-  currentName: string;
+  currentName: string | undefined;
   onSave: (name: string) => void;
   onEdit: (name: string, id: number) => void;
   onDelete: (id: number) => void;
@@ -60,7 +60,7 @@ const PlaylistModal: React.FC<PlaylistModalProps> = ({
 }) => {
   const classes = useStyles();
   const [playlistName, changePlaylistName] = useState<string>(
-    type === "edit" ? currentName : ""
+    currentName ? currentName : ""
   );
   const [nameError, setNameError] = useState<string>("");
 

@@ -1,48 +1,53 @@
 import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  REMOVE_FROM_COLLECTION_SUCCESS,
-  REMOVE_FROM_COLLECTION_FAILED,
-  REMOVE_FROM_COLLECTION_REQUEST,
+  RENAME_PLAYLIST_REQUEST,
+  RENAME_PLAYLIST_SUCCESS,
+  RENAME_PLAYLIST_FAILED,
   LOGOUT,
 } from "../actions";
 
-function* removeFromCollectionWatcher() {
-  yield takeEvery(REMOVE_FROM_COLLECTION_REQUEST, removeFromCollectionWorker);
+function* renamePlaylistWatcher() {
+  yield takeEvery(RENAME_PLAYLIST_REQUEST, renamePlaylistWorker);
 }
 
-function* removeFromCollectionWorker(action: Action) {
+function* renamePlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { id: action.payload.id };
+        return { name: action.payload.name, id: action.payload.id };
       }
       return axios
-        .delete("/api/collection", {
-          data: {
+        .put(
+          "/api/playlists",
+          {
+            name: action.payload.name,
             id: action.payload.id,
           },
-          headers: {
-            "x-auth-token": token,
-          },
-        })
+          {
+            headers: {
+              "x-auth-token": token,
+            },
+          }
+        )
         .then((res) => res.data)
         .catch((err) => {
           return {
-            error: "An error occured removing item from collection",
+            error: "An error occured adding new playlist",
           };
         });
     } catch (err) {
       return {
-        error: "An error occured removing item from collection",
+        error: "An error occured adding new playlist",
       };
     }
   });
-  if (response.id >= 0) {
+  if (response.name && response.id) {
     yield put({
-      type: REMOVE_FROM_COLLECTION_SUCCESS,
+      type: RENAME_PLAYLIST_SUCCESS,
       payload: {
+        name: response.name,
         id: response.id,
       },
     });
@@ -57,7 +62,7 @@ function* removeFromCollectionWorker(action: Action) {
   }
   if (response.error) {
     yield put({
-      type: REMOVE_FROM_COLLECTION_FAILED,
+      type: RENAME_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -65,4 +70,4 @@ function* removeFromCollectionWorker(action: Action) {
   }
 }
 
-export default removeFromCollectionWatcher;
+export default renamePlaylistWatcher;

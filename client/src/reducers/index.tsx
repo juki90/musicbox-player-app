@@ -7,8 +7,10 @@ import {
   ADD_TO_PLAYLIST_SUCCESS,
   REMOVE_FROM_PLAYLIST_FAILED,
   REMOVE_FROM_PLAYLIST_SUCCESS,
-  ADD_NEW_PLAYLIST,
-  RENAME_PLAYLIST,
+  ADD_NEW_PLAYLIST_FAILED,
+  ADD_NEW_PLAYLIST_SUCCESS,
+  RENAME_PLAYLIST_SUCCESS,
+  RENAME_PLAYLIST_FAILED,
   DELETE_PLAYLIST,
   SORT_PLAYLIST,
   MOVE_IN_PLAYLIST,
@@ -484,22 +486,22 @@ const rootReducer: Reducer<StateProps, Action> = (
         ...state,
         playlists: withRemovedFromPlaylist,
       };
-    case ADD_NEW_PLAYLIST:
+    case ADD_NEW_PLAYLIST_SUCCESS:
       const withNewPlaylist = [...state.playlists];
       withNewPlaylist.push({
         id: state.playlists.length,
-        name: (action as addNewPlaylistAction).payload.name,
+        name: (action as addNewPlaylistSuccessAction).payload.name,
         items: [],
       });
       return {
         ...state,
         playlists: withNewPlaylist,
       };
-    case RENAME_PLAYLIST:
+    case RENAME_PLAYLIST_SUCCESS:
       const withRenamedPlaylist = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.id === (action as renamePlaylistAction).payload.id) {
-          pl.name = (action as renamePlaylistAction).payload.name;
+        if (pl.id === (action as renamePlaylistSuccessAction).payload.id) {
+          pl.name = (action as renamePlaylistSuccessAction).payload.name;
         }
         return pl;
       });
@@ -819,6 +821,8 @@ const rootReducer: Reducer<StateProps, Action> = (
     case REMOVE_FROM_COLLECTION_FAILED:
     case ADD_TO_PLAYLIST_FAILED:
     case REMOVE_FROM_PLAYLIST_FAILED:
+    case ADD_NEW_PLAYLIST_FAILED:
+    case RENAME_PLAYLIST_FAILED:
       return {
         ...state,
         message: {

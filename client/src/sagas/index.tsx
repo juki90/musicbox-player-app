@@ -5,6 +5,8 @@ import addToCollectionWatcher from "./addToCollectionSaga";
 import removeFromCollectionWatcher from "./removeFromCollectionSaga";
 import addToPlaylistWatcher from "./addToPlaylistSaga";
 import removeFromPlaylistWatcher from "./removeFromPlaylistSaga";
+import addNewPlaylistWatcher from "./addNewPlaylistSaga";
+import renamePlaylistWatcher from "./renamePlaylistSaga";
 
 function* rootSaga() {
   yield all([
@@ -14,6 +16,8 @@ function* rootSaga() {
     removeFromCollectionWatcher(),
     addToPlaylistWatcher(),
     removeFromPlaylistWatcher(),
+    addNewPlaylistWatcher(),
+    renamePlaylistWatcher(),
   ]);
 }
 

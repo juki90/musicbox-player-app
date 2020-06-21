@@ -79,6 +79,68 @@ const playlists = {
       res.status(500).json({ error: "Server Error" });
     }
   },
+  addNewPlaylist: async (req, res) => {
+    const { email, name } = req.body;
+
+    let playlistsObj = await Playlists.findOne({ email });
+
+    if (!playlistsObj) {
+      res.status(500).json({ error: "Server Error" });
+    }
+
+    const withNewPlaylist = [...playlistsObj.playlists];
+    withNewPlaylist.push({
+      id: playlistsObj.playlists.length,
+      name: name,
+      items: [],
+    });
+
+    playlistsObj.playlists = withNewPlaylist;
+
+    try {
+      const saved = await playlistsObj.save();
+      if (saved) {
+        res.json({
+          name,
+        });
+      }
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: "Server Error" });
+    }
+  },
+  renamePlaylist: async (req, res) => {
+    const { email, name, id } = req.body;
+
+    let playlistsObj = await Playlists.findOne({ email });
+
+    if (!playlistsObj) {
+      res.status(500).json({ error: "Server Error" });
+    }
+
+    const withRenamedPlaylist = [...playlistsObj.playlists].map((p) => {
+      const pl = p;
+      if (pl.id === id) {
+        pl.name = name;
+      }
+      return pl;
+    });
+
+    playlistsObj.playlists = withRenamedPlaylist;
+
+    try {
+      const saved = await playlistsObj.save();
+      if (saved) {
+        res.json({
+          name,
+          id,
+        });
+      }
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ error: "Server Error" });
+    }
+  },
 };
 
 module.exports = playlists;

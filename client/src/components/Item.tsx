@@ -23,7 +23,6 @@ import { connect } from "react-redux";
 import {
   addToPlaylistRequest as addToPlaylistRequestAction,
   playVideo as playVideoAction,
-  addToCollectionRequest as addToCollectionRequestAction,
 } from "../actions";
 
 const useStyles = makeStyles({
@@ -223,8 +222,8 @@ interface ItemProps {
   onMove?: (
     e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
   ) => void;
+  onAdd?: () => void;
   playVideo: (vidId: number, plId?: number) => void;
-  addToCollectionRequest: (item: Item) => void;
 }
 
 const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
@@ -245,8 +244,8 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     onRemove,
     addToPlaylistRequest,
     onMove,
+    onAdd,
     playVideo,
-    addToCollectionRequest,
   } = props;
 
   const addedAt = new Date(added);
@@ -300,16 +299,6 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
       return;
     }
     playVideo(num, inTab - 1);
-  };
-
-  const handleAddToCollection = () => {
-    addToCollectionRequest({
-      id: num,
-      title,
-      desc,
-      link,
-      added: added ? added : new Date(),
-    });
   };
 
   const playlistMenuItems = playlists.map((p: Playlist) => (
@@ -439,7 +428,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     startIcon={inCollection ? <CheckIcon /> : <AddIcon />}
                     disabled={inCollection}
-                    onClick={handleAddToCollection}
+                    onClick={onAdd}
                   >
                     {inCollection ? "In collection" : "Collection"}
                   </Button>
@@ -520,8 +509,6 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
     dispatch(addToPlaylistRequestAction(id, item)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
-  addToCollectionRequest: (item: Item) =>
-    dispatch(addToCollectionRequestAction(item)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

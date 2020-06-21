@@ -14,8 +14,14 @@ export const REMOVE_FROM_PLAYLIST_REQUEST = "REMOVE_FROM_PLAYLIST_REQUEST";
 export const REMOVE_FROM_PLAYLIST_FAILED = "REMOVE_FROM_PLAYLIST_FAILED";
 export const REMOVE_FROM_PLAYLIST_SUCCESS = "REMOVE_FROM_PLAYLIST_SUCCESS";
 
-export const ADD_NEW_PLAYLIST = "ADD_NEW_PLAYLIST";
-export const RENAME_PLAYLIST = "RENAME_PLAYLIST";
+export const ADD_NEW_PLAYLIST_REQUEST = "ADD_NEW_PLAYLIST_REQUEST";
+export const ADD_NEW_PLAYLIST_FAILED = "ADD_NEW_PLAYLIST_FAILED";
+export const ADD_NEW_PLAYLIST_SUCCESS = "ADD_NEW_PLAYLIST_SUCCESS";
+
+export const RENAME_PLAYLIST_REQUEST = "RENAME_PLAYLIST_REQUEST";
+export const RENAME_PLAYLIST_FAILED = "RENAME_PLAYLIST_FAILED";
+export const RENAME_PLAYLIST_SUCCESS = "RENAME_PLAYLIST_SUCCESS";
+
 export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
 export const SORT_PLAYLIST = "SORT_PLAYLIST";
 export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
@@ -151,21 +157,57 @@ export const removeFromPlaylistSuccess: (
   };
 };
 
-export const addNewPlaylist: (name: string) => Action = (name) => {
+export const addNewPlaylistRequest: (name: string) => Action = (name) => {
   return {
-    type: ADD_NEW_PLAYLIST,
+    type: ADD_NEW_PLAYLIST_REQUEST,
+    payload: {
+      name,
+    },
+  };
+};
+export const addNewPlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: ADD_NEW_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const addNewPlaylistSuccess: (name: string) => Action = (name) => {
+  return {
+    type: ADD_NEW_PLAYLIST_SUCCESS,
     payload: {
       name,
     },
   };
 };
 
-export const renamePlaylist: (name: string, id: number) => Action = (
+export const renamePlaylistRequest: (name: string, id: number) => Action = (
   name,
   id
 ) => {
   return {
-    type: RENAME_PLAYLIST,
+    type: RENAME_PLAYLIST_REQUEST,
+    payload: {
+      name,
+      id,
+    },
+  };
+};
+export const renamePlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: RENAME_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const renamePlaylistSuccess: (name: string, id: number) => Action = (
+  name,
+  id
+) => {
+  return {
+    type: RENAME_PLAYLIST_SUCCESS,
     payload: {
       name,
       id,
