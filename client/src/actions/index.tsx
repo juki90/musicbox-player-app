@@ -22,9 +22,17 @@ export const RENAME_PLAYLIST_REQUEST = "RENAME_PLAYLIST_REQUEST";
 export const RENAME_PLAYLIST_FAILED = "RENAME_PLAYLIST_FAILED";
 export const RENAME_PLAYLIST_SUCCESS = "RENAME_PLAYLIST_SUCCESS";
 
-export const DELETE_PLAYLIST = "DELETE_PLAYLIST";
-export const SORT_PLAYLIST = "SORT_PLAYLIST";
-export const MOVE_IN_PLAYLIST = "MOVE_IN_PLAYLIST";
+export const DELETE_PLAYLIST_REQUEST = "DELETE_PLAYLIST_REQUEST";
+export const DELETE_PLAYLIST_FAILED = "DELETE_PLAYLIST_FAILED";
+export const DELETE_PLAYLIST_SUCCESS = "DELETE_PLAYLIST_SUCCESS";
+
+export const SORT_PLAYLIST_REQUEST = "SORT_PLAYLIST_REQUEST";
+export const SORT_PLAYLIST_FAILED = "SORT_PLAYLIST_FAILED";
+export const SORT_PLAYLIST_SUCCESS = "SORT_PLAYLIST_SUCCESS";
+
+export const MOVE_IN_PLAYLIST_REQUEST = "MOVE_IN_PLAYLIST_REQUEST";
+export const MOVE_IN_PLAYLIST_FAILED = "MOVE_IN_PLAYLIST_FAILED";
+export const MOVE_IN_PLAYLIST_SUCCESS = "MOVE_IN_PLAYLIST_SUCCESS";
 
 export const PLAY_VIDEO = "PLAY_VIDEO";
 export const SKIP_TO_VIDEO = "SKIP_TO_VIDEO";
@@ -215,18 +223,57 @@ export const renamePlaylistSuccess: (name: string, id: number) => Action = (
   };
 };
 
-export const deletePlaylist: (id: number) => Action = (id) => {
+export const deletePlaylistRequest: (id: number) => Action = (id) => {
   return {
-    type: DELETE_PLAYLIST,
+    type: DELETE_PLAYLIST_REQUEST,
+    payload: {
+      id,
+    },
+  };
+};
+export const deletePlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: DELETE_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const deletePlaylistSuccess: (id: number) => Action = (id) => {
+  return {
+    type: DELETE_PLAYLIST_SUCCESS,
     payload: {
       id,
     },
   };
 };
 
-export const sortPlaylist: (id: number, way: string) => Action = (id, way) => {
+export const sortPlaylistRequest: (id: number, way: string) => Action = (
+  id,
+  way
+) => {
   return {
-    type: SORT_PLAYLIST,
+    type: SORT_PLAYLIST_REQUEST,
+    payload: {
+      id,
+      way,
+    },
+  };
+};
+export const sortPlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: SORT_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const sortPlaylistSuccess: (id: number, way: string) => Action = (
+  id,
+  way
+) => {
+  return {
+    type: SORT_PLAYLIST_SUCCESS,
     payload: {
       id,
       way,
@@ -234,13 +281,35 @@ export const sortPlaylist: (id: number, way: string) => Action = (id, way) => {
   };
 };
 
-export const moveInPlaylist: (
+export const moveInPlaylistRequest: (
   id: number,
   vidId: number,
   toVid: number
 ) => Action = (id, vidId, toVid) => {
   return {
-    type: MOVE_IN_PLAYLIST,
+    type: MOVE_IN_PLAYLIST_REQUEST,
+    payload: {
+      id,
+      vidId,
+      toVid,
+    },
+  };
+};
+export const moveInPlaylistFailed: (text: string) => Action = (text) => {
+  return {
+    type: MOVE_IN_PLAYLIST_FAILED,
+    payload: {
+      text,
+    },
+  };
+};
+export const moveInPlaylistSuccess: (
+  id: number,
+  vidId: number,
+  toVid: number
+) => Action = (id, vidId, toVid) => {
+  return {
+    type: MOVE_IN_PLAYLIST_SUCCESS,
     payload: {
       id,
       vidId,

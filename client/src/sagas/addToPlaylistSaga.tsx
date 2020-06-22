@@ -42,7 +42,7 @@ function* addToPlaylistWorker(action: Action) {
       };
     }
   });
-  if (response.id && response.item) {
+  if (response.id >= 0 && response.item) {
     yield put({
       type: ADD_TO_PLAYLIST_SUCCESS,
       payload: {

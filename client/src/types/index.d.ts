@@ -149,14 +149,39 @@ type renamePlaylistSuccessAction = {
   };
 };
 
-type deletePlaylistAction = {
+type deletePlaylistRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+  };
+};
+type deletePlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type deletePlaylistSuccessAction = {
   type: string;
   payload: {
     id: number;
   };
 };
 
-type sortPlaylistAction = {
+type sortPlaylistRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+    way: string;
+  };
+};
+type sortPlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type sortPlaylistSuccessAction = {
   type: string;
   payload: {
     id: number;
@@ -164,7 +189,21 @@ type sortPlaylistAction = {
   };
 };
 
-type moveInPlaylistAction = {
+type moveInPlaylistRequestAction = {
+  type: string;
+  payload: {
+    id: number;
+    vidId: number;
+    toVid: number;
+  };
+};
+type moveInPlaylistFailedAction = {
+  type: string;
+  payload: {
+    text: string;
+  };
+};
+type moveInPlaylistSuccessAction = {
   type: string;
   payload: {
     id: number;

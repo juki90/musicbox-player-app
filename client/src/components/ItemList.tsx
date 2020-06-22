@@ -8,7 +8,7 @@ import { makeStyles, Box } from "@material-ui/core";
 import theme from "../styles/theme";
 import Divider from "./Divider";
 import { connect } from "react-redux";
-import { moveInPlaylist as moveInPlaylistAction } from "./../actions/index";
+import { moveInPlaylistRequest as moveInPlaylistRequestAction } from "./../actions/index";
 
 const useStyles = makeStyles({
   playlist: {
@@ -34,7 +34,7 @@ interface ItemListProps {
   playlists?: Playlist[];
   type: string;
   rmPlaylist?: (id: number, vidId: number) => void;
-  moveInPlaylist: (id: number, vidId: number, toVid: number) => void;
+  moveInPlaylistRequest: (id: number, vidId: number, toVid: number) => void;
 }
 
 const ItemList: React.FC<ItemListProps> = ({
@@ -43,7 +43,7 @@ const ItemList: React.FC<ItemListProps> = ({
   itemsPerPage,
   type,
   rmPlaylist,
-  moveInPlaylist,
+  moveInPlaylistRequest,
 }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
@@ -127,7 +127,7 @@ const ItemList: React.FC<ItemListProps> = ({
     const handleReplacePosition = () => {
       (document.querySelector("#divider") as HTMLDivElement).style.top =
         "-10000em";
-      moveInPlaylist(activeTab - 1, currentId, target.id);
+      moveInPlaylistRequest(activeTab - 1, currentId, target.id);
       bodyEl?.classList.remove("scroll-lock");
       document.removeEventListener("mousemove", handleMove);
       document.removeEventListener("mouseup", handleReplacePosition);
@@ -255,8 +255,8 @@ const ItemList: React.FC<ItemListProps> = ({
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
-  moveInPlaylist: (id: number, vidId: number, toVid: number) =>
-    dispatch(moveInPlaylistAction(id, vidId, toVid)),
+  moveInPlaylistRequest: (id: number, vidId: number, toVid: number) =>
+    dispatch(moveInPlaylistRequestAction(id, vidId, toVid)),
 });
 
 const mapStateToProps = (state: StateProps) => {

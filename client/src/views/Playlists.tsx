@@ -17,8 +17,8 @@ import {
   addNewPlaylistRequest as addNewPlaylistRequestAction,
   renamePlaylistRequest as renamePlaylistRequestAction,
   removeFromPlaylistRequest as removeFromPlaylistRequestAction,
-  deletePlaylist as deletePlaylistAction,
-  sortPlaylist as sortPlaylistAction,
+  deletePlaylistRequest as deletePlaylistRequestAction,
+  sortPlaylistRequest as sortPlaylistRequestAction,
   playVideo as playVideoAction,
 } from "./../actions/index";
 import ItemList from "./../components/ItemList";
@@ -50,8 +50,8 @@ interface PlaylistsProps {
   collection: Item[];
   addNewPlaylistRequest: (name: string) => void;
   renamePlaylistRequest: (name: string, id: number) => void;
-  deletePlaylist: (id: number) => void;
-  sortPlaylist: (id: number, way: string) => void;
+  deletePlaylistRequest: (id: number) => void;
+  sortPlaylistRequest: (id: number, way: string) => void;
   removeFromPlaylistRequest: (id: number, vidId: number) => void;
   playVideo: (vidId: number, plId?: number) => void;
 }
@@ -61,8 +61,8 @@ const Playlists: React.FC<PlaylistsProps> = ({
   collection,
   addNewPlaylistRequest,
   renamePlaylistRequest,
-  deletePlaylist,
-  sortPlaylist,
+  deletePlaylistRequest,
+  sortPlaylistRequest,
   removeFromPlaylistRequest,
   playVideo,
 }) => {
@@ -90,7 +90,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
 
   const handleDeletePlaylist = (id: number) => {
     setPlaylistModal("");
-    deletePlaylist(id);
+    deletePlaylistRequest(id);
     setActiveTab(activeTab - 1);
   };
 
@@ -100,7 +100,7 @@ const Playlists: React.FC<PlaylistsProps> = ({
   };
 
   const handleSortPlaylist = (id: number, way: string) => {
-    sortPlaylist(id, way);
+    sortPlaylistRequest(id, way);
     setAnchorEl(null);
   };
 
@@ -270,9 +270,10 @@ const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   removeFromPlaylistRequest: (id: number, vidId: number) =>
     dispatch(removeFromPlaylistRequestAction(id, vidId)),
 
-  deletePlaylist: (id: number) => dispatch(deletePlaylistAction(id)),
-  sortPlaylist: (id: number, way: string) =>
-    dispatch(sortPlaylistAction(id, way)),
+  deletePlaylistRequest: (id: number) =>
+    dispatch(deletePlaylistRequestAction(id)),
+  sortPlaylistRequest: (id: number, way: string) =>
+    dispatch(sortPlaylistRequestAction(id, way)),
   playVideo: (vidId: number, plId?: number) =>
     dispatch(playVideoAction(vidId, plId)),
 });

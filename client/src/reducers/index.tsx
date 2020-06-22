@@ -11,9 +11,12 @@ import {
   ADD_NEW_PLAYLIST_SUCCESS,
   RENAME_PLAYLIST_SUCCESS,
   RENAME_PLAYLIST_FAILED,
-  DELETE_PLAYLIST,
-  SORT_PLAYLIST,
-  MOVE_IN_PLAYLIST,
+  DELETE_PLAYLIST_FAILED,
+  DELETE_PLAYLIST_SUCCESS,
+  SORT_PLAYLIST_FAILED,
+  SORT_PLAYLIST_SUCCESS,
+  MOVE_IN_PLAYLIST_FAILED,
+  MOVE_IN_PLAYLIST_SUCCESS,
   PLAY_VIDEO,
   SKIP_TO_VIDEO,
   REGISTER_SUCCESS,
@@ -509,20 +512,26 @@ const rootReducer: Reducer<StateProps, Action> = (
         ...state,
         playlists: withRenamedPlaylist,
       };
-    case DELETE_PLAYLIST:
-      const withDeletedPlaylist = [...state.playlists].filter(
-        (p) => p.id !== (action as deletePlaylistAction).payload.id
-      );
+    case DELETE_PLAYLIST_SUCCESS:
+      const withDeletedPlaylist = [...state.playlists]
+        .filter(
+          (p) => p.id !== (action as deletePlaylistSuccessAction).payload.id
+        )
+        .map((p, i) => {
+          const pl = p;
+          pl.id = i;
+          return pl;
+        });
       return {
         ...state,
         playlists: withDeletedPlaylist,
       };
-    case SORT_PLAYLIST:
+    case SORT_PLAYLIST_SUCCESS:
       const sortedItems = [...state.playlists].map((p) => {
         const pl = p;
-        const way = (action as sortPlaylistAction).payload.way;
+        const way = (action as sortPlaylistSuccessAction).payload.way;
         if (
-          pl.id === (action as sortPlaylistAction).payload.id &&
+          pl.id === (action as sortPlaylistSuccessAction).payload.id &&
           way === "name"
         ) {
           pl.items = pl.items.sort((a, b) => {
@@ -536,7 +545,7 @@ const rootReducer: Reducer<StateProps, Action> = (
           });
         }
         if (
-          pl.id === (action as sortPlaylistAction).payload.id &&
+          pl.id === (action as sortPlaylistSuccessAction).payload.id &&
           way === "name-reversed"
         ) {
           pl.items = pl.items.sort((a, b) => {
@@ -550,7 +559,7 @@ const rootReducer: Reducer<StateProps, Action> = (
           });
         }
         if (
-          pl.id === (action as sortPlaylistAction).payload.id &&
+          pl.id === (action as sortPlaylistSuccessAction).payload.id &&
           way === "date"
         ) {
           pl.items = pl.items.sort((a, b) => {
@@ -566,7 +575,7 @@ const rootReducer: Reducer<StateProps, Action> = (
           });
         }
         if (
-          pl.id === (action as sortPlaylistAction).payload.id &&
+          pl.id === (action as sortPlaylistSuccessAction).payload.id &&
           way === "date-reversed"
         ) {
           pl.items = pl.items.sort((a, b) => {
@@ -592,14 +601,17 @@ const rootReducer: Reducer<StateProps, Action> = (
         ...state,
         playlists: sortedItems,
       };
-    case MOVE_IN_PLAYLIST:
+    case MOVE_IN_PLAYLIST_SUCCESS:
       const withMovedInPlaylist = [...state.playlists].map((p) => {
         const pl = p;
-        if (pl.id === (action as moveInPlaylistAction).payload.id) {
+        if (pl.id === (action as moveInPlaylistSuccessAction).payload.id) {
           pl.items.map((it) => {
             const item = it;
-            if (item.id === (action as moveInPlaylistAction).payload.vidId) {
-              item.id = (action as moveInPlaylistAction).payload.toVid + 0.5;
+            if (
+              item.id === (action as moveInPlaylistSuccessAction).payload.vidId
+            ) {
+              item.id =
+                (action as moveInPlaylistSuccessAction).payload.toVid + 0.5;
             }
             return item;
           });
@@ -823,6 +835,9 @@ const rootReducer: Reducer<StateProps, Action> = (
     case REMOVE_FROM_PLAYLIST_FAILED:
     case ADD_NEW_PLAYLIST_FAILED:
     case RENAME_PLAYLIST_FAILED:
+    case DELETE_PLAYLIST_FAILED:
+    case SORT_PLAYLIST_FAILED:
+    case MOVE_IN_PLAYLIST_FAILED:
       return {
         ...state,
         message: {

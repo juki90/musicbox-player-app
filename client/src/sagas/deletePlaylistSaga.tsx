@@ -1,51 +1,49 @@
 import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  REMOVE_FROM_PLAYLIST_SUCCESS,
-  REMOVE_FROM_PLAYLIST_FAILED,
-  REMOVE_FROM_PLAYLIST_REQUEST,
+  DELETE_PLAYLIST_REQUEST,
+  DELETE_PLAYLIST_SUCCESS,
+  DELETE_PLAYLIST_FAILED,
   LOGOUT,
 } from "../actions";
 
-function* removeFromPlaylistWatcher() {
-  yield takeEvery(REMOVE_FROM_PLAYLIST_REQUEST, removeFromPlaylistWorker);
+function* deletePlaylistWatcher() {
+  yield takeEvery(DELETE_PLAYLIST_REQUEST, deletePlaylistWorker);
 }
 
-function* removeFromPlaylistWorker(action: Action) {
+function* deletePlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { id: action.payload.id, vidId: action.payload.vidId };
+        return { id: action.payload.id };
       }
       return axios
-        .delete("/api/playlists/item", {
-          data: {
-            id: action.payload.id,
-            vidId: action.payload.vidId,
-          },
+        .delete("/api/playlists", {
           headers: {
             "x-auth-token": token,
+          },
+          data: {
+            id: action.payload.id,
           },
         })
         .then((res) => res.data)
         .catch((err) => {
           return {
-            error: "An error occured removing video to the playlist",
+            error: "An error occured deleting this playlist",
           };
         });
     } catch (err) {
       return {
-        error: "An error occured removing video to the playlist",
+        error: "An error occured deleting this playlist",
       };
     }
   });
-  if (response.id >= 0 && response.vidId >= 0) {
+  if (response.id >= 0) {
     yield put({
-      type: REMOVE_FROM_PLAYLIST_SUCCESS,
+      type: DELETE_PLAYLIST_SUCCESS,
       payload: {
         id: response.id,
-        vidId: response.vidId,
       },
     });
   }
@@ -59,7 +57,7 @@ function* removeFromPlaylistWorker(action: Action) {
   }
   if (response.error) {
     yield put({
-      type: REMOVE_FROM_PLAYLIST_FAILED,
+      type: DELETE_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -67,4 +65,4 @@ function* removeFromPlaylistWorker(action: Action) {
   }
 }
 
-export default removeFromPlaylistWatcher;
+export default deletePlaylistWatcher;

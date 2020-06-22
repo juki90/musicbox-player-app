@@ -1,29 +1,34 @@
 import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  RENAME_PLAYLIST_REQUEST,
-  RENAME_PLAYLIST_SUCCESS,
-  RENAME_PLAYLIST_FAILED,
+  MOVE_IN_PLAYLIST_REQUEST,
+  MOVE_IN_PLAYLIST_SUCCESS,
+  MOVE_IN_PLAYLIST_FAILED,
   LOGOUT,
 } from "../actions";
 
-function* renamePlaylistWatcher() {
-  yield takeEvery(RENAME_PLAYLIST_REQUEST, renamePlaylistWorker);
+function* moveInPlaylistWatcher() {
+  yield takeEvery(MOVE_IN_PLAYLIST_REQUEST, moveInPlaylistWorker);
 }
 
-function* renamePlaylistWorker(action: Action) {
+function* moveInPlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { name: action.payload.name, id: action.payload.id };
+        return {
+          id: action.payload.id,
+          vidId: action.payload.vidId,
+          toVid: action.payload.toVid,
+        };
       }
       return axios
-        .put(
-          "/api/playlists",
+        .patch(
+          "/api/playlists/item",
           {
-            name: action.payload.name,
             id: action.payload.id,
+            vidId: action.payload.vidId,
+            toVid: action.payload.toVid,
           },
           {
             headers: {
@@ -43,12 +48,13 @@ function* renamePlaylistWorker(action: Action) {
       };
     }
   });
-  if (response.name && response.id >= 0) {
+  if (response.id >= 0 && response.vidId >= 0 && response.toVid >= 0) {
     yield put({
-      type: RENAME_PLAYLIST_SUCCESS,
+      type: MOVE_IN_PLAYLIST_SUCCESS,
       payload: {
-        name: response.name,
         id: response.id,
+        vidId: response.vidId,
+        toVid: response.toVid,
       },
     });
   }
@@ -62,7 +68,7 @@ function* renamePlaylistWorker(action: Action) {
   }
   if (response.error) {
     yield put({
-      type: RENAME_PLAYLIST_FAILED,
+      type: MOVE_IN_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -70,4 +76,4 @@ function* renamePlaylistWorker(action: Action) {
   }
 }
 
-export default renamePlaylistWatcher;
+export default moveInPlaylistWatcher;

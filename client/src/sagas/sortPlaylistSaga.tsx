@@ -1,28 +1,28 @@
 import { put, call, takeEvery } from "redux-saga/effects";
 import axios from "axios";
 import {
-  RENAME_PLAYLIST_REQUEST,
-  RENAME_PLAYLIST_SUCCESS,
-  RENAME_PLAYLIST_FAILED,
+  SORT_PLAYLIST_REQUEST,
+  SORT_PLAYLIST_SUCCESS,
+  SORT_PLAYLIST_FAILED,
   LOGOUT,
 } from "../actions";
 
-function* renamePlaylistWatcher() {
-  yield takeEvery(RENAME_PLAYLIST_REQUEST, renamePlaylistWorker);
+function* sortPlaylistWatcher() {
+  yield takeEvery(SORT_PLAYLIST_REQUEST, sortPlaylistWorker);
 }
 
-function* renamePlaylistWorker(action: Action) {
+function* sortPlaylistWorker(action: Action) {
   const response = yield call(() => {
     const token = localStorage.getItem("token");
     try {
       if (!token) {
-        return { name: action.payload.name, id: action.payload.id };
+        return { way: action.payload.way, id: action.payload.id };
       }
       return axios
-        .put(
+        .patch(
           "/api/playlists",
           {
-            name: action.payload.name,
+            way: action.payload.way,
             id: action.payload.id,
           },
           {
@@ -43,11 +43,11 @@ function* renamePlaylistWorker(action: Action) {
       };
     }
   });
-  if (response.name && response.id >= 0) {
+  if (response.way && response.id >= 0) {
     yield put({
-      type: RENAME_PLAYLIST_SUCCESS,
+      type: SORT_PLAYLIST_SUCCESS,
       payload: {
-        name: response.name,
+        way: response.way,
         id: response.id,
       },
     });
@@ -62,7 +62,7 @@ function* renamePlaylistWorker(action: Action) {
   }
   if (response.error) {
     yield put({
-      type: RENAME_PLAYLIST_FAILED,
+      type: SORT_PLAYLIST_FAILED,
       payload: {
         text: response.error,
       },
@@ -70,4 +70,4 @@ function* renamePlaylistWorker(action: Action) {
   }
 }
 
-export default renamePlaylistWatcher;
+export default sortPlaylistWatcher;

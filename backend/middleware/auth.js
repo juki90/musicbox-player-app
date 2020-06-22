@@ -15,9 +15,9 @@ const auth = (req, res, next) => {
     return next();
   } catch (err) {
     console.log(err);
-    return res.status(401).json({
+    return res.json({
       authError:
-        "Authorization denied, you token may be expired. You are logged out",
+        "Authorization denied, your token may be expired. You are logged out",
     });
   }
 };
