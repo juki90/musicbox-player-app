@@ -3,6 +3,7 @@ const auth = require("../middleware/auth");
 const { user } = require("../controllers");
 const { theCollection } = require("../controllers");
 const { playlists } = require("../controllers");
+const { search } = require("../controllers");
 
 router.post("/register", user.register);
 router.post("/login", user.login);
@@ -18,5 +19,7 @@ router.post("/playlists", auth, playlists.addNewPlaylist);
 router.put("/playlists", auth, playlists.renamePlaylist);
 router.patch("/playlists", auth, playlists.sortPlaylist);
 router.delete("/playlists", auth, playlists.deletePlaylist);
+
+router.post("/search", auth, search.search);
 
 module.exports = router;

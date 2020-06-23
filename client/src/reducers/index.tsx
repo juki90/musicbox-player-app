@@ -856,8 +856,24 @@ const rootReducer: Reducer<StateProps, Action> = (
       };
     case LOGOUT:
       localStorage.removeItem("token");
+      const withStoppedCollection = [...state.collection].map((c) => {
+        const col = c;
+        col.playing = false;
+        return col;
+      });
+      const withStoppedPlaylists = [...state.playlists].map((p) => {
+        const pl = p;
+        pl.items = pl.items.map((i) => {
+          const it = i;
+          it.playing = false;
+          return it;
+        });
+        return pl;
+      });
       return {
         ...initialState,
+        collection: withStoppedCollection,
+        playlists: withStoppedPlaylists,
         loggedAs: "",
         message: {
           error: "",
