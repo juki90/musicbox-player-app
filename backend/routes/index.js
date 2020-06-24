@@ -20,6 +20,6 @@ router.put("/playlists", auth, playlists.renamePlaylist);
 router.patch("/playlists", auth, playlists.sortPlaylist);
 router.delete("/playlists", auth, playlists.deletePlaylist);
 
-router.post("/search", auth, search.search);
+router.post("/search", search.search);
 
 module.exports = router;

@@ -319,15 +319,17 @@ export const moveInPlaylistSuccess: (
   };
 };
 
-export const playVideo: (vidId: number, plId?: number) => Action = (
-  vidId,
-  plId?
-) => {
+export const playVideo: (
+  vidId: number,
+  plId?: number,
+  fromSearch?: Item
+) => Action = (vidId, plId?, fromSearch?) => {
   return {
     type: PLAY_VIDEO,
     payload: {
       vidId,
       plId,
+      fromSearch,
     },
   };
 };

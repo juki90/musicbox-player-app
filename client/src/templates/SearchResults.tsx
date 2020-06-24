@@ -23,6 +23,7 @@ const useStyles = makeStyles({
 
 interface SearchResultsProps {
   collection: Item[];
+  searched: Item[];
   addToCollectionRequest: (item: Item) => void;
 }
 
@@ -210,13 +211,15 @@ const results: Item[] = [
 
 const SearchResults: React.FC<SearchResultsProps> = ({
   collection,
+  searched,
   addToCollectionRequest,
 }) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const [gridOn, setGridOn] = useState<boolean>(false);
   const [paginationOn, setPaginationOn] = useState<number>(1);
-  const prepearedResults = prepeareToPagination(results as Item[], 10);
+
+  const prepearedResults = prepeareToPagination(searched, 10);
 
   const handleIsInCollection = (link: string) => {
     return collection.some((i) => {

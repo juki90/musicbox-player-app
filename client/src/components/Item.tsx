@@ -214,6 +214,7 @@ interface ItemProps {
   num: number;
   inTab: number;
   playing: boolean;
+  inPlayer: Item | undefined;
   onRemove?:
     | ((e: React.MouseEvent<HTMLButtonElement>) => void)
     | ((id: number) => void)
@@ -223,7 +224,7 @@ interface ItemProps {
     e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLButtonElement>
   ) => void;
   onAdd?: () => void;
-  playVideo: (vidId: number, plId?: number) => void;
+  playVideo: (vidId: number, plId?: number, fromSearch?: Item) => void;
 }
 
 const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
@@ -241,6 +242,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
     num,
     inTab,
     playing,
+    inPlayer,
     onRemove,
     addToPlaylistRequest,
     onMove,
@@ -290,6 +292,23 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
   };
 
   const handlePlayVideo = () => {
+    if (
+      type === "search-result" &&
+      (!inPlayer || (inPlayer && inPlayer.link !== link))
+    ) {
+      playVideo(-1, -1, {
+        title,
+        desc,
+        link,
+        added: new Date(),
+        id: -1,
+      });
+      return;
+    }
+    if (type === "search-result" && inPlayer && inPlayer.link === link) {
+      playVideo(-1);
+      return;
+    }
     if (playing) {
       playVideo(-1);
       return;
@@ -407,9 +426,16 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     variant="contained"
                     color="primary"
                     size="small"
-                    startIcon={<PlayArrowIcon />}
+                    startIcon={
+                      inPlayer && inPlayer.link === link ? (
+                        <StopIcon />
+                      ) : (
+                        <PlayArrowIcon />
+                      )
+                    }
+                    onClick={handlePlayVideo}
                   >
-                    Play
+                    {inPlayer && inPlayer.link === link ? "Stop" : "Play"}
                   </Button>
                   <Button
                     className={classes.videoButton}
@@ -498,17 +524,18 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
 };
 
 const mapStateToProps = (state: StateProps) => {
-  const { playlists } = state;
+  const { playlists, inPlayer } = state;
   return {
     playlists,
+    inPlayer,
   };
 };
 
 const mapDispatchToProps = (dispatch: (arg0: Action) => unknown) => ({
   addToPlaylistRequest: (id: number, item: Item) =>
     dispatch(addToPlaylistRequestAction(id, item)),
-  playVideo: (vidId: number, plId?: number) =>
-    dispatch(playVideoAction(vidId, plId)),
+  playVideo: (vidId: number, plId?: number, fromSearch?: Item) =>
+    dispatch(playVideoAction(vidId, plId, fromSearch)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Item);

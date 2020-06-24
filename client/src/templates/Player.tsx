@@ -42,7 +42,7 @@ const useStyles = makeStyles({
           left: 0,
           width: "100%",
           height: "80px",
-          paddingRight: "50px",
+          padding: "0 50px 10px 0",
           backgroundColor: "#121212",
           zIndex: 999,
         }
@@ -88,25 +88,23 @@ const useStyles = makeStyles({
     },
     color: "#eeeeee",
     padding: "1em 0",
-    whiteSpace: "pre",
+    whiteSpace: "pre-wrap",
   },
   video: {
     display: "block",
-    alignSelf: "center",
-    height: "auto",
-    maxWidth: "480px",
     margin: (props: PlayerProps) => {
-      return props.minimalized ? "0 0.5em" : "1em auto 2em auto";
+      return props.minimalized ? "0 0 0.5em 0.5em" : "1em auto 2em auto";
     },
     "& img": {
       display: "block",
       margin: "0 auto",
-      width: (props: PlayerProps) => {
-        return props.minimalized ? "120px" : "240px";
+      height: (props: PlayerProps) => {
+        return props.minimalized ? "50px" : "180px";
       },
+      width: "auto",
       [theme.breakpoints.up("sm")]: {
-        width: (props: PlayerProps) => {
-          return props.minimalized ? "120px" : "480px";
+        height: (props: PlayerProps) => {
+          return props.minimalized ? "76px" : "240px";
         },
       },
     },
@@ -114,7 +112,7 @@ const useStyles = makeStyles({
   videoPanelContainer: {
     position: "relative",
     color: theme.palette.primary.main,
-    padding: "5px 10px 0 10px",
+    padding: "5px 10px 30px 10px",
   },
   videoPanel: (props: PlayerProps) => {
     return props.minimalized
@@ -245,7 +243,7 @@ const Player: React.FC<PlayerProps> = (props) => {
   const playerWidth = useMedia(
     [`(min-width: ${theme.breakpoints.values.sm}px)`],
     [480],
-    300
+    320
   );
   useEffect(() => {
     if (playing) {
@@ -345,8 +343,14 @@ const Player: React.FC<PlayerProps> = (props) => {
       <ThemeProvider theme={theme}>
         <Box className={classes.videoBox}>
           <Container className={classes.videoContainer}>
-            <Box className={classes.video} width={`${playerWidth}px`}>
-              {inPlayer ? (
+            {inPlayer && (
+              <Box
+                m="0 auto"
+                className={classes.video}
+                width={minimalized ? "120px" : `${playerWidth}px`}
+                display="flex"
+                alignItems="center"
+              >
                 <ReactPlayer
                   url={inPlayer.link}
                   playing={playing}
@@ -362,11 +366,14 @@ const Player: React.FC<PlayerProps> = (props) => {
                   onPause={() => setPlaying(false)}
                   onEnded={() => handleSkipToVideo(1)}
                 />
-              ) : (
+              </Box>
+            )}
+            {!inPlayer && (
+              <Box m="0 auto" className={classes.video}>
                 <img src={defaultVideoImg} alt="Blank video" />
-              )}
-            </Box>
-            {minimalized && <Box pr="3em">{videoTitle}</Box>}
+              </Box>
+            )}
+            {minimalized && <Box p="0 3em 0 0">{videoTitle}</Box>}
             <Box className={classes.playerBtns}>
               <IconButton aria-label="close" onClick={handleClosePlayer}>
                 <CloseIcon />

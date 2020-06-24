@@ -217,6 +217,7 @@ type playVideoAction = {
   payload: {
     vidId: number;
     plId?: number;
+    fromSearch?: Item;
   };
 };
 

@@ -15,17 +15,7 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(
-  persistedReducer,
-  compose(
-    applyMiddleware(sagaMiddleware),
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__({
-        trace: true,
-        traceLimit: 25,
-      })
-  )
-);
+const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(rootSaga);
 

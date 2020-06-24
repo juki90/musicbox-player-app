@@ -639,6 +639,26 @@ const rootReducer: Reducer<StateProps, Action> = (
         playlists: withMovedInPlaylist,
       };
     case PLAY_VIDEO:
+      if ((action as playVideoAction).payload.fromSearch !== undefined) {
+        return {
+          ...state,
+          collection: state.collection.map((i) => {
+            const item = i;
+            item.playing = false;
+            return item;
+          }),
+          playlists: state.playlists.map((pl) => {
+            const playlist = pl;
+            playlist.items = playlist.items.map((i) => {
+              const item = i;
+              item.playing = false;
+              return item;
+            });
+            return playlist;
+          }),
+          inPlayer: (action as playVideoAction).payload.fromSearch,
+        };
+      }
       if ((action as playVideoAction).payload.vidId === -1) {
         return {
           ...state,
