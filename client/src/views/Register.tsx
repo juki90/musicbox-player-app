@@ -37,7 +37,8 @@ interface RegisterProps extends RouteComponentProps {
     data: {
       playlists: Playlist[];
       collection: Item[];
-    }
+    },
+    onSuccess: () => void
   ) => void;
   collection: Item[];
   playlists: Playlist[];
@@ -109,14 +110,19 @@ const Register: React.FC<RegisterProps> = ({
         setSubmitError(true);
         return;
       }
-      registerRequest(nameInput, emailInput, pswdInput, {
-        collection,
-        playlists,
-      });
+      registerRequest(
+        nameInput,
+        emailInput,
+        pswdInput,
+        {
+          collection,
+          playlists,
+        },
+        () => history.push("/")
+      );
       setNameInput("");
       setEmailInput("");
       setPswdInput("");
-      history.push("/");
     };
 
   return (
@@ -206,8 +212,9 @@ const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
     data: {
       playlists: Playlist[];
       collection: Item[];
-    }
-  ) => dispatch(registerRequestAction(name, email, password, data)),
+    },
+    onSuccess: () => void
+  ) => dispatch(registerRequestAction(name, email, password, data, onSuccess)),
 });
 
 export default connect(

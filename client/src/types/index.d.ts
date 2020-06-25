@@ -239,6 +239,7 @@ type registerRequestAction = {
       playlists: Playlist[];
       collection: Item[];
     };
+    onSuccess: () => void;
   };
 };
 
@@ -267,6 +268,7 @@ type loginRequestAction = {
     email: string;
     password: string;
   };
+  onSuccess: () => void;
 };
 
 type loginSuccessAction = {

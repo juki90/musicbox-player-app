@@ -31,7 +31,11 @@ const useStyles = makeStyles({
 });
 
 interface LoginProps extends RouteComponentProps {
-  loginRequest: (email: string, password: string) => void;
+  loginRequest: (
+    email: string,
+    password: string,
+    onSuccess: () => void
+  ) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ loginRequest, history }) => {
@@ -84,10 +88,9 @@ const Login: React.FC<LoginProps> = ({ loginRequest, history }) => {
         setLoginError(true);
         return;
       }
-      loginRequest(emailInput, pswdInput);
+      loginRequest(emailInput, pswdInput, () => history.push("/"));
       setEmailInput("");
       setPswdInput("");
-      history.push("/");
     };
 
   return (
@@ -161,8 +164,8 @@ const Login: React.FC<LoginProps> = ({ loginRequest, history }) => {
 };
 
 const mapDispatchToProps = (dispatch: (arg0: any) => any) => ({
-  loginRequest: (email: string, password: string) =>
-    dispatch(loginRequestAction(email, password)),
+  loginRequest: (email: string, password: string, onSuccess: () => void) =>
+    dispatch(loginRequestAction(email, password, onSuccess)),
 });
 
 export default connect(null, mapDispatchToProps)(withRouter(Login));

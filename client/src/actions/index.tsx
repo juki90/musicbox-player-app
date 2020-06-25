@@ -354,8 +354,9 @@ export const registerRequest: (
   data: {
     playlists: Playlist[];
     collection: Item[];
-  }
-) => Action = (name, email, password, data) => {
+  },
+  onSuccess: () => void
+) => Action = (name, email, password, data, onSuccess) => {
   return {
     type: REGISTER_REQUEST,
     payload: {
@@ -363,6 +364,7 @@ export const registerRequest: (
       email,
       password,
       data,
+      onSuccess,
     },
   };
 };
@@ -397,15 +399,17 @@ export const removeNotification: () => Action = () => {
   };
 };
 
-export const loginRequest: (email: string, password: string) => Action = (
-  email,
-  password
-) => {
+export const loginRequest: (
+  email: string,
+  password: string,
+  onSuccess: () => void
+) => Action = (email, password, onSuccess) => {
   return {
     type: LOGIN_REQUEST,
     payload: {
       email,
       password,
+      onSuccess,
     },
   };
 };

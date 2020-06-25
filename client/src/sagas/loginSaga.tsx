@@ -28,6 +28,7 @@ function* loginWorker(action: Action) {
   });
   if (response.loggedAs && response.token) {
     localStorage.setItem("token", response.token);
+    action.payload.onSuccess();
     yield put({
       type: LOGIN_SUCCESS,
       payload: {

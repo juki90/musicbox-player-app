@@ -34,6 +34,7 @@ function* registerWorker(action: Action) {
   });
   if (response.name && response.token) {
     localStorage.setItem("token", response.token);
+    action.payload.onSuccess();
     yield put({
       type: REGISTER_SUCCESS,
       payload: {

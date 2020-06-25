@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, ThemeProvider } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -24,7 +24,7 @@ import axios from "axios";
 
 const useStyles = makeStyles({
   filterBtn: {
-    padding: "10px 15px 5px 15px",
+    padding: "5px 15px 5px 15px",
     margin: "10px 0 20px 0",
   },
   filterLabel: {
@@ -66,13 +66,14 @@ const Search: React.FC = () => {
   const commonClasses = useCommonStyles();
   const classes = useStyles();
   const [filtersOn, setFiltersOn] = useState<boolean>(false);
-  const [websites, setWebsites] = useState<string[]>([]);
+  const [websites, setWebsites] = useState<string[]>(["youtube"]);
   const [searchString, setSearchString] = useState<string>("");
   const [sentBefore, setSentBefore] = useState<number>(0);
   const [sentBeforeForAPI, setSentBeforeForAPI] = useState<string>("");
   const [isShort, setIsShort] = useState<boolean>(true);
   const [searched, setSearched] = useState<Item[]>([]);
   const [searchError, setSearchError] = useState<string>("");
+  const searchBtn = useRef<HTMLButtonElement | null>(null);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.getAttribute("name")!;
@@ -97,7 +98,7 @@ const Search: React.FC = () => {
     setSentBeforeForAPI("");
   };
 
-  const handleSearchButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSearchButton = () => {
     if (!searchString) {
       return;
     }
@@ -115,6 +116,13 @@ const Search: React.FC = () => {
       .catch((err) =>
         setSearchError("An error occured fetching links from server")
       );
+  };
+
+  const handleEnterPress = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchBtn.current!.click();
+    }
   };
 
   return (
@@ -142,6 +150,12 @@ const Search: React.FC = () => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchString(e.currentTarget.value)
                 }
+                onFocus={() =>
+                  document.addEventListener("keypress", handleEnterPress)
+                }
+                onBlur={() =>
+                  document.removeEventListener("keypress", handleEnterPress)
+                }
               />
               <Button
                 className={classes.searchBtn}
@@ -149,6 +163,7 @@ const Search: React.FC = () => {
                 color="primary"
                 startIcon={<SearchIcon />}
                 onClick={handleSearchButton}
+                ref={searchBtn}
               >
                 Search
               </Button>
@@ -180,16 +195,6 @@ const Search: React.FC = () => {
                           Website to search in:
                         </FormLabel>
                         <FormGroup>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={websites.includes("soundcloud")}
-                                name="soundcloud"
-                                onChange={handleCheckboxChange}
-                              />
-                            }
-                            label="Soundcloud"
-                          />
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -279,7 +284,7 @@ const Search: React.FC = () => {
                           <FormControlLabel
                             value={false}
                             control={<Radio />}
-                            label="Long"
+                            label="Medium"
                           />
                         </RadioGroup>
                       </FormControl>
