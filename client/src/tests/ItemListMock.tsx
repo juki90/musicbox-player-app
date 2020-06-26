@@ -1,4 +1,3 @@
-
 const results: Item[] = [
   {
     id: 0,
@@ -180,3 +179,5 @@ const results: Item[] = [
     Stream / download here: release.spinninrecords.com/choir-1-0!SC`,
   },
 ];
+
+export default results;

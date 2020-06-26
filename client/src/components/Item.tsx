@@ -371,7 +371,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
               }
               className={classes.videoInfo}
             >
-              <Typography variant="h6">
+              <Typography data-testid="item-title" variant="h6">
                 {title.length > 100 ? `${title.slice(0, 100)}...` : title}
 
                 {playing && (type === "playlist" || type === "player") && (
@@ -395,6 +395,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     onClick={handlePlayVideo}
                     startIcon={playing ? <StopIcon /> : <PlayArrowIcon />}
+                    data-testid="collection-play-button"
                   >
                     {playing ? "Stop" : "Play"}
                   </Button>
@@ -405,6 +406,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     onClick={handleClickPlaylistAdd}
                     startIcon={<PlaylistAddIcon />}
+                    data-testid="collection-playlist-button"
                   >
                     Playlist
                   </Button>
@@ -414,6 +416,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     startIcon={<DeleteForeverIcon />}
                     onClick={() => (onRemove as (id: number) => void)(num)}
+                    data-testid="collection-remove-button"
                   >
                     Remove
                   </Button>
@@ -434,6 +437,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                       )
                     }
                     onClick={handlePlayVideo}
+                    data-testid="search-play-button"
                   >
                     {inPlayer && inPlayer.link === link ? "Stop" : "Play"}
                   </Button>
@@ -444,6 +448,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     size="small"
                     startIcon={<PlaylistAddIcon />}
                     onClick={handleClickPlaylistAdd}
+                    data-testid="search-playlist-button"
                   >
                     Playlist
                   </Button>
@@ -455,6 +460,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                     startIcon={inCollection ? <CheckIcon /> : <AddIcon />}
                     disabled={inCollection}
                     onClick={onAdd}
+                    data-testid="search-collection-button"
                   >
                     {inCollection ? "In collection" : "Collection"}
                   </Button>
@@ -472,6 +478,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                   onMouseDown={onMove}
                   onTouchStart={onMove}
                   data-num={num}
+                  data-testid="playlist-move-button"
                 >
                   {" "}
                 </Button>
@@ -481,6 +488,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                   size="small"
                   startIcon={<DeleteForeverIcon />}
                   onClick={onRemove as () => void}
+                  data-testid="playlist-remove-button"
                 >
                   {" "}
                 </Button>
@@ -495,6 +503,13 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                 onClose={handleClose}
               >
                 {playlistMenuItems}
+                {!playlistMenuItems.length && (
+                  <Box p="0 1em">
+                    <Typography>
+                      You must create your first playlist!
+                    </Typography>
+                  </Box>
+                )}
               </Menu>
             )}
           </Box>
