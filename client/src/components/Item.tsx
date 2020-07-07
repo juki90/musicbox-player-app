@@ -382,7 +382,7 @@ const Item: React.FC<ItemProps & React.HTMLAttributes<HTMLDivElement>> = (
                 )}
               </Typography>
               {type !== "playlist" && type !== "player" && (
-                <Typography variant="body1">
+                <Typography variant="body1" data-testid="item-description">
                   {desc.length > 250 ? `${desc.slice(0, 250)}...` : desc}
                 </Typography>
               )}

@@ -2,10 +2,11 @@ import React from "react";
 import { render as rtlRender } from "@testing-library/react";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import rootReducer from "../reducers";
+import rootReducer from "../../reducers";
 
 interface WrapperProps {
-  children: React.ReactElement;
+  children?: React.ReactElement;
+  ui?: React.ReactElement;
 }
 
 const render = (
@@ -23,4 +24,5 @@ const render = (
 };
 
 export * from "@testing-library/react";
+
 export { render };

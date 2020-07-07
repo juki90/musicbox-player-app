@@ -147,6 +147,7 @@ const Login: React.FC<LoginProps> = ({ loginRequest, history }) => {
                 className={classes.loginError}
                 variant="body1"
                 align="center"
+                data-testid="error-msg"
               >
                 Please, fill the form up correctly
               </Typography>

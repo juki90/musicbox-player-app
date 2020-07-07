@@ -185,7 +185,11 @@ const Register: React.FC<RegisterProps> = ({
               </Button>
             </form>
             {submitError && (
-              <Typography className={classes.submitError} variant="body1">
+              <Typography
+                className={classes.submitError}
+                variant="body1"
+                data-testid="error-msg"
+              >
                 Please, fill the form up correctly
               </Typography>
             )}

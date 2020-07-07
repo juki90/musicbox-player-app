@@ -1,4 +1,4 @@
-import results from "./ItemListMock";
+import results from "./utils/ItemListMock";
 import prepeareToPagination from "../utils/prepeareToPagination";
 
 describe("prepeareToPagination test", () => {
